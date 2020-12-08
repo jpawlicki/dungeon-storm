@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="crashreporting.js"></script>
+		<script src="gamelib.js"></script>
+		<script src="rendering.js"></script>
+		<script src="ui.js"></script>
+		<script src="rendering_unitcard.js"></script>
+		<script src="ability_move.js"></script>
+		<script src="ability_attack.js"></script>
+		<link rel="stylesheet" type="text/css" href="rendering.css"/>
+		<style>
+			body {
+				background-color: #024;
+				display: grid;
+				font-family: sans-serif;
+				grid-template-rows: auto;
+				grid-template-columns: 20em 1fr;
+				height: 100vh;
+				margin: 0;
+				padding: 0;
+			}
+			#turnControls {
+				background: #000;
+				color: #ccc;
+				padding: 0.2em;
+				display: flex;
+				justify-content: space-around;
+			}
+			#turnControls > svg {
+				cursor: pointer;
+			}
+			#turnControls > svg:hover {
+				color: #fff;
+			}
+			#abilityDesc {
+				background: #000;
+				color: #fff;
+				padding: 0.5em;
+				overflow: auto;
+			}
+			#abilityDescText {
+				white-space: pre-wrap;
+			}
+			#abilityDesc h1 {
+				margin: 0;
+				font-size: 110%;
+			}
+			#mapDiv {
+				overflow: auto;
+			}
+			#mapDiv > svg {
+				min-width: 100%;
+				min-height: 100%;
+			}
+			#undo {
+				visibility: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="abilityDesc">
+			<div id="unitCards">
+				<div id="turnControls">
+					<svg id="undo" title="Undo Action" style="width:24px;height:24px" viewBox="0 0 24 24" onClick="clickOnUndo()">
+						<path fill="currentColor" d="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" />
+					</svg>
+					<svg id="done" title="End Turn" style="width:24px;height:24px" viewBox="0 0 24 24" onClick="clickOnDone()">
+						<path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+					</svg>
+				</div>
+			</div>
+			<h1 id="abilityDescTitle"></h1>
+			<div id="abilityDescText"></div>
+		</div>
+		<div id="mapDiv">
+		</div>
+		<script>
+			let gameState = new GameState();
+			let currentState = gameState.currentState;
+			document.querySelector("#mapDiv").appendChild(setupSvg(currentState));
+			for (let unit of currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
+			//gameState.addListener(enableDisableUndoButton);
+		</script>
+	</body>
+</html>

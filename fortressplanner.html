@@ -1,0 +1,49 @@
+<html>
+<head>
+<style>
+	body {
+		background: black;
+	}
+	table {
+		border-collapse: collapse;
+	}
+	tr {
+		height: 34px;
+	}
+	td {
+		border: 4px dashed #888;
+		width: 30px;
+		height: 30px;
+		background: black;
+		padding: 0px;
+	}
+</style>
+</head>
+<body>
+<table id="t">
+</table>
+<script>
+
+function makeOnclick(c) {
+	return function(e) {
+		if (!c.hasOwnProperty("dark")) {
+			c.dark = true;
+		} else {
+			c.dark = !c.dark;
+		}
+		c.style.background = c.dark ? "white" : "black";
+	}
+}
+
+var t = document.getElementById("t");
+for (var i = 0; i < 21; i++) {
+	var r = document.createElement("tr");
+	for (var j = 0; j < 21; j++) {
+		var c = document.createElement("td");
+		c.addEventListener("click", makeOnclick(c));
+		r.appendChild(c);
+	}
+	t.appendChild(r);
+}
+</script>
+</body></html>
