@@ -51,18 +51,21 @@ class Fortress {
 }
 
 class Unit {
-	// pos[]: rank, file
-	// facing: 0-3
-	// portrait
-	// state
-	// strengths[]: 0-5
-	// threats[]: bool
-	// player
+	// abilities
 	// actionPoints
 	// actors
 	// card
-	// player
+	// facing: 0-3
 	// name
+	// player
+	// player
+	// portrait
+	// pos[2]: rank, file
+	// state
+	// strengths[4]: 0-5
+	// threats[4]: bool
+	// strengthsBloodied[4]: 0-5
+	// threatsBloodied[4]: bool
 
 	static State = {
 		NORMAL: 1,
@@ -71,20 +74,20 @@ class Unit {
 	}
 
 	constructor(id) {
+		this.abilities = [abilityData.MOVE, abilityData.ATTACK]
+		this.actionPoints = 3;
+		this.actors = [];
+		this.card = undefined;
+		this.facing = 0;
 		this.id = id;
 		this.name = "Example Unit";
-		this.pos = [4, 3];
-		this.facing = 0;
+		this.player = 0;
 		this.portrait = "port.png";
+		this.pos = [4, 3];
 		this.state = Unit.State.NORMAL;
 		this.strengths = [4, 3, 2, 3];
+		this.strengthsBloodied = [3, 2, 1, 2];
 		this.threats = [true, false, false, false];
-		this.player = 1;
-		this.actors = [];
-		this.actionPoints = 3;
-		this.abilities = [abilityData.MOVE, abilityData.ATTACK]
-		this.player = 0;
-		this.card = undefined;
 	}
 
 	registerActor(actor) {
@@ -119,7 +122,18 @@ class Unit {
 	}
 
 	getStrength(direction) {
-		return this.strengths[(4 + direction - this.facing) % 4];
+		let dir = (4 + direction - this.facing) % 4;
+		return this.state == Unit.State.NORMAL ? this.strengths[dir] : this.strengthsBloodied[dir];
+	}
+
+	getThreat(direction) {
+		return this.threats[(4 + direction - this.facing) % 4];
+	}
+
+	canAct() {
+		if (this.state == Unit.State.DEFEATED) return false;
+		for (let a of this.abilities) if (a.minActionPoints <= this.actionPoints) return true;
+		return false;
 	}
 }
 
@@ -164,10 +178,10 @@ class GameState {
 	}
 
 	turnDone() {
-		// TODO
 		let effects = [];
 		for (let u of this.currentState.units) if (u.player == this.currentState.currentPlayer) effects.push(new Effect(u, "actionPoints", 3));
 		this.addAction(new Action(false, effects, "END TURN"));
+		// TODO
 		// this.currentState.currentPlayer = this.currentState.currentPlayer + 1;
 	}
 

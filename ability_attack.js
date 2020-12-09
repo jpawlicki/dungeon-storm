@@ -14,12 +14,10 @@ abilityData.ATTACK = new class extends Ability {
 	}
 
 	clickOnTile(unit, loc, quadrant) {
-		console.log("click");
 		if (!this.isMoveLegal(unit, loc, quadrant)) return;
 		let target = gameState.currentState.getUnitAt(loc);
 		if (target == null) return;
 		clearClickContextActors();
-		console.log("click");
 
 		let roll1 = parseInt(Math.random() * 6 + 1);
 		let roll2 = parseInt(Math.random() * 6 + 1);

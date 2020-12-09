@@ -63,4 +63,8 @@ function clickOnDone() {
 function showHideUiElements() {
 	document.getElementById("undo").style.visibility = gameState.actionHistory.length > 0 && gameState.actionHistory[gameState.actionHistory.length - 1].undoable ? "visible" : "hidden";
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) clickOnAbility(clickContext.selectedUnit, clickContext.selectedAbility);
+
+	let actionsLeft = false;
+	for (let unit of gameState.currentState.units) if (unit.player == 0 && unit.canAct()) actionsLeft = true;
+	document.getElementById("done").setAttribute("class", actionsLeft ? "warn" : "suggest");
 }

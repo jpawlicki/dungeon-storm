@@ -27,6 +27,10 @@ class UnitCard {
 }
 
 class UnitCardElement extends HTMLElement {
+	// icons
+	// movePipsActor
+	// unit
+
 	connectedCallback() {
 		this.icons = {};
 
@@ -37,7 +41,7 @@ class UnitCardElement extends HTMLElement {
 					display: flex;
 					flex-direction: row;
 				}
-				img {
+				svg {
 					height: 4em;
 					width: 4em;
 				}
@@ -68,7 +72,9 @@ class UnitCardElement extends HTMLElement {
 					visibility: hidden;
 				}
 			</style>
-			<img src="assets/portraits/${this.unit.portrait}" />
+			<svg id="portrait" viewBox="-18 26 36 36">
+				<image xlink:href="assets/portraits/${this.unit.portrait}" width="36" height="36" x="-18" y="26" />
+			</svg>
 			<div id="abilities">
 			</div>
 		`;
@@ -89,6 +95,7 @@ class UnitCardElement extends HTMLElement {
 				abilityDiv.appendChild(d);
 			}
 		}
+		this.movePipsActor = new MovePipsActor(this.unit, shadow.getElementById("portrait"));
 	}
 
 	update() {
@@ -101,6 +108,7 @@ class UnitCardElement extends HTMLElement {
 				this.icons[i].element.setAttribute("class", "");
 			}
 		}
+		this.movePipsActor.update();
 	}
 }
 customElements.define("unit-card", UnitCardElement);

@@ -50,7 +50,7 @@ class AbilityMoveActor {
 		this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		this.g.style.opacity = 0.7;
 		this.g.style.pointerEvents = "none";
-		let u = Object.assign({}, unit);
+		let u = Object.assign(new Unit(), unit);
 		u.facing = facing;
 		u.pos = loc;
 		u.actionPoints -= 1;

@@ -1,10 +1,5 @@
 Short Term:
- - unit card needs indicator of how many AP remain
- - end turn should flash when all AP on non-defeated units exhausted
- - warning about ending turn early
  - hotkey support
- - bloodied units need a visual indicator and should change stats
- - strength pips need to adjust based on unit strength changes (and should use getStrength to account for bloodied status)
 
 
 Long Term:

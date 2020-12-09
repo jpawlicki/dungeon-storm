@@ -176,6 +176,7 @@ class UnitActor {
 	// unit
 	// group
 	// edges: The edges group
+	// bloodied: The bloodied overlay
 	// statActors[]
 	// moveActor
 	// selectionActor
@@ -194,8 +195,15 @@ class UnitActor {
 		portraitimg.setAttribute("width", 34);
 		portraitimg.setAttribute("height", 34);
 		portraitimg.setAttribute("x", -17);
-		portraitimg.setAttribute("y", Math.pow(2 * tileSize * tileSize, .5) / 2 * yShortening - 17);
-		portraitimg.addEventListener("click", () => clickOnUnit(unit));
+		let porty = Math.pow(2 * tileSize * tileSize, .5) / 2 * yShortening - 17;
+		portraitimg.setAttribute("y", porty);
+
+		this.bloodied = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		this.bloodied.style.opacity = 0;
+		this.bloodied.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
+		this.bloodied.setAttribute("d", "M-17 " + (porty + 17) + "A17 13 0 0 0 17 " + (porty + 17) + "A17 19 0 0 1 -17 " + (porty + 17));
+		this.bloodied.setAttribute("fill", "#8a0303");
+
 
 		this.statActors = [
 			new StatFaceActor(this, 0),
@@ -226,6 +234,7 @@ class UnitActor {
 
 		g.appendChild(plane);
 		g.appendChild(portraitimg);
+		g.appendChild(this.bloodied);
 		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.fortress.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
 
 		g.setAttribute("transform", "translate(" + loc[0] + "," + loc[1] + ")");
@@ -234,7 +243,7 @@ class UnitActor {
 		g.style.pointerEvents = "none";
 		g.style.opacity = 1.0;
 
-		this.moveActor = new MovePipsActor(this);
+		this.moveActor = new MovePipsActor(this.unit, this.group);
 		this.selectActor = new SelectionActor(this);
 	}
 
@@ -244,6 +253,8 @@ class UnitActor {
 		this.group.setAttribute("transform", "translate(" + loc[0] + "," + loc[1] + ")");
 		this.group.style.opacity = this.unit.state == Unit.State.DEFEATED ? 0 : 1;
 		this.moveActor.update();
+		this.bloodied.style.opacity = this.unit.state == Unit.State.BLOODIED ? 1 : 0;
+		for (let sf of this.statActors) sf.update();
 	}
 
 	select() {
@@ -258,18 +269,36 @@ class UnitActor {
 // A StatFaceActor has a series of circles indicating the strength of a unit on a face.
 // The circles are colored according to threat.
 class StatFaceActor {
-	constructor(unitActor, face) {
-		let str = unitActor.unit.strengths[face];
+	// unitActor
+	// facing
+	// strengthPips[]
+	
+	constructor(unitActor, facing) {
+		this.unitActor = unitActor;
+		this.facing = facing;
+		this.strengthPips = [];
+		let str = unitActor.unit.strengths[facing];
 		for (let i = 0; i < str; i++) {
 			let eg = document.createElementNS("http://www.w3.org/2000/svg", "g");
 			let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-			c.setAttribute("r", 3);
-			c.setAttribute("class", unitActor.unit.threats[face] ? "unitedge threat" : "unitedge");
-			c.setAttribute("cx", tileSize / 2 + 8 * (i - str / 2.0 + 0.5));
 			c.setAttribute("cy", 9);
+			c.style.transition = "r 0.4s, cx 0.4s";
+			this.strengthPips.push(c);
 			eg.appendChild(c);
-			eg.setAttribute("transform", "rotate(" + (90 * face) + "," + (tileSize / 2) + "," + (tileSize / 2) + ")");
+			eg.setAttribute("transform", "rotate(" + (90 * facing) + "," + (tileSize / 2) + "," + (tileSize / 2) + ")");
 			unitActor.edges.appendChild(eg);
+		}
+		this.update();
+	}
+
+	update() {
+		let str = this.unitActor.unit.getStrength(this.unitActor.unit.facing + this.facing);
+		let threat = this.unitActor.unit.getThreat(this.unitActor.unit.facing + this.facing);
+		for (let i = 0; i < this.strengthPips.length; i++) {
+			let p = this.strengthPips[i];
+			p.setAttribute("class", threat ? "unitedge threat" : "unitedge");
+			p.setAttribute("r", i < str ? 3 : 0);
+			p.setAttribute("cx", tileSize / 2 + 8 * (i - str / 2.0 + 0.5));
 		}
 	}
 }
@@ -286,8 +315,8 @@ class MovePipsActor {
 		return "translate(" + x + "px," + ((i % 5) * 6) + "px)" + "scale(" + (active ? "1" : "0") + ")";
 	}
 
-	constructor(unitActor) {
-		this.unitActor = unitActor;
+	constructor(unit, group) {
+		this.unit = unit;
 		this.diamonds = [];
 		let MAX_ACTIONS = 10;
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -299,16 +328,16 @@ class MovePipsActor {
 			diamond.style.stroke = "#000";
 			diamond.style.strokeWidth = "0.2";
 			diamond.style.transition = "transform 1s";
-			diamond.style.transform = MovePipsActor.getTransform(i, this.unitActor.unit.actionPoints > i);
+			diamond.style.transform = MovePipsActor.getTransform(i, this.unit.actionPoints > i);
 			this.diamonds.push(diamond);
 			g.appendChild(diamond);
 		}
-		this.unitActor.group.appendChild(g);
+		group.appendChild(g);
 	}
 
 	update() {
 		for (let i = 0; i < this.diamonds.length; i++) {
-			this.diamonds[i].style.transform = MovePipsActor.getTransform(i, this.unitActor.unit.actionPoints > i);
+			this.diamonds[i].style.transform = MovePipsActor.getTransform(i, this.unit.actionPoints > i);
 		}
 	}
 }
