@@ -89,6 +89,7 @@ abilityData.ATTACK = new class extends Ability {
 		for (let u of gameState.currentState.units) {
 			if (Tile.equals(u.pos, newPos)) return false;
 		}
+		// TODO: test if unit is threatened by a perpendicular unit.
 		return true;
 	}
 }();

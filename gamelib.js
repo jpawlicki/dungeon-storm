@@ -1,3 +1,9 @@
+let abilityData = {};
+let aiData = {};
+let characterData = {};
+let roomData = {};
+let unitData = {};
+
 class Tile {
 	// height
 	// decoration
@@ -31,13 +37,14 @@ class Tile {
 class Fortress {
 	// tiles[][]
 
-	constructor(ranks, files) {
+	constructor(room) {
 		this.tiles = [];
-		for (let i = 0; i < ranks; i++) {
-			this.tiles.push([]);
-			for (let j = 0; j < files; j++) {
-				this.tiles[i].push(new Tile(parseInt(Math.random() * 3), "portuguese" + parseInt(1 + Math.random() * 8) + ".svg"));
+		for (let row of room.tiles) {
+			let rout = [];
+			for (let cell of row) {
+				rout.push(new Tile(cell.h, cell.t + ".svg"));
 			}
+			this.tiles.push(rout);
 		}
 	}
 
@@ -54,7 +61,6 @@ class Unit {
 	// abilities
 	// actionPoints
 	// actors
-	// card
 	// facing: 0-3
 	// name
 	// player
@@ -73,21 +79,15 @@ class Unit {
 		DEFEATED: 3
 	}
 
-	constructor(id) {
-		this.abilities = [abilityData.MOVE, abilityData.ATTACK]
+	constructor(characterOrUnitClass) {
 		this.actionPoints = 3;
 		this.actors = [];
-		this.card = undefined;
 		this.facing = 0;
-		this.id = id;
-		this.name = "Example Unit";
 		this.player = 0;
-		this.portrait = "port.png";
-		this.pos = [4, 3];
+		this.pos = [0, 0];
 		this.state = Unit.State.NORMAL;
-		this.strengths = [4, 3, 2, 3];
-		this.strengthsBloodied = [3, 2, 1, 2];
-		this.threats = [true, false, false, false];
+		// Remainder of attributes come from the class.
+		Object.assign(this, characterOrUnitClass);
 	}
 
 	registerActor(actor) {
@@ -127,7 +127,8 @@ class Unit {
 	}
 
 	getThreat(direction) {
-		return this.threats[(4 + direction - this.facing) % 4];
+		let dir = (4 + direction - this.facing) % 4;
+		return this.state == Unit.State.NORMAL ? this.threats[dir] : this.threatsBloodied[dir];
 	}
 
 	canAct() {
@@ -142,17 +143,24 @@ class CurrentState {
 	// units
 	// currentPlayer
 
-	constructor() {
+	constructor(room, playerUnits) {
 		this.currentPlayer = 0;
-		this.fortress = new Fortress(6, 6);
-		this.units = [
-			new Unit(0),
-			new Unit(1),
-		];
-
-		this.units[1].pos = [5, 3];
-		this.units[1].portrait = "port2.png";
-		this.units[1].player = 2;
+		this.fortress = new Fortress(room);
+		this.units = [];
+		for (let u of playerUnits) this.units.push(u);
+		for (let i = 0; i < playerUnits.length; i++) {
+			playerUnits[i].pos[0] = room.entry[0 + i % 2];
+			playerUnits[i].pos[1] = room.entry[1 + parseInt(i / 2)];
+			playerUnits[i].facing = 1;
+		}
+		for (let u of room.units) {
+			let unit = new Unit(u.type);
+			unit.player = u.player;
+			unit.pos[0] = u.pos[0];
+			unit.pos[1] = u.pos[1];
+			unit.facing = u.facing;
+			this.units.push(unit);
+		}
 	}
 
 	// Returns the unit in the position, or null if there is no unit in the position.
@@ -162,7 +170,6 @@ class CurrentState {
 	}
 }
 
-let abilityData = {};
 class Ability {
 	// name
 
@@ -171,10 +178,11 @@ class Ability {
 class GameState {
 	// currentState
 	// actionHistory
+	// characters
 
 	constructor() {
-		this.currentState = new CurrentState();
 		this.actionHistory = [];
+		this.characters = [];
 	}
 
 	turnDone() {
@@ -194,6 +202,15 @@ class GameState {
 	addAction(action) {
 		this.actionHistory.push(action);
 		action.apply();
+	}
+
+	loadRoom(room) {
+		this.currentState = new CurrentState(room, this.characters);
+	}
+
+	addCharacter(characterClass) {
+		// TODO: probably need a PlayerUnit class.
+		this.characters.push(new Unit(characterClass));
 	}
 }
 

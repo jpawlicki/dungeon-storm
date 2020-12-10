@@ -6,8 +6,12 @@
 		<script src="rendering.js"></script>
 		<script src="ui.js"></script>
 		<script src="rendering_unitcard.js"></script>
-		<script src="ability_move.js"></script>
-		<script src="ability_attack.js"></script>
+		<script src="abilities/attack.js"></script>
+		<script src="abilities/move.js"></script>
+		<script src="ai/attack_nearest.js"></script>
+		<script src="characters/wisher.js"></script>
+		<script src="units/rat.js"></script>
+		<script src="rooms/demo.js"></script>
 		<link rel="stylesheet" type="text/css" href="rendering.css"/>
 		<style>
 			body {
@@ -41,10 +45,10 @@
 		</div>
 		<script>
 			let gameState = new GameState();
-			let currentState = gameState.currentState;
-			document.querySelector("#mapDiv").appendChild(setupSvg(currentState));
-			for (let unit of currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
-			//gameState.addListener(enableDisableUndoButton);
+			gameState.addCharacter(characterData.Wisher);
+			gameState.loadRoom(roomData.BUILTIN_DEMO);
+			document.querySelector("#mapDiv").appendChild(setupSvg(gameState.currentState));
+			for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
 		</script>
 	</body>
 </html>

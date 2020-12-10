@@ -32,7 +32,7 @@ abilityData.MOVE = new class extends Ability {
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) > 1) return false;
 		let dstUnit = gameState.currentState.getUnitAt(loc);
 		if (dstUnit != null && dstUnit != unit) return false;
-		for (let u of currentState.units) {
+		for (let u of gameState.currentState.units) {
 			if (u.threatens(unit)) {
 				let offsetX = unit.pos[0] - u.pos[0];
 				let offsetY = unit.pos[1] - u.pos[1];
@@ -54,7 +54,7 @@ class AbilityMoveActor {
 		u.facing = facing;
 		u.pos = loc;
 		u.actionPoints -= 1;
-		new UnitActor(u, this.g, currentState.fortress);
+		new UnitActor(u, this.g, gameState.currentState.fortress);
 		document.getElementById("clickContextGroup").appendChild(this.g);
 	}
 

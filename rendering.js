@@ -277,8 +277,7 @@ class StatFaceActor {
 		this.unitActor = unitActor;
 		this.facing = facing;
 		this.strengthPips = [];
-		let str = unitActor.unit.strengths[facing];
-		for (let i = 0; i < str; i++) {
+		for (let i = 0; i < 10; i++) {
 			let eg = document.createElementNS("http://www.w3.org/2000/svg", "g");
 			let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 			c.setAttribute("cy", 9);

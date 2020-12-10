@@ -1,7 +1,6 @@
 Short Term:
  - hotkey support
 
-
 Long Term:
  - AI units should take a turn
  - Load rooms from room file / database
@@ -13,3 +12,50 @@ Long Term:
  - Persistence
  - Crash handling report to server logging
  - Bug report UI
+ - Graphics: improve bloodied overlay & portrait sphere to look more 3D and marbleish
+
+Tools:
+ - Unit Editor
+ - Room Editor
+   - Players should be able to create and upload rooms to a room database.
+	 - Players should be able to rate rooms after completing them.
+ - Dungeon Editor
+   - Players should be able to add rooms into a dungeon to create a custom campaign.
+	 - Some rooms should be able to be randomized.
+
+Room Data:
+ - Room ID
+ - Room version #.
+ - Tiles
+ - Room entry top point (Room entry is always in the upper-left in a 2x2 pattern.)
+ - Units in room
+   - Unit reference
+	 - Unit location
+	 - Unit disposition (allied / enemy)
+ - Features in room (fire, sand, water, rock, gold, action-bonus, heal-bonus, xp-bonus, etc)
+ - Room exit top point (room exit is always a 2x2 pattern on the low 
+ - Recommended difficulty level (0 to 10).
+ - Whether or not the room should be put in the random room pool.
+ - Dependencies
+	 - Room ID (most rooms that use a feature should depend on a room that introduces the feature in a tutorial)
+	 - Ability (for rooms that require a particular ability to succeed)
+	 - Any of [Dependencies]
+
+Enemy Unit Template Data:
+ - Strengths / Threats (normal and bloodied)
+ - Abilities
+ - AI strategy
+ - Portrait
+
+Player Unit Data:
+ - Learnable Abilities
+   - Each class of unit has certain abilities it can learn.
+   - Additionally, player units can learn any abilities known by the characters who raised them.
+ - Parents (raised by)
+ - XP
+ - Whether or not the unit can raise new characters.
+
+Campaign design:
+ - A player has a pool of characters that can begin a run. They may run with up to 4.
+ - Characters bond by running together. When characters retire at the end of a run, each most strongly-bonded pair raises a child (of a random unlocked class) who enters the pool.
+ - The pool is then filled up to 8 with random characters drawn from unlocked classes.
