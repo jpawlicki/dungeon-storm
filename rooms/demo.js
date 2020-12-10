@@ -16,12 +16,12 @@
 			{
 				type: unitData.Rat,
 				facing: 3,
-				pos: [2, 1],
+				pos: [2, 2],
 				player: 1,
 			},
 			{
 				type: unitData.Rat,
-				facing: 3,
+				facing: 0,
 				pos: [1, 2],
 				player: 1,
 			},

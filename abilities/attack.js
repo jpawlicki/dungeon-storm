@@ -11,6 +11,7 @@ abilityData.ATTACK = new class extends Ability {
 			"Anyone who retreats becomes bloodied.",
 			"Anyone who retreats into a wall or another unit is defeated.",
 			"This action cannot be undone."];
+		this.aiHints = [AiHints.ATTACK];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

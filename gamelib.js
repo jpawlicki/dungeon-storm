@@ -4,6 +4,11 @@ let characterData = {};
 let roomData = {};
 let unitData = {};
 
+const AiHints = {
+	ATTACK: 0,
+	MOVE: 1,
+}
+
 class Tile {
 	// height
 	// decoration
@@ -22,6 +27,10 @@ class Tile {
 		if (pos1[0] + 1 == pos2[0] && pos1[1] == pos2[1]) return 2;
 		if (pos1[0] == pos2[0] && pos1[1] - 1 == pos2[1]) return 3;
 		return -1;
+	}
+
+	static distanceBetween(pos1, pos2) {
+		return Math.abs(pos1[0] - pos2[0]) + Math.abs(pos1[1] - pos2[1]);
 	}
 
 	static equals(pos1, pos2) {
@@ -189,8 +198,41 @@ class GameState {
 		let effects = [];
 		for (let u of this.currentState.units) if (u.player == this.currentState.currentPlayer) effects.push(new Effect(u, "actionPoints", 3));
 		this.addAction(new Action(false, effects, "END TURN"));
-		// TODO
-		// this.currentState.currentPlayer = this.currentState.currentPlayer + 1;
+		this.currentState.currentPlayer = (this.currentState.currentPlayer + 1) % 3;
+		this.runAi();
+	}
+
+	runAi() {
+		if (this.currentState.currentPlayer == 0) return;
+		this.runAiSubtask(this.currentState.units.filter(u => u.player == this.currentState.currentPlayer));
+	}
+
+	runAiSubtask(units) {
+		units = units.filter(u => u.canAct());
+		if (units.length == 0) {
+			this.turnDone();
+			return;
+		}
+		let aiPattern = units[0].ai;
+		function aiEquals(a, b) {
+			if (a.length != b.length) return false;
+			for (let i = 0; i < a.length; i++) if (a[i] != b[i]) return false;
+			return true;
+		}
+		let unitSelection = units.filter(u => aiEquals(aiPattern, u.ai));
+		let patternIndex = 0;
+		let action = aiPattern[patternIndex].getNextMove(unitSelection, this.currentState);
+		while (action == undefined && patternIndex < aiPattern.length - 1) {
+			patternIndex++
+			action = aiPattern[patternIndex].getNextMove(unitSelection, this.currentState);
+		}
+		if (action == undefined) {
+			// The first unit has no valid moves. Remove it and try again.
+			this.runAiSubtask(units.splice(1));
+			return;
+		}
+		this.addAction(action);
+		window.setTimeout(() => this.runAiSubtask(units), 700);
 	}
 
 	undoAction() {

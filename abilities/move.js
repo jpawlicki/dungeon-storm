@@ -9,6 +9,7 @@ abilityData.MOVE = new class extends Ability {
 			"  1. Move to an adjacent empty tile.",
 			"  2. Rotate in the same tile.",
 			"If threatened, you cannot move in a direction other than directly away from the threat."];
+		this.aiHints = [AiHints.MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
