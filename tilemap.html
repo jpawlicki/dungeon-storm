@@ -3,17 +3,22 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script src="crashreporting.js"></script>
 		<script src="gamelib.js"></script>
-		<script src="rendering.js"></script>
 		<script src="ui.js"></script>
-		<script src="rendering_unitcard.js"></script>
 		<script src="abilities/attack.js"></script>
 		<script src="abilities/move.js"></script>
+		<script src="adventures/a_girl_and_her_dog.js"></script>
 		<script src="ai/attack_nearest.js"></script>
 		<script src="ai/move_randomly.js"></script>
+		<script src="characters/dog.js"></script>
 		<script src="characters/wisher.js"></script>
+		<script src="rendering/adventure.js"></script>
+		<script src="rendering/room.js"></script>
+		<script src="rendering/unit.js"></script>
+		<script src="rendering/unitcard.js"></script>
 		<script src="units/rat.js"></script>
 		<script src="rooms/demo.js"></script>
-		<link rel="stylesheet" type="text/css" href="rendering.css"/>
+		<link rel="stylesheet" type="text/css" href="rendering/room.css"/>
+		<link rel="stylesheet" type="text/css" href="rendering/unit.css"/>
 		<style>
 			body {
 				background-color: #024;
@@ -24,6 +29,12 @@
 				height: 100vh;
 				margin: 0;
 				padding: 0;
+			}
+			body.nosidePane {
+				grid-template-columns: 1fr;
+			}
+			body.nosidePane > #abilityDesc {
+				display: none;
 			}
 		</style>
 	</head>
@@ -45,11 +56,9 @@
 		<div id="mapDiv">
 		</div>
 		<script>
-			let gameState = new GameState();
-			gameState.addCharacter(characterData.Wisher);
-			gameState.loadRoom(roomData.BUILTIN_DEMO);
-			document.querySelector("#mapDiv").appendChild(setupSvg(gameState.currentState));
-			for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
+			let lang = "en";
+			let gameState = null;
+			loadAdventure(adventureData.A_GIRL_AND_HER_DOG);
 		</script>
 	</body>
 </html>

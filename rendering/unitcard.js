@@ -73,7 +73,7 @@ class UnitCardElement extends HTMLElement {
 				}
 			</style>
 			<svg id="portrait" viewBox="-18 26 36 36">
-				<image xlink:href="assets/portraits/${this.unit.portrait}" width="36" height="36" x="-18" y="26" />
+				<image xlink:href="assets/portraits/${this.unit.portrait}" width="36" height="36" x="-18" y="26" clip-path="circle()"/>
 			</svg>
 			<div id="abilities">
 			</div>

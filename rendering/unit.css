@@ -1,0 +1,40 @@
+.unitedge {
+	fill: #ccc;
+	stroke: #000;
+	stroke-width: 1;
+}
+.threat {
+	fill: #f88;
+	animation: threatpulse 2s alternate infinite;
+}
+.hidden use {
+	transition: opacity 0.5s;
+	opacity: 0;
+}
+.overlay {
+	pointer-events: none;
+}
+.selection {
+	fill: transparent;
+	stroke: #fff;
+	stroke-width: 2;
+	stroke-dasharray: 6.67588438888 6.67588438888;
+	animation: selectcrawl 1s linear infinite;
+	pointer-events: none;
+}
+@keyframes threatpulse {
+	0% {
+		fill: #f88;	
+	}
+	100% {
+		fill: #f00;
+	}
+}
+@keyframes selectcrawl {
+	0% {
+		stroke-dashoffset: 0;
+	}
+	100% {
+		stroke-dashoffset: 13.3517687778;
+	}
+}

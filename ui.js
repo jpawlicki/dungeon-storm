@@ -9,6 +9,12 @@ function clearClickContextActors() {
 	clickContext.actors = [];
 }
 
+function clearClickContext() {
+	clearClickContextActors();
+	clickContext.selectedAbility = null;
+	clickContext.selectedUnit = null;
+}
+
 function clickOnAbility(unit, ability) {
 	if (clickContext.selectedUnit == unit && clickContext.selectedAbility == ability) {
 		clickContext.selectedUnit = null;
@@ -35,6 +41,7 @@ function clickOnAbility(unit, ability) {
 //     \21/
 //      \/
 function clickOnTile(loc, quadrant) {
+	if (gameState.currentState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, loc, quadrant);
 		if (action != null) {
@@ -45,6 +52,7 @@ function clickOnTile(loc, quadrant) {
 }
 
 function mouseOverTile(loc, quadrant) {
+	if (gameState.currentState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		clickContext.selectedAbility.mouseOverTile(clickContext.selectedUnit, loc, quadrant);
 	}
@@ -56,15 +64,40 @@ function clickOnUndo() {
 }
 
 function clickOnDone() {
+	clearClickContext();
 	gameState.turnDone();
 	showHideUiElements();
 }
 
 function showHideUiElements() {
-	document.getElementById("undo").style.visibility = gameState.actionHistory.length > 0 && gameState.actionHistory[gameState.actionHistory.length - 1].undoable ? "visible" : "hidden";
+	document.getElementById("undo").style.visibility = gameState.currentState.currentPlayer == 0 && gameState.actionHistory.length > 0 && gameState.actionHistory[gameState.actionHistory.length - 1].undoable ? "visible" : "hidden";
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) clickOnAbility(clickContext.selectedUnit, clickContext.selectedAbility);
 
 	let actionsLeft = false;
 	for (let unit of gameState.currentState.units) if (unit.player == 0 && unit.canAct()) actionsLeft = true;
 	document.getElementById("done").setAttribute("class", actionsLeft ? "warn" : "suggest");
+
+	document.getElementById("done").style.visibility = gameState.currentState.currentPlayer == 0 ? "visible" : "hidden";
+}
+
+function loadAdventure(adventure) {
+	document.querySelector("#mapDiv").innerHTML = "";
+	gameState = new GameState(adventure);
+	document.querySelector("#mapDiv").appendChild(setupAdventureSituation());
+}
+
+function loadRoom() {
+	gameState.loadRoom(roomData.BUILTIN_DEMO);
+	document.querySelector("#mapDiv").innerHTML = "";
+	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState.currentState));
+	for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
+	showSidePane();
+}
+
+function hideSidePane() {
+	document.querySelector("body").setAttribute("class", "nosidepane");
+}
+
+function showSidePane() {
+	document.querySelector("body").setAttribute("class", "");
 }

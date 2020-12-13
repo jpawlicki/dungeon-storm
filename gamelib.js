@@ -1,9 +1,11 @@
 let abilityData = {};
+let adventureData = {};
 let aiData = {};
 let characterData = {};
 let roomData = {};
 let unitData = {};
 
+// Abilities have AiHints to suggest to the AI how to use the ability.
 const AiHints = {
 	ATTACK: 0,
 	MOVE: 1,
@@ -43,7 +45,7 @@ class Tile {
 	}
 }
 
-class Fortress {
+class Room {
 	// tiles[][]
 
 	constructor(room) {
@@ -73,7 +75,6 @@ class Unit {
 	// facing: 0-3
 	// name
 	// player
-	// player
 	// portrait
 	// pos[2]: rank, file
 	// state
@@ -81,6 +82,8 @@ class Unit {
 	// threats[4]: bool
 	// strengthsBloodied[4]: 0-5
 	// threatsBloodied[4]: bool
+	// experience
+	// abilitiesLearnable
 
 	static State = {
 		NORMAL: 1,
@@ -95,6 +98,7 @@ class Unit {
 		this.player = 0;
 		this.pos = [0, 0];
 		this.state = Unit.State.NORMAL;
+		this.experience = 0;
 		// Remainder of attributes come from the class.
 		Object.assign(this, characterOrUnitClass);
 	}
@@ -147,14 +151,14 @@ class Unit {
 	}
 }
 
-class CurrentState {
-	// fortress
+class CurrentState { // TODO: combine into GameState.
+	// fortress // TODO: rename to "room"
 	// units
 	// currentPlayer
 
 	constructor(room, playerUnits) {
 		this.currentPlayer = 0;
-		this.fortress = new Fortress(room);
+		this.fortress = new Room(room);
 		this.units = [];
 		for (let u of playerUnits) this.units.push(u);
 		for (let i = 0; i < playerUnits.length; i++) {
@@ -188,10 +192,19 @@ class GameState {
 	// currentState
 	// actionHistory
 	// characters
+	// characterPool
+	// adventure
+	// disableActions
 
-	constructor() {
+	constructor(adventure) {
+		this.adventure = adventure;
 		this.actionHistory = [];
 		this.characters = [];
+		this.characterPool = [];
+
+		for (let cname of adventure.characterPool) {
+			this.characterPool.push(new Unit(characterData[cname]));
+		}
 	}
 
 	turnDone() {
@@ -200,6 +213,7 @@ class GameState {
 		this.addAction(new Action(false, effects, "END TURN"));
 		this.currentState.currentPlayer = (this.currentState.currentPlayer + 1) % 3;
 		this.runAi();
+		showHideUiElements();
 	}
 
 	runAi() {
@@ -208,6 +222,7 @@ class GameState {
 	}
 
 	runAiSubtask(units) {
+		if (this.disableActions) return false;
 		units = units.filter(u => u.canAct());
 		if (units.length == 0) {
 			this.turnDone();
@@ -242,17 +257,37 @@ class GameState {
 	}
 
 	addAction(action) {
+		if (this.disableActions) return;
 		this.actionHistory.push(action);
 		action.apply();
+
+		// TODO: fire listeners for passive abilities.
+
+		// Check for room clear.
+		let numPlayer = 0;
+		let numEnemy = 0;
+		for (let u of this.currentState.units) {
+			if (u.state == Unit.State.DEFEATED) continue;
+			if (u.player == 0) numPlayer++;
+			if (u.player == 1) numEnemy++;
+		}
+		if (numEnemy == 0) this.roomVictory();
+		else if (numPlayer == 0) this.roomDefeat();
 	}
 
 	loadRoom(room) {
+		this.disableActions = false;
 		this.currentState = new CurrentState(room, this.characters);
 	}
 
-	addCharacter(characterClass) {
-		// TODO: probably need a PlayerUnit class.
-		this.characters.push(new Unit(characterClass));
+	roomVictory() {
+		this.disableActions = true;
+		setupVictorySituation();
+	}
+
+	roomDefeat() {
+		this.disableActions = true;
+		setupDefeatSituation();
 	}
 }
 
@@ -300,4 +335,11 @@ class Effect {
 		this.unit[this.property] = this.oldValue;
 		this.unit.updateActors();
 	}
+}
+
+// A Fortress is a collection of rooms. Fortresses are square. The player starts in the upper-left and is trying to reach the lower-right.
+class Fortress {
+	// id
+	// rooms
+	// random: whether to include the fortress in randomized fortress pools.
 }

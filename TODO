@@ -2,6 +2,7 @@ Short Term:
  - hotkey support
  - If the active unit is defeated, the clickContext must be cleared and the remaining actions in the unit card should be updated.
  - undo button and player actions have to be disabled during AI turns.
+ - canRetreat is counting defeated units. Need to review all places units are being iterated.
 
 Long Term:
  - AI units should take a turn
