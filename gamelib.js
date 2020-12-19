@@ -82,8 +82,7 @@ class Unit {
 	// threats[4]: bool
 	// strengthsBloodied[4]: 0-5
 	// threatsBloodied[4]: bool
-	// experience
-	// abilitiesLearnable
+	// learnableAbilities
 
 	static State = {
 		NORMAL: 1,
@@ -98,7 +97,6 @@ class Unit {
 		this.player = 0;
 		this.pos = [0, 0];
 		this.state = Unit.State.NORMAL;
-		this.experience = 0;
 		// Remainder of attributes come from the class.
 		Object.assign(this, characterOrUnitClass);
 	}
@@ -111,12 +109,28 @@ class Unit {
 		for (let a of this.actors) a.update();
 	}
 
+	clearActors() {
+		this.actors = [];
+	}
+
 	select() {
 		for (let a of this.actors) a.select();
 	}
 
 	deselect() {
 		for (let a of this.actors) a.deselect();
+	}
+
+	learn(ability) {
+		this.abilities.push(ability);
+		let index = this.learnableAbilities.indexOf(ability);
+		if (index >= 0) this.learnableAbilities.splice(index, 1);
+	}
+
+	unlearn(ability) {
+		let index = this.abilities.indexOf(ability);
+		if (index >= 0) this.abilities.splice(index, 1);
+		this.learnableAbilities.push(ability);
 	}
 
 	// Returns true if and only if this unit threatens the given unit.
@@ -162,8 +176,8 @@ class CurrentState { // TODO: combine into GameState.
 		this.units = [];
 		for (let u of playerUnits) this.units.push(u);
 		for (let i = 0; i < playerUnits.length; i++) {
-			playerUnits[i].pos[0] = room.entry[0 + i % 2];
-			playerUnits[i].pos[1] = room.entry[1 + parseInt(i / 2)];
+			playerUnits[i].pos[0] = room.entry[0] + i % 2;
+			playerUnits[i].pos[1] = room.entry[1] + parseInt(i / 2);
 			playerUnits[i].facing = 1;
 		}
 		for (let u of room.units) {
@@ -194,16 +208,28 @@ class GameState {
 	// characters
 	// characterPool
 	// adventure
+	// adventureProgress
+	// currentRoom
 	// disableActions
+	// resource: {experience: int, healing: int}
 
 	constructor(adventure) {
 		this.adventure = adventure;
 		this.actionHistory = [];
 		this.characters = [];
 		this.characterPool = [];
+		this.adventureProgress = [];
+		this.resources = {};
 
 		for (let cname of adventure.characterPool) {
 			this.characterPool.push(new Unit(characterData[cname]));
+		}
+
+		for (let i = 0; i < adventure.rooms.length; i++) {
+			this.adventureProgress.push([]);
+			for (let j = 0; j < adventure.rooms[i].length; j++) {
+				this.adventureProgress[i][j] = false;
+			}
 		}
 	}
 
@@ -275,13 +301,22 @@ class GameState {
 		else if (numPlayer == 0) this.roomDefeat();
 	}
 
-	loadRoom(room) {
+	loadRoom(coords) {
 		this.disableActions = false;
-		this.currentState = new CurrentState(room, this.characters);
+		this.currentState = new CurrentState(this.adventure.rooms[coords[0]][coords[1]], this.characters);
+		this.currentRoom = coords;
+		for (let c of this.characters) c.actionPoints = 3;
 	}
 
 	roomVictory() {
 		this.disableActions = true;
+		this.adventureProgress[this.currentRoom[0]][this.currentRoom[1]] = true;
+		let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
+		for (let reward in room.reward) {
+			if (this.resources.hasOwnProperty(reward)) this.resources[reward] += room.reward[reward];
+			else this.resources[reward] = room.reward[reward];
+		}
+		for (let c of this.characters) c.actionPoints = 0;
 		setupVictorySituation();
 	}
 

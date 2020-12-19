@@ -6,10 +6,11 @@ abilityData.MOVE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and either:",
-			"  1. Move to an adjacent empty tile.",
-			"  2. Rotate in the same tile.",
+			"  1. Move to an adjacent empty space, and rotate.",
+			"  2. Rotate in the same space.",
 			"If threatened, you cannot move in a direction other than directly away from the threat."];
 		this.aiHints = [AiHints.MOVE];
+		this.cost = {experience: 1};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

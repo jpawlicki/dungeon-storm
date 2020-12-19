@@ -12,6 +12,7 @@ abilityData.ATTACK = new class extends Ability {
 			"Anyone who retreats into a wall or another unit is defeated.",
 			"This action cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
+		this.cost = {experience: 1};
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -87,9 +88,7 @@ abilityData.ATTACK = new class extends Ability {
 	canRetreat(unit, direction) {
 		let newPos = Tile.offset(unit.pos, direction);
 		if (!gameState.currentState.fortress.inBounds(newPos)) return false;
-		for (let u of gameState.currentState.units) {
-			if (Tile.equals(u.pos, newPos)) return false;
-		}
+		if (gameState.currentState.getUnitAt(newPos) != undefined) return false;
 		// TODO: test if unit is threatened by a perpendicular unit.
 		return true;
 	}

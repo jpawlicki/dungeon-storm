@@ -6,6 +6,10 @@
 		exit: [3, 3],
 		id: "BUILTIN_DEMO",
 		random: false,
+		reward: {
+			experience: 2,
+			healing: 1,
+		},
 		tiles: [
 			[{t: "portuguese1", h: 1}, {t: "portuguese2", h: 0}, {t: "portuguese2", h: 0}, {t: "portuguese1", h: 1}],
 			[{t: "portuguese2", h: 0}, {t: "portuguese3", h: 0}, {t: "portuguese4", h: 0}, {t: "portuguese2", h: 0}],

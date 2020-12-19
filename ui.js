@@ -86,10 +86,12 @@ function loadAdventure(adventure) {
 	document.querySelector("#mapDiv").appendChild(setupAdventureSituation());
 }
 
-function loadRoom() {
-	gameState.loadRoom(roomData.BUILTIN_DEMO);
+function loadRoom(coords) {
+	gameState.loadRoom(coords);
+	for (let c of gameState.characters) c.clearActors();
 	document.querySelector("#mapDiv").innerHTML = "";
 	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState.currentState));
+	for (let u of document.querySelectorAll("unit-card")) u.parentNode.removeChild(u);
 	for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
 	showSidePane();
 }

@@ -2,7 +2,6 @@
 	let c = {
 		abilities: [abilityData.MOVE, abilityData.ATTACK],
 		id: "Dog",
-		name: "Fido",
 		learnableAbilities: [],
 		portrait: "dog.png",
 		strengths: [5, 2, 1, 2],

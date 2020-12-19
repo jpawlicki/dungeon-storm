@@ -11,8 +11,9 @@
 		id: "A_GIRL_AND_HER_DOG",
 		random: false,
 		rooms: [
-			[roomData.BUILTIN_DEMO, roomData.BUILDIN_DEMO],
-			[roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO]
+			[roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO],
+			[roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO],
+			[roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO, roomData.BUILTIN_DEMO]
 		],
 		title: {
 			"en": "A Girl and Her Dog (Tutorial)",

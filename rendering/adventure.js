@@ -1,4 +1,18 @@
 class AdventureIntroElement extends HTMLElement {
+	static makeAbilitySvg(ability, known, shadow) {
+		let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("viewBox", "0 0 24 24");
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", ability.icon);
+		svg.appendChild(d);
+		let info = () => {
+			shadow.getElementById("abilityDescText2").textContent = ability.details.join("\n");
+		};
+		svg.addEventListener("mouseover", info);
+		svg.addEventListener("click", info);
+		return svg;
+	}
+
 	connectedCallback() {
 		let shadow = this.attachShadow({mode: "open"});
 		this.shadow = shadow;
@@ -76,9 +90,19 @@ class AdventureIntroElement extends HTMLElement {
 				#stats {
 					grid-column: 1 / 4;
 				}
-				#abilities, #abilities_learns {
+				#abilities, #abilitiesLearns {
 					display: flex;
 					justify-content: space-around;
+				}
+				#abilities svg, #abilitiesLearns svg {
+					width: 3em;
+					height: 3em;
+				}
+				#abilities svg path {
+					fill: #eee;
+				}
+				#abilitiesLearns svg path {
+					fill: #888;
 				}
 				#begin:hover #play {
 					fill: #fff;
@@ -138,7 +162,7 @@ class AdventureIntroElement extends HTMLElement {
 			}
 			if (chars.length == gameState.adventure.characters) {
 				for (let c of chars) gameState.characters.push(c);
-				loadRoom(gameState.adventure.rooms[0][0]);
+				loadRoom([0, 0]);
 			}
 		});
 	}
@@ -155,7 +179,7 @@ class AdventureIntroElement extends HTMLElement {
 			<div id="abilities">
 			</div>
 			<h2>Learns:</h2>
-			<div id="abilities_learns">
+			<div id="abilitiesLearns">
 			</div>
 		`;
 
@@ -193,25 +217,8 @@ class AdventureIntroElement extends HTMLElement {
 		this.shadow.querySelector("#stats").appendChild(makeSvg(character.strengthsBloodied, character.threatsBloodied, true));
 
 
-		function makeAbilitySvg(ability, known, shadow) {
-			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-			svg.setAttribute("viewBox", "0 0 24 24");
-			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			d.setAttribute("d", ability.icon);
-			d.setAttribute("fill", known ? "#eee" : "#ccc");
-			svg.style.width = "4em";
-			svg.style.height = "4em";
-			svg.appendChild(d);
-			shadow.querySelector(known ? "#abilities" : "#abilitiesLearns").appendChild(svg);
-			let info = () => {
-				shadow.getElementById("abilityDescText2").textContent = ability.details.join("\n");
-			};
-			svg.addEventListener("mouseover", info);
-			svg.addEventListener("click", info);
-		}
-
-		for (let x of character.abilities) makeAbilitySvg(x, true, this.shadow);
-		for (let x of character.learnableAbilities) makeAbilitySvg(x, false, this.shadow);
+		for (let x of character.abilities) this.shadow.querySelector("#abilities").appendChild(AdventureIntroElement.makeAbilitySvg(x, true, this.shadow));
+		for (let x of character.learnableAbilities) this.shadow.querySelector("#abilitiesLearns").appendChild(AdventureIntroElement.makeAbilitySvg(x, false, this.shadow));
 
 		let count = gameState.adventure.characters;
 		for (let x of this.shadow.querySelectorAll("input:checked")) count--;
@@ -231,15 +238,321 @@ class AdventureNextRoomElement extends HTMLElement {
 			<style>
 				:host {
 					display: grid;
-					grid-template-rows: min-content min-content 1fr;
-					grid-template-columns: min-content 1fr;
+					grid-template-rows: 1fr 30em;
+					grid-template-columns: 50% 50%;
 					color: #fff;
 					height: 100%;
+					width: 100%;
+				}
+				:host > div {
+				}
+				#characters {
+					display: flex;
+					flex-direction: column;
+					justify-content: space-around;
+					min-height: 100%;
+				}
+				#characters > div {
+					display: flex;
+					align-items: center;
+				}
+				#characters > div > img {
+					width: 4em;
+					height: 4em;
+					border-radius: 2em;
+				}
+				#characters > div > div {
+					display: flex;
+				}
+				#characters svg {
+					height: 4em;
+					width: 4em;
+				}
+				#characters svg path {
+					fill: #eee;
+				}
+				.learnable {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					transition: color 0.3s;
+				}
+				#characters .learnable svg {
+					height: 2em;
+					width: 2em;
+				}
+				.learnable svg path {
+					fill: #888;
+					transition: fill 0.3s;
+				}
+				#characters .activated svg path {
+					fill: #fc0;
+				}
+				#characters .activated svg path {
+					color: #fc0;
+				}
+				#abilityDescText2 {
+					white-space: pre-wrap;
+					overflow: auto;
+				}
+				#adventure {
+					width: 100%;
+					height: 100%;
+					grid-row: 1/3;
+					grid-column: 2;
+				}
+				#adventure .roomClear {
+					fill: #888;
+				}
+				#adventure .roomAccess {
+					cursor: pointer;
+					animation: nextRoom 1s alternate infinite;
+				}
+				#adventure .roomAccess:hover {
+					fill: #fff;
+					cursor: pointer;
+					animation: none;
+				}
+				#adventure .roomHidden {
+					fill: #000;
+				}
+				@keyframes nextRoom {
+					0% {
+						fill: #aaa;
+					}
+					100% {
+						fill: #ddd;
+					}
+				}
+				#characters #resources {
+					display: flex;
+					width: 100%;
+					justify-content: space-around;
+					font-size: 300%;
+					background-color: transparent;
+				}
+				#characters #resources svg {
+					height: 1em;
+					width: 1em;
+				}
+				#characters div {
+					background-color: #000;
+					border-radius: 0 1em 1em 0;
+					justify-content: space-between;
 				}
 			</style>
-			<h1>${gameState.adventure.title[lang]}</h1>
-			Next room...
+			<div id="characters">
+				<div id="resources"></div>
+			</div>
+			<svg id="adventure"></svg>
+			<div id="abilityDescText2">
+			</div>
 		`;
+
+		function makeCap(container) {
+			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			d.setAttribute("d", "M12,3L1,9L12,15L21,10.09V17H23V9ZM5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z");
+			d.setAttribute("fill", "currentColor");
+			container.appendChild(d);
+		}
+
+		function makePlus(container) {
+			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			d.setAttribute("d", "M10,3L8,5V7H5C3.85,7 3.12,8 3,9L2,19C1.88,20 2.54,21 4,21H20C21.46,21 22.12,20 22,19L21,9C20.88,8 20.06,7 19,7H16V5L14,3H10M10,5H14V7H10V5M11,10H13V13H16V15H13V18H11V15H8V13H11V10Z");
+			d.setAttribute("fill", "currentColor");
+			container.appendChild(d);
+		}
+
+		function updateResources() {
+			for (let c of shadow.querySelectorAll("#resources > span > span")) {
+				c.innerHTML = gameState.resources[c.getAttribute("data-resource")];
+			}
+		}
+
+		for (let r in gameState.resources) {
+			let span = document.createElement("span");
+			let spanc = document.createElement("span");
+			spanc.setAttribute("data-resource", r);
+			spanc.appendChild(document.createTextNode(gameState.resources[r]));
+			span.appendChild(spanc);
+			if (r == "experience") {
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				makeCap(svg);
+				span.appendChild(svg);
+			} else if (r == "healing") {
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				makePlus(svg);
+				span.appendChild(svg);
+			} else {
+				span.appendChild(document.createTextNode("?"));
+			}
+			this.shadow.querySelector("#resources").appendChild(span);
+		}
+
+		function addCharacter(character) {
+			function addText(text, iconFunc) {
+				let span = document.createElement("span");
+				span.appendChild(document.createTextNode(text));
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				iconFunc(svg);
+				svg.style.width = "1em";
+				svg.style.height = "1em";
+				span.appendChild(svg);
+				return span;
+			}
+
+			let cdiv = document.createElement("div");
+			let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			img.setAttribute("viewBox", "-18 -18 36 36");
+			let portrait = new PortraitActor(character, img);
+			cdiv.appendChild(img);
+			{
+				let abilityDiv = document.createElement("div");
+				for (let a of character.abilities) {
+					abilityDiv.appendChild(AdventureIntroElement.makeAbilitySvg(a, true, shadow));
+				}
+				cdiv.appendChild(abilityDiv);
+			}
+			{
+				let learnableAbilityDiv = document.createElement("div");
+
+				function makeLearnableSpot(icon, cost, effect, undoEffect) {
+					let miniDiv = document.createElement("div");
+					miniDiv.appendChild(icon);
+					for (let r in cost) {
+						if (r == "experience") miniDiv.appendChild(addText(-cost[r], makeCap));
+						else if (r == "healing") miniDiv.appendChild(addText(-cost[r], makePlus));
+						else miniDiv.appendChild(document.createTextNode(cost[r] + "?"));
+					}
+					miniDiv.setAttribute("class", "learnable");
+					let state = false;
+					miniDiv.addEventListener("click", () => {
+						if (!state) {
+							for (let r in cost) if (gameState.resources[r] < cost[r]) return;
+							for (let r in cost) gameState.resources[r] -= cost[r];
+							state = true;
+							effect();
+							miniDiv.setAttribute("class", "learnable activated");
+						} else {
+							for (let r in cost) gameState.resources[r] += cost[r];
+							state = false;
+							undoEffect();
+							miniDiv.setAttribute("class", "learnable");
+						}
+						updateResources();
+					});
+					learnableAbilityDiv.appendChild(miniDiv);
+				}
+
+				for (let a of character.learnableAbilities) {
+					makeLearnableSpot(AdventureIntroElement.makeAbilitySvg(a, false, shadow), a.cost, () => {character.learn(a)}, () => {character.unlearn(a)});
+				}
+				if (character.state == Unit.State.DEFEATED) {
+					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					img.setAttribute("viewBox", "0 0 24 24");
+					makePlus(img);
+					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
+					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
+					makeLearnableSpot(img, {healing: 3}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.DEFEATED; portrait.update();});
+				} else if (character.state == Unit.State.BLOODIED) {
+					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					img.setAttribute("viewBox", "0 0 24 24");
+					makePlus(img);
+					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
+					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
+					makeLearnableSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.BLOODIED; portrait.update();});
+				}
+				cdiv.appendChild(learnableAbilityDiv);
+			}
+			shadow.getElementById("characters").appendChild(cdiv);
+		}
+
+		for (let c of gameState.characters) addCharacter(c);
+
+		// Adventure Status
+		{
+			let adventureSvg = shadow.querySelector("#adventure");
+			{
+				let maxW = 0;
+				let maxH = 0;
+				for (let i = 0; i < gameState.adventure.rooms.length; i++) {
+					for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
+						let room = gameState.adventure.rooms[i][j];
+						if (room == null || room == undefined) continue;
+						let w = 3 + i * -3 + j * 3;
+						let h = 6 + i * 3 + j * 3;
+						if (maxW < w) maxW = w;
+						if (maxH < h) maxH = h;
+					}
+				}
+				adventureSvg.setAttribute("viewBox", (gameState.adventure.rooms.length * -3 - 1) + " -4 " + (maxW + gameState.adventure.rooms.length * 3 + 2) + " " + (maxH + 2));
+			}
+			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
+				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
+					let room = gameState.adventure.rooms[i][j];
+					if (room == null) continue;
+					let access = false;
+					for (let neighbor of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+						let x = i + neighbor[0];
+						let y = j + neighbor[1];
+						if (x < 0 || x >= gameState.adventure.rooms.length || y < 0 || y >= gameState.adventure.rooms[x].length) continue;
+						access = access || gameState.adventureProgress[x][y];
+					}
+					// Add diamond to map.
+					let diamond = document.createElementNS("http://www.w3.org/2000/svg", "path");
+					diamond.setAttribute("d", "M0,-3L3,0L0,3L-3,0Z");
+					diamond.style.strokeWidth = "0.2";
+					diamond.style.transform = "translate(" + (i * -3 + j * 3) + "px, " + (i * 3 + j * 3) + "px)";
+					diamond.setAttribute("class", gameState.adventureProgress[i][j] ? "roomClear" : access ? "roomAccess" : "roomHidden");
+					if (access && !gameState.adventureProgress[i][j]) diamond.addEventListener("click", () => { loadRoom([i, j]); });
+					adventureSvg.appendChild(diamond);
+
+					if (gameState.adventureProgress[i][j]) {
+						let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+						text.appendChild(document.createTextNode("✓"));
+						text.setAttribute("text-anchor", "middle");
+						text.setAttribute("fill", "#aaf");
+						text.setAttribute("font-weight", "bold");
+						text.setAttribute("font-size", "3px");
+						text.setAttribute("style", "text-shadow: #000 2px 2px 3px, #000 0 0 5px; pointer-events: none; dominant-baseline: middle");
+						text.setAttribute("x", i * -3 + j * 3);
+						text.setAttribute("y", i * 3 + j * 3);
+						adventureSvg.appendChild(text);
+					} else {
+						let rewards = [];
+						for (let x in gameState.adventure.rooms[i][j].reward) {
+							for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
+						}
+						let rewardDimension = Math.ceil(Math.sqrt(rewards.length));
+						for (let k = 0; k < rewards.length; k++) {
+							let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+							let px = k % rewardDimension;
+							let py = Math.floor(k / rewardDimension);
+							let step = 3 / (rewardDimension);
+							g.style.transform = "translate(" + (i * -3 + j * 3) + "px, " + (i * 3 + j * 3 - 3) + "px) translate(" + (px * -step + py * step) + "px, " + (px * step + py * step + step) + "px) scale(" + (0.15 / rewardDimension) + ") translate(-12px, -12px)";
+							g.style.pointerEvents = "none";
+							if (rewards[k] == "experience") makeCap(g);
+							else if (rewards[k] == "healing") makePlus(g);
+							else {
+								let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+								text.appendChild(document.createTextNode("?"));
+								text.setAttribute("text-anchor", "middle");
+								text.setAttribute("font-size", "3px");
+								text.setAttribute("style", "text-shadow: #000 2px 2px 3px, #000 0 0 5px; pointer-events: none; dominant-baseline: middle");
+								g.appendChild(text);
+							}
+							for (let ele of g.querySelectorAll("path")) {
+								ele.style.fill = "#444";
+							}
+							adventureSvg.appendChild(g);
+						}
+					}
+				}
+			}
+		}
 	}
 }
 customElements.define("adventure-nextroom-element", AdventureNextRoomElement);
@@ -288,7 +601,7 @@ function setupDefeatSituation() {
 }
 
 function setupVictorySituation() {
-	window.setTimeout(() => showSplash("CLEAR"), 1000);
+	window.setTimeout(() => showSplash("✓"), 1000);
 	function setup() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";
