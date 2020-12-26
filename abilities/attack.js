@@ -21,14 +21,12 @@ abilityData.ATTACK = new class extends Ability {
 		if (target == null) return;
 		clearClickContextActors();
 
-		let roll1 = parseInt(Math.random() * 6 + 1);
-		let roll2 = parseInt(Math.random() * 6 + 1);
-
 		let effects = [
 			new Effect(unit, "actionPoints", unit.actionPoints - 1)
 		];
 
-		if (roll1 > target.getStrength(Tile.directionTo(target.pos, unit.pos))) {
+		let retreat1 = parseInt(Math.random() * 6 + 1) > target.getStrength(Tile.directionTo(target.pos, unit.pos));
+		if (retreat1) {
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
 			if (this.canRetreat(target, retreatDir)) {
 				effects.push(new Effect(target, "state", Unit.State.BLOODIED));
@@ -38,7 +36,8 @@ abilityData.ATTACK = new class extends Ability {
 			}
 		}
 
-		if (roll2 > unit.getStrength(Tile.directionTo(unit.pos, target.pos))) {
+		let retreat2 = parseInt(Math.random() * 6 + 1) > unit.getStrength(Tile.directionTo(unit.pos, target.pos));
+		if (retreat2) {
 			let retreatDir = Tile.directionTo(target.pos, unit.pos);
 			if (this.canRetreat(unit, retreatDir)) {
 				effects.push(new Effect(unit, "state", Unit.State.BLOODIED));
@@ -48,7 +47,11 @@ abilityData.ATTACK = new class extends Ability {
 			}
 		}
 
-		return new Action(false, effects, this.name);
+		let tpos = target.pos;
+		let upos = unit.pos;
+		return new Action(false, effects, this.name, () => {
+			SpecialEffect.attackClash(tpos, upos, retreat1, retreat2);
+		});
 	}
 
 	mouseOverTile(unit, loc, quadrant) {

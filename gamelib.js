@@ -331,15 +331,18 @@ class Action {
 	// undoable
 	// effects[]
 	// note
+	// specialEffect: a function to call to spawn sfx.
 
-	constructor(undoable, effects, note) {
+	constructor(undoable, effects, note, specialEffect) {
 		this.undoable = undoable;
 		this.effects = effects;
 		this.note = note;
+		this.specialEffect = specialEffect;
 	}
 
 	apply() {
 		for (let e of this.effects) e.apply();
+		if (this.specialEffect != undefined) this.specialEffect();
 	}
 
 	undo() {

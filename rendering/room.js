@@ -60,9 +60,9 @@ function getTileEdgeCenter(pos, facing) {
 	return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
 }
 
-// position
+// pos[]: The tile coordinates. If there is a third dimension, that is used instead of tile height.
 function getTileCenter(pos) {
-	let h = gameState.currentState.fortress.getTile(pos).height;
+	let h = pos.length < 3 ? gameState.currentState.fortress.getTile(pos).height : pos[2];
 	return [getTilePoint(pos[0], pos[1], h, 0)[0], getTilePoint(pos[0], pos[1], h, 1)[1]];
 }
 
@@ -158,6 +158,10 @@ function setupRoomSvg(currentState) {
 		unit.registerActor(new UnitActor(unit, g, fortress));
 		svg.appendChild(g);
 	}
+
+	let sfx = document.createElementNS("http://www.w3.org/2000/svg", "g");
+	sfx.setAttribute("id", "sfxGroup");
+	svg.appendChild(sfx);
 
 	let overlay = document.createElementNS("http://www.w3.org/2000/svg", "g");
 	overlay.setAttribute("id", "clickContextGroup");
