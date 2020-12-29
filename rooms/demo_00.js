@@ -4,7 +4,7 @@
 		difficulty: 0,
 		entry: [1, 0],
 		exit: [3, 3],
-		id: "BUILTIN_DEMO",
+		id: "BUILTIN_DEMO_00",
 		random: false,
 		reward: {
 			experience: 2,

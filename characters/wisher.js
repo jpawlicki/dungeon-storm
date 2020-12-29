@@ -1,6 +1,6 @@
 {
 	let c = {
-		abilities: [abilityData.MOVE, abilityData.ATTACK],
+		abilities: [abilityData.MOVE, abilityData.ATTACK, abilityData.CONTROL],
 		id: "Wisher",
 		learnableAbilities: [abilityData.TELEPORT],
 		portrait: "port.png",

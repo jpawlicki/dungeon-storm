@@ -1,13 +1,12 @@
 Short Term:
- - hotkey support
  - room defeat UI
    - Parentage
  - cross-adventure UI / main menu
- - special-effect particle emitters / animations / sound
+ - learning abilities should get more expensive every ability learned
+ - sfx sound
 
 Long Term:
  - Room feedback
- - Help UI
  - Flee room UI
  - Persistence
  - Crash handling report to server logging
@@ -21,6 +20,7 @@ Long Term:
  - Additional abilities
  - Additional units
  - Additional rooms
+ - Tutorial popups
  - Tools
    - Unit Editor
    - Room Editor

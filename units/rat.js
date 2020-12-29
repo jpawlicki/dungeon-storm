@@ -1,7 +1,7 @@
 {
 	let unit = {
 		ai: [aiData.ATTACK_NEAREST, aiData.MOVE_RANDOMLY],
-		abilities: [abilityData.MOVE, abilityData.ATTACK],
+		abilities: [abilityData.MOVE, abilityData.ATTACK, abilityData.BLOODLUST],
 		id: "Rat",
 		portrait: "rat.png",
 		strengths: [2, 1, 1, 1],

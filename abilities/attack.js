@@ -6,64 +6,58 @@ abilityData.ATTACK = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and select an adjacent enemy:",
-			"  Roll ⚅. If greater than their strength, they retreat.",
-			"  Roll ⚅. If greater than your strength, retreat.",
-			"Anyone who retreats becomes bloodied.",
-			"Anyone who retreats into a wall or another unit is defeated.",
+			"  Roll ⚅. If greater than their strength, they !RETREAT.",
+			"  Roll ⚅. If greater than your strength, !RETREAT.",
+			"Anyone who !RETREATs becomes !BLOODY.",
 			"This action cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 1};
 	}
 
 	clickOnTile(unit, loc, quadrant) {
-		if (!this.isMoveLegal(unit, loc, quadrant)) return;
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
 		let target = gameState.currentState.getUnitAt(loc);
 		if (target == null) return;
-		clearClickContextActors();
 
 		let effects = [
 			new Effect(unit, "actionPoints", unit.actionPoints - 1)
 		];
+		let events = [];
 
 		let retreat1 = parseInt(Math.random() * 6 + 1) > target.getStrength(Tile.directionTo(target.pos, unit.pos));
 		if (retreat1) {
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
-			if (this.canRetreat(target, retreatDir)) {
-				effects.push(new Effect(target, "state", Unit.State.BLOODIED));
-				effects.push(new Effect(target, "pos", Tile.offset(target.pos, retreatDir)));
-			} else {
-				effects.push(new Effect(target, "state", Unit.State.DEFEATED));
-			}
+			effects.push(new Effect(target, "state", Unit.State.BLOODIED));
+			events.push(ActionEvent.retreat(target, retreatDir));
 		}
 
 		let retreat2 = parseInt(Math.random() * 6 + 1) > unit.getStrength(Tile.directionTo(unit.pos, target.pos));
 		if (retreat2) {
 			let retreatDir = Tile.directionTo(target.pos, unit.pos);
-			if (this.canRetreat(unit, retreatDir)) {
-				effects.push(new Effect(unit, "state", Unit.State.BLOODIED));
-				effects.push(new Effect(unit, "pos", Tile.offset(unit.pos, retreatDir)));
-			} else {
-				effects.push(new Effect(unit, "state", Unit.State.DEFEATED));
-			}
+			effects.push(new Effect(unit, "state", Unit.State.BLOODIED));
+			events.push(ActionEvent.retreat(unit, retreatDir));
 		}
 
 		let tpos = target.pos;
 		let upos = unit.pos;
-		return new Action(false, effects, this.name, () => {
+		return new Action(false, effects, events, this.name, () => {
+			SpecialEffect.abilityUse(unit, this);
 			SpecialEffect.attackClash(tpos, upos, retreat1, retreat2);
 		});
 	}
 
 	mouseOverTile(unit, loc, quadrant) {
 		clearClickContextActors();
-		if (!this.isMoveLegal(unit, loc, quadrant)) return;
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
 		let target = gameState.currentState.getUnitAt(loc);
 		if (target == null) return;
 
 		// Attacker
+		let hypo = Object.assign(new Unit(), unit);
+		hypo.actionPoints--;
 		let attackerRetreatChance = Math.min(1, Math.max(0, 1 - unit.getStrength(Tile.directionTo(unit.pos, loc)) / 6.0));
 		let attackerRetreatDir = Tile.directionTo(loc, unit.pos);
-		if (this.canRetreat(unit, attackerRetreatDir)) {
+		if (hypo.canRetreat(attackerRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(unit, attackerRetreatDir, attackerRetreatChance));
 		} else {
 			clickContext.actors.push(new DefeatActor(unit, attackerRetreatChance));
@@ -72,27 +66,19 @@ abilityData.ATTACK = new class extends Ability {
 		// Defender
 		let defenderRetreatChance = Math.min(1, Math.max(0, 1 - target.getStrength(Tile.directionTo(loc, unit.pos)) / 6.0));
 		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
-		if (this.canRetreat(target, defenderRetreatDir)) {
+		if (target.canRetreat(defenderRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));
 		} else {
 			clickContext.actors.push(new DefeatActor(target, defenderRetreatChance));
 		}
 	}
 
-	isMoveLegal(unit, loc, quadrant) {
+	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
 		let target = gameState.currentState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
-		return true;
-	}
-
-	canRetreat(unit, direction) {
-		let newPos = Tile.offset(unit.pos, direction);
-		if (!gameState.currentState.fortress.inBounds(newPos)) return false;
-		if (gameState.currentState.getUnitAt(newPos) != undefined) return false;
-		// TODO: test if unit is threatened by a perpendicular unit.
 		return true;
 	}
 }();

@@ -1,15 +1,18 @@
 class AdventureIntroElement extends HTMLElement {
-	static makeAbilitySvg(ability, known, shadow) {
+	static makeAbilitySvg(ability, known, descElement) {
 		let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("viewBox", "0 0 24 24");
 		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		d.setAttribute("d", ability.icon);
 		svg.appendChild(d);
-		let info = () => {
-			shadow.getElementById("abilityDescText2").textContent = ability.details.join("\n");
-		};
-		svg.addEventListener("mouseover", info);
-		svg.addEventListener("click", info);
+		if (descElement != undefined) {
+			let info = () => {
+				descElement.textContent = expandAbilityDetails(ability.details);
+			};
+			svg.addEventListener("mouseover", info);
+			svg.addEventListener("click", info);
+		}
+		svg.setAttribute("class", known ? "abilityKnown" : "abilityLearned");
 		return svg;
 	}
 
@@ -21,53 +24,16 @@ class AdventureIntroElement extends HTMLElement {
 				:host {
 					display: grid;
 					grid-template-rows: min-content min-content 1fr;
-					grid-template-columns: min-content 1fr;
+					grid-template-columns: 40% 60%;
 					color: #fff;
 					height: 100%;
 				}
 				h1, #desc {
 					grid-column: 2;
 					text-align: center;
-					white-space: pre-wrap;
 				}
 				h2 {
 					text-align: center;
-				}
-				hr {
-					margin-bottom: 4em;
-				}
-				img {
-					height: 5em;
-					width: 5em;
-					vertical-align: middle;
-					filter: brightness(50%) grayscale(80%);
-					border: 3px solid transparent;
-					transition: filter 0.3s;
-					border-radius: 2.5em;
-				}
-				label {
-					display: flex;
-					justify-content: space-around;
-					align-items: center;
-					width: 7em;
-					cursor: pointer;
-					margin-bottom: 1em;
-				}
-				svg.arrow {
-					width: 2em;
-					height: 2em;
-				}
-				#stats svg {
-					width: 12em;
-					height: 12em;
-				}
-				#stats {
-					display: flex;
-					justify-content: space-around;
-				}
-				:checked + img {
-					filter: brightness(100%) grayscale(0%);
-					border: 3px solid white;
 				}
 				#begin {
 					height: calc(5em + 6px);
@@ -78,31 +44,7 @@ class AdventureIntroElement extends HTMLElement {
 				}
 				#abilityDescText2 {
 					white-space: pre-wrap;
-					grid-column: 3;
-					grid-row: 2;
-				}
-				#characterDescription {
-					display: grid;
-					grid-template-columns: min-content 1fr 1fr;
-					grid-template-rows: 1fr 1fr 1fr;
-					height: 100%;
-				}
-				#stats {
-					grid-column: 1 / 4;
-				}
-				#abilities, #abilitiesLearns {
-					display: flex;
-					justify-content: space-around;
-				}
-				#abilities svg, #abilitiesLearns svg {
-					width: 3em;
-					height: 3em;
-				}
-				#abilities svg path {
-					fill: #eee;
-				}
-				#abilitiesLearns svg path {
-					fill: #888;
+					padding: 2em;
 				}
 				#begin:hover #play {
 					fill: #fff;
@@ -111,10 +53,15 @@ class AdventureIntroElement extends HTMLElement {
 				#desc {
 					max-width: 50em;
 					margin: auto;
+					overflow: auto;
+				}
+				#begin:hover #play {
+					fill: #fff;
+					transition: fill 0.4s;
 				}
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
-			<div id="desc">${gameState.adventure.description[lang]}<hr width="50%"/></div>
+			<div id="desc">${gameState.adventure.description[lang].replaceAll("\n", "<br/>")}<hr width="50%"/></div>
 			<div id="characterSelect">
 				<svg id="begin" viewBox="-12 -12 24 24">
 					<circle fill="#333" r="12"></circle>
@@ -122,40 +69,22 @@ class AdventureIntroElement extends HTMLElement {
 					<path id="play" fill="#eee" d="M8,0L-4,6.9282L-4,-6.9282Z" opacity="0"></path>
 				</svg>
 			</div>
-			<div id="characterDescription"></div>
+			<div id="abilityDescText2">
+			</div>
 		`;
 		for (let c of gameState.characterPool) {
 			// Add character.
-			let d = document.createElement("label");
-			let check = document.createElement("input");
-			check.setAttribute("type", "checkbox");
-			d.appendChild(check);
-			let img = document.createElement("img");
-			img.setAttribute("src", "assets/portraits/" + c.portrait);
-			img.setAttribute("draggable", false);
-			d.appendChild(img);
-			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-			svg.setAttribute("viewBox", "0 0 24 24");
-			let p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			p.setAttribute("d", "M4,4L12,12L4,20M12,4L20,12L12,20");
-			p.setAttribute("fill", "transparent");
-			p.setAttribute("stroke", "#ccc");
-			p.setAttribute("stroke-width", "3");
-			p.setAttribute("stroke-linecap", "round");
-			svg.appendChild(p);
-			svg.setAttribute("class", "arrow");
-			svg.style.visibility = "hidden";
-			d.appendChild(svg);
-			d.addEventListener("mouseover", () => this.showCharacterDescription(c, svg));
-			d.addEventListener("click", () => this.showCharacterDescription(c, svg));
+			let d = renderMenuCharacter(c, true, false, shadow.getElementById("abilityDescText2"));
+			let othis = this;
+			d.addEventListener("click", () => othis.charClicked());
 			shadow.querySelector("#characterSelect").insertBefore(d, shadow.querySelector("#begin"));
 		}
 
 		this.shadow.querySelector("#begin").addEventListener("click", () => {
 			let chars = [];
 			let i = 0;
-			for (let x of this.shadow.querySelectorAll("input")) {
-				if (x.checked) {
+			for (let x of this.shadow.querySelectorAll("menu-character")) {
+				if (x.selected()) {
 					chars.push(gameState.characterPool[i]);
 				}
 				i++;
@@ -167,61 +96,9 @@ class AdventureIntroElement extends HTMLElement {
 		});
 	}
 
-	showCharacterDescription(character, svg) {
-		for (let s of this.shadow.querySelectorAll("svg.arrow")) s.style.visibility = s == svg ? "visible" : "hidden";
-		let p = this.shadow.querySelector("#characterDescription");
-		p.innerHTML = `
-			<div id="stats">
-			</div>
-			<div id="abilityDescText2">
-			</div>
-			<h2>Knows:</h2>
-			<div id="abilities">
-			</div>
-			<h2>Learns:</h2>
-			<div id="abilitiesLearns">
-			</div>
-		`;
-
-		function makeSvg(strengths, threats, bloodied) {
-			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-			svg.setAttribute("viewBox", "-12 -12 24 24");
-
-			for (let i = 0; i < 4; i++) {
-				let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-				g.setAttribute("transform", "rotate(" + (90 * (i + 2)) + ", 0, 0)");
-				for (let n = 0; n < strengths[i]; n++) {
-					let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-					c.setAttribute("cx", 3 * (n - strengths[i] / 2.0 + 0.5));
-					c.setAttribute("cy", 10);
-					c.setAttribute("fill", threats[i] ? "#f00" : "#fff");
-					c.setAttribute("stroke", "#000");
-					c.setAttribute("stroke-width", "0.4");
-					c.setAttribute("r", 1);
-					g.appendChild(c);
-				}
-				if (bloodied) {
-					let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-					d.setAttribute("d", "M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-					d.setAttribute("fill", "#8a0303");
-					d.style.transform = "scale(0.5)";
-					svg.appendChild(d);
-				}
-				svg.appendChild(g);
-			}
-
-			return svg;
-		}
-
-		this.shadow.querySelector("#stats").appendChild(makeSvg(character.strengths, character.threats, false));
-		this.shadow.querySelector("#stats").appendChild(makeSvg(character.strengthsBloodied, character.threatsBloodied, true));
-
-
-		for (let x of character.abilities) this.shadow.querySelector("#abilities").appendChild(AdventureIntroElement.makeAbilitySvg(x, true, this.shadow));
-		for (let x of character.learnableAbilities) this.shadow.querySelector("#abilitiesLearns").appendChild(AdventureIntroElement.makeAbilitySvg(x, false, this.shadow));
-
+	charClicked() {
 		let count = gameState.adventure.characters;
-		for (let x of this.shadow.querySelectorAll("input:checked")) count--;
+		for (let x of this.shadow.querySelectorAll("menu-character")) if (x.selected()) count--;
 		this.shadow.querySelector("#remaining").style.opacity = count == 0 ? 0 : 1;
 		this.shadow.querySelector("#remaining").innerHTML = count;
 		this.shadow.querySelector("#play").style.opacity = count != 0 ? 0 : 1;
@@ -264,11 +141,20 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters > div > div {
 					display: flex;
 				}
-				#characters svg {
+				#characters > div > div:nth-child(1) {
+					flex-direction: column;
+					flex-wrap: wrap;
+					max-height: 4em;
+				}
+				#characters > div > div > svg:nth-child(1) {
 					height: 4em;
 					width: 4em;
 				}
-				#characters svg path {
+				#characters > div > div > svg {
+					height: 2em;
+					width: 2em;
+				}
+				#characters > div > div > svg:nth-child(n + 2) path {
 					fill: #eee;
 				}
 				.learnable {
@@ -362,6 +248,12 @@ class AdventureNextRoomElement extends HTMLElement {
 			d.setAttribute("fill", "currentColor");
 			container.appendChild(d);
 		}
+		function makeCup(container) {
+			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			d.setAttribute("d", "M18 2C17.1 2 16 3 16 4H8C8 3 6.9 2 6 2H2V11C2 12 3 13 4 13H6.2C6.6 15 7.9 16.7 11 17V19.08C8 19.54 8 22 8 22H16C16 22 16 19.54 13 19.08V17C16.1 16.7 17.4 15 17.8 13H20C21 13 22 12 22 11V2H18M6 11H4V4H6V11M20 11H18V4H20V11Z");
+			d.setAttribute("fill", "currentColor");
+			container.appendChild(d);
+		}
 
 		function updateResources() {
 			for (let c of shadow.querySelectorAll("#resources > span > span")) {
@@ -408,11 +300,11 @@ class AdventureNextRoomElement extends HTMLElement {
 			let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			img.setAttribute("viewBox", "-18 -18 36 36");
 			let portrait = new PortraitActor(character, img);
-			cdiv.appendChild(img);
 			{
 				let abilityDiv = document.createElement("div");
+				abilityDiv.appendChild(img);
 				for (let a of character.abilities) {
-					abilityDiv.appendChild(AdventureIntroElement.makeAbilitySvg(a, true, shadow));
+					abilityDiv.appendChild(AdventureIntroElement.makeAbilitySvg(a, true, shadow.getElementById("abilityDescText2")));
 				}
 				cdiv.appendChild(abilityDiv);
 			}
@@ -448,7 +340,7 @@ class AdventureNextRoomElement extends HTMLElement {
 				}
 
 				for (let a of character.learnableAbilities) {
-					makeLearnableSpot(AdventureIntroElement.makeAbilitySvg(a, false, shadow), a.cost, () => {character.learn(a)}, () => {character.unlearn(a)});
+					makeLearnableSpot(AdventureIntroElement.makeAbilitySvg(a, false, shadow.getElementById("abilityDescText2")), a.cost, () => {character.learn(a)}, () => {character.unlearn(a)});
 				}
 				if (character.state == Unit.State.DEFEATED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -523,8 +415,14 @@ class AdventureNextRoomElement extends HTMLElement {
 						adventureSvg.appendChild(text);
 					} else {
 						let rewards = [];
-						for (let x in gameState.adventure.rooms[i][j].reward) {
-							for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
+						let victoryRoom = false;
+						for (let vRoom of gameState.adventure.victory) if (vRoom[0] == i && vRoom[1] == j) victoryRoom = true;
+						if (victoryRoom) {
+							rewards.push("victory");
+						} else {
+							for (let x in gameState.adventure.rooms[i][j].reward) {
+								for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
+							}
 						}
 						let rewardDimension = Math.ceil(Math.sqrt(rewards.length));
 						for (let k = 0; k < rewards.length; k++) {
@@ -536,6 +434,7 @@ class AdventureNextRoomElement extends HTMLElement {
 							g.style.pointerEvents = "none";
 							if (rewards[k] == "experience") makeCap(g);
 							else if (rewards[k] == "healing") makePlus(g);
+							else if (rewards[k] == "victory") makeCup(g);
 							else {
 								let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 								text.appendChild(document.createTextNode("?"));
@@ -557,26 +456,188 @@ class AdventureNextRoomElement extends HTMLElement {
 }
 customElements.define("adventure-nextroom-element", AdventureNextRoomElement);
 
-class AdventureDefeatElement extends HTMLElement {
+class AdventureCompleteElement extends HTMLElement {
 	connectedCallback() {
 		let shadow = this.attachShadow({mode: "open"});
 		this.shadow = shadow;
 		shadow.innerHTML = `
 			<style>
 				:host {
-					display: grid;
-					grid-template-rows: min-content min-content 1fr;
-					grid-template-columns: min-content 1fr;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					width: 100%;
 					color: #fff;
 					height: 100%;
 				}
+				#rewards {
+					display: flex;
+					align-content: flex-start;
+					width: 100%;
+					align-items: center;
+				}
+				#text {
+					max-width: 50em;
+					margin-bottom: 1em;
+				}
+				#treasureBox {
+					cursor: pointer;
+					width: 8em;
+					height: 8em;
+				}
+				#treasureBox > path {
+					transition: d 0.3s, fill 1s;
+					fill: #fff;
+				}
+				.clickMe {
+					animation: clickMe 1s alternate infinite;
+				}
+				@keyframes clickMe {
+					0% {
+						fill: #fff;
+					}
+					100% {
+						fill: #fc0;
+					}
+				}
+				#clears {
+					display: flex;
+					flex-wrap: wrap;
+				}
+				#clears > svg {
+					height: 2em;
+					width: 2em;
+				}
+				#clears > svg > text {
+					dominant-baseline: middle;
+					transition: opacity 0.3s;
+				}
+				#clears > svg > path {
+					transition: opacity 0.3s;
+				}
+				.lockicon {
+					opacity: 0;
+				}
+				.unlocked path, .unlocked text {
+					opacity: 0;
+				}
+				.unlocked path.lockicon {
+					opacity: 1;
+					fill: #fff;
+				}
+				#continue {
+					visibility: hidden;
+					height: 6em;
+					width: 6em;
+					cursor: pointer;
+				}
+				#continue:hover #play {
+					fill: #fff;
+					transition: fill 0.4s;
+				}
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
-			Defeat...
+			<div id="text">${(gameState.getAdventureVictorious() ? gameState.adventure.descriptionVictory[lang] : gameState.adventure.descriptionDefeat[lang]).replaceAll("\n", "<br/>")}</div>
+			<div id="rewards">
+				<svg id="treasureBox" viewBox="0 0 24 24">
+					<path class="clickMe" d="M5,4H19A3,3 0 0,1 22,7V11H15V10H9V11H2V7A3,3 0 0,1 5,4M11,11L13,11L13,13L11,13M2,12H9V13L11,15H13L15,13V12H22V20H2V12Z" />
+				</svg>
+				<div id="clears"></div>
+			</div>
+			<svg id="continue" viewBox="-12 -12 24 24">
+				<circle fill="#333" r="12"></circle>
+				<path id="play" fill="#eee" d="M8,0L-4,6.9282L-4,-6.9282Z"></path>
+			</svg>
 		`;
+
+		shadow.getElementById("continue").addEventListener("click", () => { setupMainMenu(); });
+
+		let numClears = 0;
+		let victory = gameState.getAdventureVictorious();
+		for (let a of gameState.adventureProgress) for (let b of a) if (b) numClears++;
+		gameState.numUnlocksEarned += numClears;
+		if (victory) gameState.numUnlocksEarned += numClears;
+
+		// TODO: unlock new character types.
+		// TODO: actually add new characters.
+		let numNewChars = 0;
+		// TODO: save game.
+
+		let boxOpened = false;
+		shadow.getElementById("treasureBox").addEventListener("click", () => {
+			if (boxOpened) return;
+			boxOpened = true;
+			shadow.getElementById("treasureBox").style.cursor = "default";
+			shadow.querySelector("#treasureBox > path").setAttribute("d", "M5,4H19A3,3 0 0,1 22,7V11H15V10H9V11H2V7A3,3 0 0,1 5,4M10,12L12,10L14,12L12,14M2,12H9V13L11,15H13L15,13V12H22V20H2V12Z");
+			shadow.querySelector("#treasureBox > path").setAttribute("class", "");
+			window.setTimeout(() => {
+				shadow.querySelector("#treasureBox > path").setAttribute("d", "M5,0H19A3,3 0 0,1 22,3V7H15V6H9V7H2V3A3,3 0 0,1 5,0M10,12L12,10L14,12L12,14M2,12H9V13L11,15H13L15,13V12H22V20H2V12Z");
+			}, 330);
+			window.setTimeout(() => {
+				// Show rewards.
+				shadow.querySelector("#treasureBox > path").style.fill = "#888";
+				for (let i = 0; i < numClears; i++) {
+					window.setTimeout(() => {
+						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+						svg.setAttribute("class", "unlockable");
+						svg.setAttribute("viewBox", "0 0 24 24");
+						let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+						text.appendChild(document.createTextNode("✓"));
+						text.setAttribute("text-anchor", "middle");
+						text.setAttribute("fill", "#aaf");
+						text.setAttribute("font-weight", "bold");
+						text.setAttribute("font-size", "26px");
+						text.setAttribute("x", "12");
+						text.setAttribute("y", "12");
+						svg.appendChild(text);
+						let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
+						p2.setAttribute("class", "lockicon");
+						svg.appendChild(p2);
+						shadow.getElementById("clears").appendChild(svg);
+					}, (victory ? 500 : 1000) / numClears * i);
+				}
+				let time = 1000;
+				if (victory) {
+					for (let i = 0; i < numClears; i++) {
+						window.setTimeout(() => {
+							let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+							svg.setAttribute("class", "unlockable");
+							svg.setAttribute("viewBox", "0 0 24 24");
+							let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+							d.setAttribute("d", "M18 2C17.1 2 16 3 16 4H8C8 3 6.9 2 6 2H2V11C2 12 3 13 4 13H6.2C6.6 15 7.9 16.7 11 17V19.08C8 19.54 8 22 8 22H16C16 22 16 19.54 13 19.08V17C16.1 16.7 17.4 15 17.8 13H20C21 13 22 12 22 11V2H18M6 11H4V4H6V11M20 11H18V4H20V11Z");
+							d.setAttribute("fill", "#fc0");
+							svg.appendChild(d);
+							let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+							p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
+							p2.setAttribute("class", "lockicon");
+							svg.appendChild(p2);
+							shadow.getElementById("clears").appendChild(svg);
+						}, 500 + 500 / numClears * i);
+					}
+					for (let i in gameState.gameOverBonus) {
+						// TODO: add bonus items here, increment time.
+						// i == unlock
+						// i == character
+						// i == experience
+						// i == healing - leftover healing and experience should convert into unlocks and get cleared.
+					}
+				}
+				window.setTimeout(() => {
+					for (let e of shadow.querySelectorAll("#clears > svg.unlockable")) e.setAttribute("class", "unlocked");
+				}, time + 500);
+				// TODO: at time+1000, add new characters: one per character unlock and one per bonus character. (time increases by 300 for each)
+				// TODO: at time+1000, remark on newly unlocked character types, add 1s to time per character type
+				// TODO: at time+2000, add new characters.
+				// TODO: at time+1000
+				window.setTimeout(() => {
+					shadow.getElementById("continue").style.visibility = "visible";
+				}, time + 1000);
+			}, 660);
+		});
 	}
 }
-customElements.define("adventure-defeat-element", AdventureDefeatElement);
+customElements.define("adventure-complete-element", AdventureCompleteElement);
 
 function setupAdventureSituation() {
 	hideSidePane();
@@ -595,7 +656,7 @@ function setupDefeatSituation() {
 	function setup() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";
-		document.querySelector("#mapDiv").appendChild(document.createElement("adventure-defeat-element"));
+		document.querySelector("#mapDiv").appendChild(document.createElement("adventure-complete-element"));
 	}
 	window.setTimeout(setup, 2500);
 }
@@ -606,6 +667,16 @@ function setupVictorySituation() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";
 		document.querySelector("#mapDiv").appendChild(document.createElement("adventure-nextroom-element"));
+	}
+	window.setTimeout(setup, 2500);
+}
+
+function setupAdventureVictorySituation() {
+	window.setTimeout(() => showSplash("✓"), 1000);
+	function setup() {
+		hideSidePane();
+		document.querySelector("#mapDiv").innerHTML = "";
+		document.querySelector("#mapDiv").appendChild(document.createElement("adventure-complete-element"));
 	}
 	window.setTimeout(setup, 2500);
 }

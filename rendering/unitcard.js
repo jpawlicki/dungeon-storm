@@ -1,4 +1,4 @@
-// A UnitCard is a collapsable card displaying unit stats and abilities. It may be interactive or not.
+// A UnitCard is a card displaying unit stats and abilities. It may be interactive or not.
 class UnitCard {
 	// div
 	// unit
@@ -32,11 +32,13 @@ class UnitCardElement extends HTMLElement {
 	// icons
 	// portraitActor
 	// unit
+	// shadow
 
 	connectedCallback() {
 		this.icons = {};
 
 		let shadow = this.attachShadow({mode: "open"});
+		this.shadow = shadow;
 		shadow.innerHTML = `
 			<style>
 				:host {
@@ -110,6 +112,29 @@ class UnitCardElement extends HTMLElement {
 			}
 		}
 		this.portraitActor.update();
+	}
+
+	// num: Which ability to select, numbered from 1 to 10. Passing -1 will select the first non-hidden ability.
+	selectAbility(num) {
+		if (num == -1) {
+			for (let i in this.icons) {
+				if (this.icons[i].element.getAttribute("class") == "hidden") continue;
+				if (this.icons[i].element.getAttribute("class") == "active") continue;
+				clickOnAbility(this.unit, this.icons[i].ability);
+				return;
+			}
+			return;
+		}
+
+		let abname = "";
+		for (let i in this.icons) {
+			num--;
+			if (num == 0) abname = i;
+		}
+		if (abname == "") return;
+		if (this.icons[abname].element.getAttribute("class") == "hidden") return;
+		if (this.icons[abname].element.getAttribute("class") == "active") return;
+		clickOnAbility(this.unit, this.icons[abname].ability);
 	}
 }
 customElements.define("unit-card", UnitCardElement);

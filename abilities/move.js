@@ -6,21 +6,27 @@ abilityData.MOVE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and either:",
-			"  1. Move to an adjacent empty space, and rotate.",
+			"  1. !MOVE to an adjacent empty space, and rotate.",
 			"  2. Rotate in the same space.",
-			"If threatened, you cannot move in a direction other than directly away from the threat."];
+			"Cannot move 2 or more elevation levels upward."];
 		this.aiHints = [AiHints.MOVE];
 		this.cost = {experience: 1};
 	}
 
 	clickOnTile(unit, loc, quadrant) {
 		if (!this.isMoveLegal(unit, loc, quadrant)) return null;
-		clearClickContextActors();
-		return new Action(true, [
-			new Effect(unit, "pos", loc),
-			new Effect(unit, "facing", quadrant),
-			new Effect(unit, "actionPoints", unit.actionPoints - 1)
-		], "Move");
+		return new Action(
+				true,
+				[
+					new Effect(unit, "pos", loc),
+					new Effect(unit, "facing", quadrant),
+					new Effect(unit, "actionPoints", unit.actionPoints - 1)
+				],
+				loc[0] == unit.pos[0] && loc[1] == unit.pos[1] ? [] : [ActionEvent.move(unit, unit.pos, loc)],
+				this.name,
+				() => {
+					SpecialEffect.abilityUse(unit, this);
+				});
 	}
 
 	mouseOverTile(unit, loc, quadrant) {
@@ -32,15 +38,9 @@ abilityData.MOVE = new class extends Ability {
 	isMoveLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) > 1) return false;
+		if (gameState.currentState.fortress.getTile(unit.pos).height < gameState.currentState.fortress.getTile(loc).height - 1) return false;
 		let dstUnit = gameState.currentState.getUnitAt(loc);
 		if (dstUnit != null && dstUnit != unit) return false;
-		for (let u of gameState.currentState.units) {
-			if (u.threatens(unit)) {
-				let offsetX = unit.pos[0] - u.pos[0];
-				let offsetY = unit.pos[1] - u.pos[1];
-				if (offsetX != loc[0] - unit.pos[0] & offsetY != loc[1] - unit.pos[1]) return false;
-			}
-		}
 		return true;
 	}
 }();

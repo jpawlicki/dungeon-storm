@@ -22,12 +22,12 @@ class Tile {
 		if (facing == 3) return [pos[0], pos[1] - 1];
 	}
 
-	// Returns -1 if the positions are not adjacent. Else returns the facing from pos1 to pos2.
+	// Returns -1 if the positions are not in the same rank or column. Else returns the facing from pos1 to pos2.
 	static directionTo(pos1, pos2) {
-		if (pos1[0] - 1 == pos2[0] && pos1[1] == pos2[1]) return 0;
-		if (pos1[0] == pos2[0] && pos1[1] + 1 == pos2[1]) return 1;
-		if (pos1[0] + 1 == pos2[0] && pos1[1] == pos2[1]) return 2;
-		if (pos1[0] == pos2[0] && pos1[1] - 1 == pos2[1]) return 3;
+		if (pos1[0] > pos2[0] && pos1[1] == pos2[1]) return 0;
+		if (pos1[0] == pos2[0] && pos1[1] < pos2[1]) return 1;
+		if (pos1[0] < pos2[0] && pos1[1] == pos2[1]) return 2;
+		if (pos1[0] == pos2[0] && pos1[1] > pos2[1]) return 3;
 		return -1;
 	}
 
@@ -37,6 +37,11 @@ class Tile {
 
 	static equals(pos1, pos2) {
 		return pos1[0] == pos2[0] && pos1[1] == pos2[1];
+	}
+
+	static inBounds(pos) {
+		let tiles = gameState.currentState.fortress.tiles;
+		return pos[0] >= 0 && pos[1] >= 0 && pos[0] < tiles.length && pos[1] < tiles[pos[0]].length;
 	}
 
 	constructor(height, decoration) {
@@ -60,7 +65,8 @@ class Room {
 	}
 
 	getTile(pos) {
-		return this.tiles[pos[0]][pos[1]];
+		if (Tile.inBounds(pos)) return this.tiles[pos[0]][pos[1]];
+		return new Tile(0, null);
 	}
 
 	inBounds(pos) {
@@ -133,11 +139,11 @@ class Unit {
 		this.learnableAbilities.push(ability);
 	}
 
-	// Returns true if and only if this unit threatens the given unit.
-	threatens(unit) {
+	// Returns true if and only if this unit threatens the given unit while it's in pos.
+	threatens(unit, pos) {
 		if (unit.player == this.player) return false;
 		if (this.state == Unit.State.DEFEATED) return false;
-		let offset = [unit.pos[0] - this.pos[0], unit.pos[1] - this.pos[1]];
+		let offset = [pos[0] - this.pos[0], pos[1] - this.pos[1]];
 		let facing =
 			offset[0] == -1 && offset[1] == 0 ? 0 :
 			offset[0] == 0 && offset[1] == 1 ? 1 :
@@ -162,6 +168,60 @@ class Unit {
 		if (this.state == Unit.State.DEFEATED) return false;
 		for (let a of this.abilities) if (a.minActionPoints <= this.actionPoints) return true;
 		return false;
+	}
+
+	getRetreatAction(direction) {
+		let retreatOption = null;
+		let retreatLocationOptions = [];
+		{
+			let nextTile = Tile.offset(this.pos, direction);
+			while (Tile.inBounds(nextTile)) {
+				retreatLocationOptions.push(nextTile);
+				nextTile = Tile.offset(nextTile, direction);
+			}
+		}
+		outer: for (let a of this.abilities) {
+			for (let retreatLocationOption of retreatLocationOptions) {
+				for (let quad of [0, 1, 2, 3]) {
+					let action = a.clickOnTile(this, retreatLocationOption, (this.facing + quad) % 4);
+					if (action != null) {
+						let posConsequence = null;
+						for (let e of action.effects) if (e.unit == this && e.property == "pos") posConsequence = e.value;
+						if (posConsequence != null) {
+							for (let option of retreatLocationOptions) {
+								if (option[0] == posConsequence[0] && option[1] == posConsequence[1]) {
+									retreatOption = action;
+									break outer;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return retreatOption;
+	}
+
+	canRetreat(direction) {
+		return this.getRetreatAction(direction) != null;
+	}
+
+	actionEvent(action) {
+		if (this.state == Unit.State.DEFEATED) return [];
+
+		let reactions = [];
+
+		// If evented to retreat, that happens first.
+		for (let e of action.events) if (e.type == ActionEvent.RETREAT && e.who == this) {
+			let retreatOption = this.getRetreatAction(e.data.direction);
+			if (retreatOption != null) {
+				reactions.push(retreatOption);
+			} else {
+				reactions.push(new Action(true, [new Effect(this, "state", Unit.State.DEFEATED)], [ActionEvent.defeat(this)], "Failed Retreat"));
+			}
+		}
+		for (let a of this.abilities) for (let r of a.actionEvent(this, action)) reactions.push(r);
+		return reactions;
 	}
 }
 
@@ -199,32 +259,42 @@ class CurrentState { // TODO: combine into GameState.
 
 class Ability {
 	// name
+	// icon
+	// minActionPoints
+	// details
+	// aiHints
+	// cost
 
+	actionEvent(unit, action) { return []; }
 }
 
 class GameState {
 	// currentState
 	// actionHistory
+	// reactionQueue
 	// characters
 	// characterPool
 	// adventure
 	// adventureProgress
 	// currentRoom
 	// disableActions
+	// numUnlocksEarned
 	// resource: {experience: int, healing: int}
+	// gameOverBonus: {experience: int, healing: int, unlocks: int, characters: int}
+	// unlockedAdventures[]
 
 	constructor(adventure) {
-		this.adventure = adventure;
-		this.actionHistory = [];
-		this.characters = [];
 		this.characterPool = [];
-		this.adventureProgress = [];
 		this.resources = {};
+		this.unlockedAdventures = [];
+	}
 
-		for (let cname of adventure.characterPool) {
-			this.characterPool.push(new Unit(characterData[cname]));
-		}
-
+	loadAdventure(adventure) {
+		this.adventure = adventure;
+		this.characters = [];
+		this.actionHistory = [];
+		this.reactionQueue = [];
+		this.adventureProgress = [];
 		for (let i = 0; i < adventure.rooms.length; i++) {
 			this.adventureProgress.push([]);
 			for (let j = 0; j < adventure.rooms[i].length; j++) {
@@ -235,8 +305,12 @@ class GameState {
 
 	turnDone() {
 		let effects = [];
-		for (let u of this.currentState.units) if (u.player == this.currentState.currentPlayer) effects.push(new Effect(u, "actionPoints", 3));
-		this.addAction(new Action(false, effects, "END TURN"));
+		let events = [];
+		for (let u of this.currentState.units) if (u.player == this.currentState.currentPlayer) {
+			effects.push(new Effect(u, "actionPoints", 3));
+			events.push(ActionEvent.endTurn(u));
+		}
+		this.addAction(new Action(false, effects, events, "END TURN"));
 		this.currentState.currentPlayer = (this.currentState.currentPlayer + 1) % 3;
 		this.runAi();
 		showHideUiElements();
@@ -277,9 +351,17 @@ class GameState {
 	}
 
 	undoAction() {
-		if (this.actionHistory.length == 0) return;
-		if (!this.actionHistory[this.actionHistory.length - 1].undoable) return;
-		this.actionHistory.pop().undo();
+		let lastUserActionIndex = this.actionHistory.length - 1;
+		while (lastUserActionIndex >= 0 && this.actionHistory[lastUserActionIndex].cause != undefined) lastUserActionIndex--;
+		if (lastUserActionIndex < 0 || !this.actionHistory[lastUserActionIndex].undoable) return;
+		for (let i = this.actionHistory.length - 1; i >= lastUserActionIndex; i--) this.actionHistory.pop().undo();
+	}
+
+	canPlayerUndo() {
+		let lastUserActionIndex = this.actionHistory.length - 1;
+		while (lastUserActionIndex >= 0 && this.actionHistory[lastUserActionIndex].cause != undefined) lastUserActionIndex--;
+		if (lastUserActionIndex < 0 || !this.actionHistory[lastUserActionIndex].undoable) return false;
+		return true;
 	}
 
 	addAction(action) {
@@ -287,8 +369,17 @@ class GameState {
 		this.actionHistory.push(action);
 		action.apply();
 
-		// TODO: fire listeners for passive abilities.
+		for (let u of this.currentState.units) {
+			for (let reaction of u.actionEvent(action)) {
+				reaction.cause = action;
+				this.reactionQueue.push(reaction);
+			}
+		}
+		if (this.reactionQueue.length > 0) this.addAction(this.reactionQueue.shift());
+		else this.checkRoomClear();
+	}
 
+	checkRoomClear() {
 		// Check for room clear.
 		let numPlayer = 0;
 		let numEnemy = 0;
@@ -311,18 +402,39 @@ class GameState {
 	roomVictory() {
 		this.disableActions = true;
 		this.adventureProgress[this.currentRoom[0]][this.currentRoom[1]] = true;
-		let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
-		for (let reward in room.reward) {
-			if (this.resources.hasOwnProperty(reward)) this.resources[reward] += room.reward[reward];
-			else this.resources[reward] = room.reward[reward];
+		if (this.getAdventureVictorious()) {
+			this.adventureOver(true);
+		} else {
+			let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
+			for (let reward in room.reward) {
+				if (this.resources.hasOwnProperty(reward)) this.resources[reward] += room.reward[reward];
+				else this.resources[reward] = room.reward[reward];
+			}
+			for (let c of this.characters) c.actionPoints = 0;
+			setupVictorySituation();
 		}
-		for (let c of this.characters) c.actionPoints = 0;
-		setupVictorySituation();
 	}
 
 	roomDefeat() {
 		this.disableActions = true;
-		setupDefeatSituation();
+		this.adventureOver(false);
+	}
+
+	getAdventureVictorious() {
+		for (let victoryRoom of this.adventure.victory) if (this.adventureProgress[victoryRoom[0]][victoryRoom[1]]) return true;
+		return false;
+	}
+
+	adventureOver(victorious) {
+		for (let c of this.characters) {
+			c.state = Unit.State.NORMAL;
+		}
+		if (victorious) {
+			setupAdventureVictorySituation();
+		} else {
+			// TODO: remove a random known ability from the character.
+			setupDefeatSituation();
+		}
 	}
 }
 
@@ -330,14 +442,18 @@ class GameState {
 class Action {
 	// undoable
 	// effects[]
+	// events[]
 	// note
 	// specialEffect: a function to call to spawn sfx.
+	// cause: an action that caused this reaction.
 
-	constructor(undoable, effects, note, specialEffect) {
+	constructor(undoable, effects, events, note, specialEffect, cause) {
 		this.undoable = undoable;
 		this.effects = effects;
+		this.events = events;
 		this.note = note;
 		this.specialEffect = specialEffect;
+		this.cause = cause;
 	}
 
 	apply() {
@@ -372,6 +488,38 @@ class Effect {
 	undo() {
 		this.unit[this.property] = this.oldValue;
 		this.unit.updateActors();
+	}
+}
+
+class ActionEvent {
+	// who: the unit receiving the event
+	// type: a numeric value indicating the type of event
+	// data: an object, depending on the eventType
+
+	static RETREAT = 1;
+	static retreat(who, direction) {
+		return new ActionEvent(who, ActionEvent.RETREAT, {"direction": direction});
+	}
+
+	static MOVE = 2;
+	static move(who, fromLoc, toLoc) {
+		return new ActionEvent(who, ActionEvent.MOVE, {"from": fromLoc, "to": toLoc});
+	}
+
+	static DEFEAT = 3;
+	static defeat(who) {
+		return new ActionEvent(who, ActionEvent.DEFEAT, {});
+	}
+
+	static ENDTURN = 4;
+	static endTurn(who) {
+		return new ActionEvent(who, ActionEvent.ENDTURN, {});
+	}
+
+	constructor(who, type, data) {
+		this.who = who;
+		this.type = type;
+		this.data = data;
 	}
 }
 

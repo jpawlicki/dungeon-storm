@@ -8,28 +8,14 @@
 #turnControls > svg {
 	cursor: pointer;
 }
-#turnControls > svg.warn {
-	color: #800;
-}
-#turnControls > svg.suggest {
-	color: #ccc;
-	animation: uisuggest 1s linear alternate infinite;
-}
-@keyframes uisuggest {
-	0% {
-		color: #ccc;
-	}
-	100% {
-		color: #fc0;
-	}
-}
 #turnControls > svg:hover {
 	color: #fff;
 }
 #abilityDesc {
 	background: #000;
 	color: #fff;
-	padding: 0.5em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 	overflow: auto;
 }
 #abilityDescText {

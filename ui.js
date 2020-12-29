@@ -1,6 +1,7 @@
 let clickContext = {
 	selectedUnit: null,
 	selectedAbility: null,
+	lastMouseOver: null,
 	actors: [],
 };
 
@@ -11,8 +12,10 @@ function clearClickContextActors() {
 
 function clearClickContext() {
 	clearClickContextActors();
+	if (clickContext.selectedUnit != null) clickContext.selectedUnit.deselect();
 	clickContext.selectedAbility = null;
 	clickContext.selectedUnit = null;
+	clickContext.lastMouseOver = null;
 }
 
 function clickOnAbility(unit, ability) {
@@ -28,9 +31,12 @@ function clickOnAbility(unit, ability) {
 		clickContext.selectedUnit = unit;
 		clickContext.selectedAbility = ability;
 		document.getElementById("abilityDescTitle").textContent = ability.name;
-		document.getElementById("abilityDescText").textContent = ability.details.join("\n");
+		document.getElementById("abilityDescText").textContent = expandAbilityDetails(ability.details);
 		if (prev != null && prev != unit) prev.deselect();
 		unit.select();
+		if (clickContext.lastMouseOver != null) {
+			mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
+		}
 		return;
 	}
 }
@@ -43,8 +49,10 @@ function clickOnAbility(unit, ability) {
 function clickOnTile(loc, quadrant) {
 	if (gameState.currentState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
+		if (clickContext.selectedUnit.player != 0) return;
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, loc, quadrant);
 		if (action != null) {
+			clearClickContextActors();
 			gameState.addAction(action);
 			showHideUiElements();
 		}
@@ -52,10 +60,17 @@ function clickOnTile(loc, quadrant) {
 }
 
 function mouseOverTile(loc, quadrant) {
+	clickContext.lastMouseOver = {"loc": loc, "quadrant": quadrant};
 	if (gameState.currentState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
+		if (clickContext.selectedUnit.player != 0) return;
 		clickContext.selectedAbility.mouseOverTile(clickContext.selectedUnit, loc, quadrant);
 	}
+}
+
+function mouseOutTile() {
+	clickContext.lastMouseOver = null;
+	clearClickContextActors();
 }
 
 function clickOnUndo() {
@@ -70,19 +85,14 @@ function clickOnDone() {
 }
 
 function showHideUiElements() {
-	document.getElementById("undo").style.visibility = gameState.currentState.currentPlayer == 0 && gameState.actionHistory.length > 0 && gameState.actionHistory[gameState.actionHistory.length - 1].undoable ? "visible" : "hidden";
+	document.getElementById("undo").style.visibility = gameState.canPlayerUndo() ? "visible" : "hidden";
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) clickOnAbility(clickContext.selectedUnit, clickContext.selectedAbility);
-
-	let actionsLeft = false;
-	for (let unit of gameState.currentState.units) if (unit.player == 0 && unit.canAct()) actionsLeft = true;
-	document.getElementById("done").setAttribute("class", actionsLeft ? "warn" : "suggest");
-
 	document.getElementById("done").style.visibility = gameState.currentState.currentPlayer == 0 ? "visible" : "hidden";
 }
 
 function loadAdventure(adventure) {
 	document.querySelector("#mapDiv").innerHTML = "";
-	gameState = new GameState(adventure);
+	gameState.loadAdventure(adventure);
 	document.querySelector("#mapDiv").appendChild(setupAdventureSituation());
 }
 
@@ -93,7 +103,9 @@ function loadRoom(coords) {
 	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState.currentState));
 	for (let u of document.querySelectorAll("unit-card")) u.parentNode.removeChild(u);
 	for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
+	for (let unit of gameState.currentState.units) if (unit.player != 0) unit.registerActor(new UnitCard(unit, false, document.getElementById("unitCardsEnemy")));
 	showSidePane();
+	showHideUiElements();
 }
 
 function hideSidePane() {
@@ -103,3 +115,66 @@ function hideSidePane() {
 function showSidePane() {
 	document.querySelector("body").setAttribute("class", "");
 }
+
+function expandAbilityDetails(descAr) {
+	let desc = descAr.join("\n");
+	let expansions = {
+		"!REACTION": "Reactions are actions that are automatically triggered by certain conditions.",
+		"!DEFEAT": "Defeated units are removed from the room. Win by defeating all enemies. Lose by having all your characters defeated.",
+		"!MOVE": "Moving threatened units often triggers common reactions.",
+		"!THREATEN": "Units with red markers threaten units next to those markers, and have automatic reactions to actions they take.",
+		"!RETREAT": "A unit retreats by using the first possible ability to move directly away from the unit causing it to retreat. If it cannot vacate the space, it is !DEFEATed.",
+		"!BLOODY": "Bloody units typically have decreased strength on each side.",
+	};
+
+	let replaced = true;
+	let suffixSet = new Set();
+	while (replaced) {
+		replaced = false;
+		for (let ex in expansions) {
+			if (desc.includes(ex)) {
+				let exRead = ex.substr(1, 1) + ex.substr(2).toLowerCase();
+				replaced = true;
+				if (!suffixSet.has(ex)) {
+					desc += "\n\n(" + expansions[ex] + ")";
+					suffixSet.add(ex);
+				}
+				desc = desc.replaceAll(ex, exRead);
+			}
+		}
+	}
+	return desc;
+}
+
+window.addEventListener("keypress", (ev) => {
+	if (document.querySelector("body").getAttribute("class") == "nosidepane") return;
+	if (ev.key == "Enter" || ev.key == "d") {
+		clickOnDone();
+	} else if (ev.key == "z") {
+		clickOnUndo();
+	} else if (ev.key == "`") {
+		let selected = false;
+		for (let unitCard of document.querySelectorAll("unit-card")) {
+			if (unitCard.unit.player != 0) continue;
+			if (selected == true) {
+				unitCard.selectAbility(-1);
+				return;
+			}
+			if (unitCard.unit == clickContext.selectedUnit) selected = true;
+		}
+		for (let unitCard of document.querySelectorAll("unit-card")) {
+			if (unitCard.unit.player != 0) continue;
+			if (unitCard.unit.canAct()) {
+				unitCard.selectAbility(-1);
+				return;
+			}
+		}
+	} else if (ev.keyCode >= 48 && ev.keyCode <= 57) {
+		let num = ev.keyCode == 48 ? 10 : ev.keyCode - 48;
+		for (let unitCard of document.querySelectorAll("unit-card")) {
+			if (unitCard.unit == clickContext.selectedUnit) {
+				unitCard.selectAbility(num);
+			}
+		}
+	}
+});

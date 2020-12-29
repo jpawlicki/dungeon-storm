@@ -90,6 +90,7 @@ function setupRoomSvg(currentState) {
 			let quad = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			quad.setAttribute("fill", "transparent");
 			quad.addEventListener("mouseover", () => mouseOverTile(pos, i));
+			quad.addEventListener("mouseout", () => mouseOutTile());
 			quad.addEventListener("click", () => clickOnTile(pos, i));
 			quad.setAttribute("d", "M" + points[i] + "L" + points[(i + 1) % 4] + "L" + tileSize / 2 + "," + tileSize / 2 + "Z");
 			g.appendChild(quad);
