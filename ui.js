@@ -47,7 +47,7 @@ function clickOnAbility(unit, ability) {
 //     \21/
 //      \/
 function clickOnTile(loc, quadrant) {
-	if (gameState.currentState.currentPlayer != 0) return;
+	if (gameState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		if (clickContext.selectedUnit.player != 0) return;
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, loc, quadrant);
@@ -61,7 +61,7 @@ function clickOnTile(loc, quadrant) {
 
 function mouseOverTile(loc, quadrant) {
 	clickContext.lastMouseOver = {"loc": loc, "quadrant": quadrant};
-	if (gameState.currentState.currentPlayer != 0) return;
+	if (gameState.currentPlayer != 0) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		if (clickContext.selectedUnit.player != 0) return;
 		clickContext.selectedAbility.mouseOverTile(clickContext.selectedUnit, loc, quadrant);
@@ -87,7 +87,7 @@ function clickOnDone() {
 function showHideUiElements() {
 	document.getElementById("undo").style.visibility = gameState.canPlayerUndo() ? "visible" : "hidden";
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) clickOnAbility(clickContext.selectedUnit, clickContext.selectedAbility);
-	document.getElementById("done").style.visibility = gameState.currentState.currentPlayer == 0 ? "visible" : "hidden";
+	document.getElementById("done").style.visibility = gameState.currentPlayer == 0 ? "visible" : "hidden";
 }
 
 function loadAdventure(adventure) {
@@ -100,10 +100,10 @@ function loadRoom(coords) {
 	gameState.loadRoom(coords);
 	for (let c of gameState.characters) c.clearActors();
 	document.querySelector("#mapDiv").innerHTML = "";
-	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState.currentState));
+	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState));
 	for (let u of document.querySelectorAll("unit-card")) u.parentNode.removeChild(u);
-	for (let unit of gameState.currentState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
-	for (let unit of gameState.currentState.units) if (unit.player != 0) unit.registerActor(new UnitCard(unit, false, document.getElementById("unitCardsEnemy")));
+	for (let unit of gameState.units) if (unit.player == 0) unit.registerActor(new UnitCard(unit, true, document.getElementById("unitCards")));
+	for (let unit of gameState.units) if (unit.player != 0) unit.registerActor(new UnitCard(unit, false, document.getElementById("unitCardsEnemy")));
 	showSidePane();
 	showHideUiElements();
 }

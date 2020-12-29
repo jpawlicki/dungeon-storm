@@ -11,12 +11,12 @@ class UnitActor {
 	// statActors[]
 	// selectionActor
 	// portraitActor
-	// fortress: the fortress
+	// room: the room
 
 	// The unit this actor is for, and an SVG group to manage its position.
-	constructor(unit, g, fortress) {
+	constructor(unit, g, room) {
 		this.unit = unit;
-		this.fortress = fortress;
+		this.room = room;
 		this.group = g;
 		let plane = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		this.edges = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -53,7 +53,7 @@ class UnitActor {
 
 		g.appendChild(plane);
 		g.appendChild(portrait);
-		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.fortress.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
+		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.room.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
 
 		g.setAttribute("transform", "translate(" + loc[0] + "," + loc[1] + ")");
 		g.style.transition = "transform 0.3s, opacity 0.5s cubic-bezier(0, 2, 1, -1)";
@@ -68,7 +68,7 @@ class UnitActor {
 
 	update() {
 		this.edges.setAttribute("transform", "rotate(" + (90 * this.unit.facing) + "," + (tileSize / 2) + "," + (tileSize / 2) + ")");
-		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.fortress.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
+		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.room.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
 		this.group.setAttribute("transform", "translate(" + loc[0] + "," + loc[1] + ")");
 		this.group.style.opacity = this.unit.state == Unit.State.DEFEATED ? 0 : 1;
 		this.portraitActor.update();

@@ -38,8 +38,8 @@ abilityData.MOVE = new class extends Ability {
 	isMoveLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) > 1) return false;
-		if (gameState.currentState.fortress.getTile(unit.pos).height < gameState.currentState.fortress.getTile(loc).height - 1) return false;
-		let dstUnit = gameState.currentState.getUnitAt(loc);
+		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(loc).height - 1) return false;
+		let dstUnit = gameState.getUnitAt(loc);
 		if (dstUnit != null && dstUnit != unit) return false;
 		return true;
 	}
@@ -56,7 +56,7 @@ class AbilityMoveActor {
 		u.facing = facing;
 		u.pos = loc;
 		u.actionPoints -= 1;
-		new UnitActor(u, this.g, gameState.currentState.fortress);
+		new UnitActor(u, this.g, gameState.room);
 		document.getElementById("clickContextGroup").appendChild(this.g);
 	}
 

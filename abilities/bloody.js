@@ -11,7 +11,7 @@ abilityData.BLOODY = new class extends Ability {
 
 	clickOnTile(unit, loc, quadrant) {
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		let effects = [
@@ -25,7 +25,7 @@ abilityData.BLOODY = new class extends Ability {
 
 	mouseOverTile(unit, loc, quadrant) {
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		// Attacker
@@ -35,7 +35,7 @@ abilityData.BLOODY = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < this.minActionPoints) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.state == Unit.State.BLOODIED) return false;
 		return true;

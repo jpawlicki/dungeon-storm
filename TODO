@@ -1,32 +1,20 @@
 Short Term:
- - room defeat UI
-   - Parentage
- - cross-adventure UI / main menu
+ - Retirement
  - learning abilities should get more expensive every ability learned
  - sfx sound
 
 Long Term:
- - Room feedback
  - Flee room UI
  - Persistence
  - Crash handling report to server logging
  - Bug report UI
  - Graphics: improve bloodied overlay & portrait sphere to look more 3D and marbleish
- - Room dependencies
-	 - Room ID (most rooms that use a feature should depend on a room that introduces the feature in a tutorial)
-	 - Ability (for rooms that require a particular ability to succeed)
-	 - Any of [Dependencies]
  - Room features (fire, sand, water, rock, gold, action-bonus, etc)
- - Additional abilities
- - Additional units
- - Additional rooms
+ - Portrait randomization
  - Tutorial popups
  - Tools
-   - Unit Editor
    - Room Editor
-     - Players should be able to create and upload rooms to a room database.
-  	 - Players should be able to rate rooms after completing them.
-   - Dungeon Editor
+   - Adventure Editor
      - Players should be able to add rooms into a dungeon to create a custom campaign.
   	 - Some rooms should be able to be randomized.
 

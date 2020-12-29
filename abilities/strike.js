@@ -11,7 +11,7 @@ abilityData.STRIKE = new class extends Ability {
 
 	clickOnTile(unit, loc, quadrant) {
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		let effects = [
@@ -32,7 +32,7 @@ abilityData.STRIKE = new class extends Ability {
 	mouseOverTile(unit, loc, quadrant) {
 		clearClickContextActors();
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		// Defender
@@ -48,7 +48,7 @@ abilityData.STRIKE = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
 		if (target.getStrength(Tile.directionTo(target.pos, unit.pos)) >= unit.getStrength(Tile.directionTo(unit.pos, target.pos))) return false;

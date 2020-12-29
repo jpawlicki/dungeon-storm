@@ -44,7 +44,7 @@ function getTilePoint(i, j, h, c) {
 //      \/
 //      2
 function getTileCorners(pos) {
-	return getTilePoints(pos[0], pos[1], gameState.currentState.fortress.getTile(pos).height);
+	return getTilePoints(pos[0], pos[1], gameState.room.getTile(pos).height);
 }
 
 // Returns the midpoint of the tile's edge.
@@ -54,7 +54,7 @@ function getTileCorners(pos) {
 //     \  / 
 //    2 \/ 1
 function getTileEdgeCenter(pos, facing) {
-	let points = getTilePoints(pos[0], pos[1], gameState.currentState.fortress.getTile(pos).height);
+	let points = getTilePoints(pos[0], pos[1], gameState.room.getTile(pos).height);
 	let p1 = points[facing];
 	let p2 = points[(facing + 1) % 4];
 	return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
@@ -62,15 +62,15 @@ function getTileEdgeCenter(pos, facing) {
 
 // pos[]: The tile coordinates. If there is a third dimension, that is used instead of tile height.
 function getTileCenter(pos) {
-	let h = pos.length < 3 ? gameState.currentState.fortress.getTile(pos).height : pos[2];
+	let h = pos.length < 3 ? gameState.room.getTile(pos).height : pos[2];
 	return [getTilePoint(pos[0], pos[1], h, 0)[0], getTilePoint(pos[0], pos[1], h, 1)[1]];
 }
 
 function setupRoomSvg(currentState) {
-	let fortress = currentState.fortress;
+	let room = currentState.room;
 	let h = [];
-	let width = (fortress.tiles.length + 1) * tileSize * Math.sqrt(2);
-	let height = (fortress.tiles[1].length + 1) * tileSize * yShortening * Math.sqrt(2);
+	let width = (room.tiles.length + 1) * tileSize * Math.sqrt(2);
+	let height = (room.tiles[1].length + 1) * tileSize * yShortening * Math.sqrt(2);
 
 	function createTile(asset, pos) {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -111,10 +111,10 @@ function setupRoomSvg(currentState) {
 	svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 
-	for (let i = 0; i < fortress.tiles.length; i++) {
+	for (let i = 0; i < room.tiles.length; i++) {
 		h[i] = [];
-		for (let j = 0; j < fortress.tiles[i].length; j++) {
-			h[i][j] = fortress.tiles[i][j].height;
+		for (let j = 0; j < room.tiles[i].length; j++) {
+			h[i][j] = room.tiles[i][j].height;
 		}
 	}
 
@@ -125,7 +125,7 @@ function setupRoomSvg(currentState) {
 
 	for (let i = 0; i < h.length - 1; i++) {
 		for (let j = 0; j < h[i].length - 1; j++) {
-			svg.appendChild(transformSurface(getTilePoint(i, j, h[i][j], 0), createTile(fortress.tiles[i][j].decoration, [i, j])));
+			svg.appendChild(transformSurface(getTilePoint(i, j, h[i][j], 0), createTile(room.tiles[i][j].decoration, [i, j])));
 
 			if (h[i+1][j] < h[i][j]) { // Add left (i) wall.
 				let tile = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
@@ -156,7 +156,7 @@ function setupRoomSvg(currentState) {
 	
 	for (let unit of currentState.units) {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		unit.registerActor(new UnitActor(unit, g, fortress));
+		unit.registerActor(new UnitActor(unit, g, room));
 		svg.appendChild(g);
 	}
 

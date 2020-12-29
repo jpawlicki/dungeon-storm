@@ -54,16 +54,16 @@ class SpecialEffect {
 	}
 
 	static abilityUse(unit, ability) {
-		let p = [unit.pos[0], unit.pos[1], gameState.currentState.fortress.getTile(unit.pos).height + 2];
+		let p = [unit.pos[0], unit.pos[1], gameState.room.getTile(unit.pos).height + 2];
 		SpecialEffect.particle(p, 0, [0, 0, 4], 0, ability.icon, 0, [[255, 255, 255, 1], [255, 255, 255, 1], [255, 255, 255, 0]], [0, 1.5, 2]);
 	}
 
 	static attackClash(c1, c2, flow1, flow2) {
-		let midpoint = [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, (gameState.currentState.fortress.getTile(c1).height + gameState.currentState.fortress.getTile(c2).height) / 2];
+		let midpoint = [(c1[0] + c2[0]) / 2, (c1[1] + c2[1]) / 2, (gameState.room.getTile(c1).height + gameState.room.getTile(c2).height) / 2];
 		SpecialEffect.particle(midpoint, 0, [0, 0, 0], 0, "M-18 0C0 0 0 0 0 18C0 0 0 0 18 0C0 0 0 0 0 -18C 0 0 0 0 -18 0Z", 0, [[255, 255, 255, 0.7], [255, 255, 128, 1], [255, 128, 128, 0]], [0, 0.1, 0.2]);
 
 		if (flow1) {
-			let dir = [c1[0] - c2[0], c1[1] - c2[1], gameState.currentState.fortress.getTile(c1).height - gameState.currentState.fortress.getTile(c2).height];
+			let dir = [c1[0] - c2[0], c1[1] - c2[1], gameState.room.getTile(c1).height - gameState.room.getTile(c2).height];
 			for (let i = 0; i < 10; i++) {
 				let offset = [midpoint[0] + Math.random() * .6 - .3, midpoint[1] + Math.random() * .6 - .3, midpoint[2]];
 				let speed = Math.random() * 0.6 + 0.7;
@@ -74,7 +74,7 @@ class SpecialEffect {
 		}
 
 		if (flow2) {
-			let dir = [c2[0] - c1[0], c2[1] - c1[1], gameState.currentState.fortress.getTile(c2).height - gameState.currentState.fortress.getTile(c1).height];
+			let dir = [c2[0] - c1[0], c2[1] - c1[1], gameState.room.getTile(c2).height - gameState.room.getTile(c1).height];
 			for (let i = 0; i < 10; i++) {
 				let offset = [midpoint[0] + Math.random() * .6 - .3, midpoint[1] + Math.random() * .6 - .3, midpoint[2]];
 				let speed = Math.random() * 0.6 + 0.7;

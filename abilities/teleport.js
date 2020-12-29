@@ -11,7 +11,7 @@ abilityData.TELEPORT = new class extends Ability {
 	}
 
 	clickOnTile(unit, loc, quadrant) {
-		if (gameState.currentState.getUnitAt(loc) != null) return;
+		if (gameState.getUnitAt(loc) != null) return;
 		return new Action(
 				true,
 				[
@@ -27,7 +27,7 @@ abilityData.TELEPORT = new class extends Ability {
 
 	mouseOverTile(unit, loc, quadrant) {
 		clearClickContextActors();
-		if (gameState.currentState.getUnitAt(loc) != null) return;
+		if (gameState.getUnitAt(loc) != null) return;
 		clickContext.actors.push(new AbilityMoveActor(unit, loc, unit.facing));
 	}
 }();

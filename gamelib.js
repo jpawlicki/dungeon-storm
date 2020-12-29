@@ -40,7 +40,7 @@ class Tile {
 	}
 
 	static inBounds(pos) {
-		let tiles = gameState.currentState.fortress.tiles;
+		let tiles = gameState.room.tiles;
 		return pos[0] >= 0 && pos[1] >= 0 && pos[0] < tiles.length && pos[1] < tiles[pos[0]].length;
 	}
 
@@ -225,38 +225,6 @@ class Unit {
 	}
 }
 
-class CurrentState { // TODO: combine into GameState.
-	// fortress // TODO: rename to "room"
-	// units
-	// currentPlayer
-
-	constructor(room, playerUnits) {
-		this.currentPlayer = 0;
-		this.fortress = new Room(room);
-		this.units = [];
-		for (let u of playerUnits) this.units.push(u);
-		for (let i = 0; i < playerUnits.length; i++) {
-			playerUnits[i].pos[0] = room.entry[0] + i % 2;
-			playerUnits[i].pos[1] = room.entry[1] + parseInt(i / 2);
-			playerUnits[i].facing = 1;
-		}
-		for (let u of room.units) {
-			let unit = new Unit(u.type);
-			unit.player = u.player;
-			unit.pos[0] = u.pos[0];
-			unit.pos[1] = u.pos[1];
-			unit.facing = u.facing;
-			this.units.push(unit);
-		}
-	}
-
-	// Returns the unit in the position, or null if there is no unit in the position.
-	getUnitAt(pos) {
-		for (let u of this.units) if (u.state != Unit.State.DEFEATED && u.pos[0] == pos[0] && u.pos[1] == pos[1]) return u;
-		return null;
-	}
-}
-
 class Ability {
 	// name
 	// icon
@@ -269,7 +237,9 @@ class Ability {
 }
 
 class GameState {
-	// currentState
+	// room
+	// units
+	// currentPlayer
 	// actionHistory
 	// reactionQueue
 	// characters
@@ -306,19 +276,19 @@ class GameState {
 	turnDone() {
 		let effects = [];
 		let events = [];
-		for (let u of this.currentState.units) if (u.player == this.currentState.currentPlayer) {
+		for (let u of this.units) if (u.player == this.currentPlayer) {
 			effects.push(new Effect(u, "actionPoints", 3));
 			events.push(ActionEvent.endTurn(u));
 		}
 		this.addAction(new Action(false, effects, events, "END TURN"));
-		this.currentState.currentPlayer = (this.currentState.currentPlayer + 1) % 3;
+		this.currentPlayer = (this.currentPlayer + 1) % 3;
 		this.runAi();
 		showHideUiElements();
 	}
 
 	runAi() {
-		if (this.currentState.currentPlayer == 0) return;
-		this.runAiSubtask(this.currentState.units.filter(u => u.player == this.currentState.currentPlayer));
+		if (this.currentPlayer == 0) return;
+		this.runAiSubtask(this.units.filter(u => u.player == this.currentPlayer));
 	}
 
 	runAiSubtask(units) {
@@ -336,10 +306,10 @@ class GameState {
 		}
 		let unitSelection = units.filter(u => aiEquals(aiPattern, u.ai));
 		let patternIndex = 0;
-		let action = aiPattern[patternIndex].getNextMove(unitSelection, this.currentState);
+		let action = aiPattern[patternIndex].getNextMove(unitSelection, this);
 		while (action == undefined && patternIndex < aiPattern.length - 1) {
 			patternIndex++
-			action = aiPattern[patternIndex].getNextMove(unitSelection, this.currentState);
+			action = aiPattern[patternIndex].getNextMove(unitSelection, this);
 		}
 		if (action == undefined) {
 			// The first unit has no valid moves. Remove it and try again.
@@ -369,7 +339,7 @@ class GameState {
 		this.actionHistory.push(action);
 		action.apply();
 
-		for (let u of this.currentState.units) {
+		for (let u of this.units) {
 			for (let reaction of u.actionEvent(action)) {
 				reaction.cause = action;
 				this.reactionQueue.push(reaction);
@@ -383,7 +353,7 @@ class GameState {
 		// Check for room clear.
 		let numPlayer = 0;
 		let numEnemy = 0;
-		for (let u of this.currentState.units) {
+		for (let u of this.units) {
 			if (u.state == Unit.State.DEFEATED) continue;
 			if (u.player == 0) numPlayer++;
 			if (u.player == 1) numEnemy++;
@@ -394,9 +364,32 @@ class GameState {
 
 	loadRoom(coords) {
 		this.disableActions = false;
-		this.currentState = new CurrentState(this.adventure.rooms[coords[0]][coords[1]], this.characters);
+		this.currentPlayer = 0;
+		let room = this.adventure.rooms[coords[0]][coords[1]];
+		this.room = new Room(room);
+		this.units = [];
+		for (let u of this.characters) this.units.push(u);
+		for (let i = 0; i < this.characters.length; i++) {
+			this.units[i].pos[0] = room.entry[0] + i % 2;
+			this.units[i].pos[1] = room.entry[1] + parseInt(i / 2);
+			this.units[i].facing = 1;
+		}
+		for (let u of room.units) {
+			let unit = new Unit(u.type);
+			unit.player = u.player;
+			unit.pos[0] = u.pos[0];
+			unit.pos[1] = u.pos[1];
+			unit.facing = u.facing;
+			this.units.push(unit);
+		}
 		this.currentRoom = coords;
 		for (let c of this.characters) c.actionPoints = 3;
+	}
+
+	// Returns the unit in the position, or null if there is no unit in the position.
+	getUnitAt(pos) {
+		for (let u of this.units) if (u.state != Unit.State.DEFEATED && u.pos[0] == pos[0] && u.pos[1] == pos[1]) return u;
+		return null;
 	}
 
 	roomVictory() {
@@ -527,5 +520,5 @@ class ActionEvent {
 class Fortress {
 	// id
 	// rooms
-	// random: whether to include the fortress in randomized fortress pools.
+	// random: whether to include the room in randomized room pools.
 }

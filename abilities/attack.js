@@ -16,7 +16,7 @@ abilityData.ATTACK = new class extends Ability {
 
 	clickOnTile(unit, loc, quadrant) {
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		let effects = [
@@ -49,7 +49,7 @@ abilityData.ATTACK = new class extends Ability {
 	mouseOverTile(unit, loc, quadrant) {
 		clearClickContextActors();
 		if (!this.isActionLegal(unit, loc, quadrant)) return;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
 		// Attacker
@@ -76,7 +76,7 @@ abilityData.ATTACK = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
-		let target = gameState.currentState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
 		return true;
@@ -91,7 +91,7 @@ class RetreatActor {
 		this.g.style.opacity = 0.9;
 		this.g.style.pointerEvents = "none";
 
-		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.currentState.fortress.getTile(unit.pos).height);
+		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.room.getTile(unit.pos).height);
 		let center = [corners[0][0], corners[1][1]];
 
 		let circ = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -158,7 +158,7 @@ class DefeatActor {
 		this.g.style.opacity = 0.9;
 		this.g.style.pointerEvents = "none";
 
-		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.currentState.fortress.getTile(unit.pos).height);
+		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.room.getTile(unit.pos).height);
 		
 		let x = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		x.setAttribute("d", "M" + (corners[0][0] + corners[1][0]) / 2 + "," + (corners[0][1] + corners[1][1]) / 2 + "L" + (corners[2][0] + corners[3][0]) / 2 + "," + (corners[2][1] + corners[3][1]) / 2);

@@ -4,8 +4,8 @@
 			for (let u of units) {
 				let moveAbilities = u.abilities.filter(a => a.aiHints.includes(AiHints.MOVE));
 				let coords = [];
-				for (let i = 0; i < currentState.fortress.tiles.length; i++) {
-					for (let j = 0; j < currentState.fortress.tiles.length; j++) {
+				for (let i = 0; i < currentState.room.tiles.length; i++) {
+					for (let j = 0; j < currentState.room.tiles.length; j++) {
 						for (let q = 0; q < 4; q++) {
 							coords.push([i, j, q]);
 						}
