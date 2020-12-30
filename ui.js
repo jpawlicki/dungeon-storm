@@ -15,7 +15,6 @@ function clearClickContext() {
 	if (clickContext.selectedUnit != null) clickContext.selectedUnit.deselect();
 	clickContext.selectedAbility = null;
 	clickContext.selectedUnit = null;
-	clickContext.lastMouseOver = null;
 }
 
 function clickOnAbility(unit, ability) {
@@ -56,6 +55,7 @@ function clickOnTile(loc, quadrant) {
 			gameState.addAction(action);
 			showHideUiElements();
 			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
+			mouseOverTile(loc, quadrant);
 		}
 	}
 }
