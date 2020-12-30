@@ -711,13 +711,13 @@ function setupRoomClear() {
 }
 
 function setupDefeatSituation() {
-	window.setTimeout(() => showSplash("DEFEAT"), 1000);
+	window.setTimeout(() => showSplash("✗"), 1500);
 	function setup() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";
 		document.querySelector("#mapDiv").appendChild(document.createElement("adventure-complete-element"));
 	}
-	window.setTimeout(setup, 2500);
+	window.setTimeout(setup, 3500);
 }
 
 function setupVictorySituation() {

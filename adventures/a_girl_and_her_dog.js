@@ -1,7 +1,7 @@
 {
 	let adventure = {
 		description: {
-			"en": "This short adventure will teach you how to play. Choose two characters by clicking on their portraits, then click the play button to venture forth!",
+			"en": "Two journey into the garden...",
 		},
 		descriptionDefeat: {
 			"en": "Forced from the garden by fear, the girl and her dog gave up on their wish.\n\nWhen you are defeated, the adventure stops and you must choose the next one. Your characters are scarred by their experiences, and permanently lose a random ability. However, new characters join your cast, and if you cleared enough rooms, you may unlock additional character types.\n\nCharacters who have lost too many abilities to be useful can be retired. When characters retire, they teach another character in your cast, expanding that character's learnable abilities, and making room for new characters.",
@@ -13,9 +13,9 @@
 		id: "A_GIRL_AND_HER_DOG",
 		random: false,
 		rooms: [
-			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_00],
-			[roomData.BUILTIN_DEMO_10, roomData.BUILTIN_DEMO_11, roomData.BUILTIN_DEMO_00],
-			[roomData.BUILTIN_DEMO_20, roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_00]
+			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],
+			[roomData.BUILTIN_DEMO_10, roomData.BUILTIN_DEMO_11, roomData.BUILTIN_DEMO_12],
+			[roomData.BUILTIN_DEMO_20, roomData.BUILTIN_DEMO_21, roomData.BUILTIN_DEMO_22]
 		],
 		title: {
 			"en": "A Girl and Her Dog (Tutorial)",
