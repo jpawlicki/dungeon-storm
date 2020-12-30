@@ -49,7 +49,7 @@ class SpecialEffect {
 			}, i);
 		}
 		window.setTimeout(() => {
-			g.parentNode.removeChild(g);
+			if (g.parentNode != null) g.parentNode.removeChild(g);
 		}, stops[stops.length - 1] * 1000);
 	}
 

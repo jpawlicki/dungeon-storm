@@ -18,13 +18,13 @@
 		],
 		units: [
 			{
-				type: unitData.Rat,
+				type: "Rat",
 				facing: 3,
 				pos: [2, 2],
 				player: 1,
 			},
 			{
-				type: unitData.Rat,
+				type: "Rat",
 				facing: 0,
 				pos: [1, 2],
 				player: 1,

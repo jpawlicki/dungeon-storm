@@ -375,7 +375,7 @@ class GameState {
 			this.units[i].facing = 1;
 		}
 		for (let u of room.units) {
-			let unit = new Unit(u.type);
+			let unit = new Unit(unitData[u.type]);
 			unit.player = u.player;
 			unit.pos[0] = u.pos[0];
 			unit.pos[1] = u.pos[1];

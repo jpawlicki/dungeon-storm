@@ -14,8 +14,8 @@
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_00],
-			[roomData.BUILTIN_DEMO_10, roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_00],
-			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_00]
+			[roomData.BUILTIN_DEMO_10, roomData.BUILTIN_DEMO_11, roomData.BUILTIN_DEMO_00],
+			[roomData.BUILTIN_DEMO_20, roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_00]
 		],
 		title: {
 			"en": "A Girl and Her Dog (Tutorial)",

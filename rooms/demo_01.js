@@ -17,13 +17,13 @@
 		],
 		units: [
 			{
-				type: unitData.Statue,
+				type: "Statue",
 				facing: 0,
 				pos: [1, 2],
 				player: 1,
 			},
 			{
-				type: unitData.Statue,
+				type: "Statue",
 				facing: 3,
 				pos: [2, 1],
 				player: 1,

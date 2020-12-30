@@ -6,6 +6,7 @@
 		<script src="../rendering/unit.js"></script>
 		<script src="../units/rat.js"></script>
 		<script src="../units/statue.js"></script>
+		<script src="../units/vulture.js"></script>
 		<link rel="stylesheet" type="text/css" href="../rendering/room.css"/>
 		<link rel="stylesheet" type="text/css" href="../rendering/unit.css"/>
 		<style>
@@ -71,8 +72,8 @@
 				reward: {
 				  experience: 0,
 					healing: 0,
-					unlocks: 0,
-					characters: 0,
+					unlock: 0,
+					character: 0,
 				},
 				tiles: [
 				],
@@ -102,8 +103,8 @@
 				room.difficulty = parseInt(document.getElementById("difficulty").value);
 				room.reward.experience = parseInt(document.getElementById("rewardExperience").value);
 				room.reward.healing = parseInt(document.getElementById("rewardHealing").value);
-				room.reward.unlocks = parseInt(document.getElementById("rewardUnlocks").value);
-				room.reward.characters = parseInt(document.getElementById("rewardCharacters").value);
+				room.reward.unlock = parseInt(document.getElementById("rewardUnlocks").value);
+				room.reward.character = parseInt(document.getElementById("rewardCharacters").value);
 				room.entry[0] = parseInt(document.getElementById("entry_x").value);
 				room.entry[1] = parseInt(document.getElementById("entry_y").value);
 				room.random = document.getElementById("random").checked;
@@ -170,7 +171,7 @@
 					}
 				}
 				if (valid) {
-					document.getElementById("json").textContent = "{ let room = " + JSON.stringify(room, null, 2) + "; roomData[room.id] = room; }";
+					document.getElementById("json").textContent = "{ let room = " + JSON.stringify(room) + "; roomData[room.id] = room; }";
 				}
 			}
 

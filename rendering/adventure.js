@@ -16,6 +16,41 @@ class AdventureIntroElement extends HTMLElement {
 		return svg;
 	}
 
+	static makeCap(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M12,3L1,9L12,15L21,10.09V17H23V9ZM5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makePlus(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M10,3L8,5V7H5C3.85,7 3.12,8 3,9L2,19C1.88,20 2.54,21 4,21H20C21.46,21 22.12,20 22,19L21,9C20.88,8 20.06,7 19,7H16V5L14,3H10M10,5H14V7H10V5M11,10H13V13H16V15H13V18H11V15H8V13H11V10Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makeCup(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M18 2C17.1 2 16 3 16 4H8C8 3 6.9 2 6 2H2V11C2 12 3 13 4 13H6.2C6.6 15 7.9 16.7 11 17V19.08C8 19.54 8 22 8 22H16C16 22 16 19.54 13 19.08V17C16.1 16.7 17.4 15 17.8 13H20C21 13 22 12 22 11V2H18M6 11H4V4H6V11M20 11H18V4H20V11Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makeUnlock(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makeCharacter(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
 	connectedCallback() {
 		let shadow = this.attachShadow({mode: "open"});
 		this.shadow = shadow;
@@ -235,26 +270,6 @@ class AdventureNextRoomElement extends HTMLElement {
 			</div>
 		`;
 
-		function makeCap(container) {
-			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			d.setAttribute("d", "M12,3L1,9L12,15L21,10.09V17H23V9ZM5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z");
-			d.setAttribute("fill", "currentColor");
-			container.appendChild(d);
-		}
-
-		function makePlus(container) {
-			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			d.setAttribute("d", "M10,3L8,5V7H5C3.85,7 3.12,8 3,9L2,19C1.88,20 2.54,21 4,21H20C21.46,21 22.12,20 22,19L21,9C20.88,8 20.06,7 19,7H16V5L14,3H10M10,5H14V7H10V5M11,10H13V13H16V15H13V18H11V15H8V13H11V10Z");
-			d.setAttribute("fill", "currentColor");
-			container.appendChild(d);
-		}
-		function makeCup(container) {
-			let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			d.setAttribute("d", "M18 2C17.1 2 16 3 16 4H8C8 3 6.9 2 6 2H2V11C2 12 3 13 4 13H6.2C6.6 15 7.9 16.7 11 17V19.08C8 19.54 8 22 8 22H16C16 22 16 19.54 13 19.08V17C16.1 16.7 17.4 15 17.8 13H20C21 13 22 12 22 11V2H18M6 11H4V4H6V11M20 11H18V4H20V11Z");
-			d.setAttribute("fill", "currentColor");
-			container.appendChild(d);
-		}
-
 		function updateResources() {
 			for (let c of shadow.querySelectorAll("#resources > span > span")) {
 				c.innerHTML = gameState.resources[c.getAttribute("data-resource")];
@@ -270,12 +285,22 @@ class AdventureNextRoomElement extends HTMLElement {
 			if (r == "experience") {
 				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 				svg.setAttribute("viewBox", "0 0 24 24");
-				makeCap(svg);
+				AdventureIntroElement.makeCap(svg);
 				span.appendChild(svg);
 			} else if (r == "healing") {
 				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 				svg.setAttribute("viewBox", "0 0 24 24");
-				makePlus(svg);
+				AdventureIntroElement.makePlus(svg);
+				span.appendChild(svg);
+			} else if (r == "unlock") {
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				AdventureIntroElement.makeUnlock(svg);
+				span.appendChild(svg);
+			} else if (r == "character") {
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				AdventureIntroElement.makeCharacter(svg);
 				span.appendChild(svg);
 			} else {
 				span.appendChild(document.createTextNode("?"));
@@ -315,8 +340,8 @@ class AdventureNextRoomElement extends HTMLElement {
 					let miniDiv = document.createElement("div");
 					miniDiv.appendChild(icon);
 					for (let r in cost) {
-						if (r == "experience") miniDiv.appendChild(addText(-cost[r], makeCap));
-						else if (r == "healing") miniDiv.appendChild(addText(-cost[r], makePlus));
+						if (r == "experience") miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makeCap));
+						else if (r == "healing") miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makePlus));
 						else miniDiv.appendChild(document.createTextNode(cost[r] + "?"));
 					}
 					miniDiv.setAttribute("class", "learnable");
@@ -345,14 +370,14 @@ class AdventureNextRoomElement extends HTMLElement {
 				if (character.state == Unit.State.DEFEATED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					img.setAttribute("viewBox", "0 0 24 24");
-					makePlus(img);
+					AdventureIntroElement.makePlus(img);
 					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
 					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
 					makeLearnableSpot(img, {healing: 3}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.DEFEATED; portrait.update();});
 				} else if (character.state == Unit.State.BLOODIED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					img.setAttribute("viewBox", "0 0 24 24");
-					makePlus(img);
+					AdventureIntroElement.makePlus(img);
 					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
 					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
 					makeLearnableSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.BLOODIED; portrait.update();});
@@ -381,6 +406,12 @@ class AdventureNextRoomElement extends HTMLElement {
 					}
 				}
 				adventureSvg.setAttribute("viewBox", (gameState.adventure.rooms.length * -3 - 1) + " -4 " + (maxW + gameState.adventure.rooms.length * 3 + 2) + " " + (maxH + 2));
+			}
+			let roomClears = 0;
+			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
+				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
+					if (gameState.adventureProgress[i][j]) roomClears++;
+				}
 			}
 			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
 				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
@@ -418,11 +449,10 @@ class AdventureNextRoomElement extends HTMLElement {
 						let victoryRoom = false;
 						for (let vRoom of gameState.adventure.victory) if (vRoom[0] == i && vRoom[1] == j) victoryRoom = true;
 						if (victoryRoom) {
-							rewards.push("victory");
-						} else {
-							for (let x in gameState.adventure.rooms[i][j].reward) {
-								for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
-							}
+							for (let i = 0 ; i < roomClears + 1; i++) rewards.push("victory");
+						}
+						for (let x in gameState.adventure.rooms[i][j].reward) {
+							for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
 						}
 						let rewardDimension = Math.ceil(Math.sqrt(rewards.length));
 						for (let k = 0; k < rewards.length; k++) {
@@ -432,9 +462,11 @@ class AdventureNextRoomElement extends HTMLElement {
 							let step = 3 / (rewardDimension);
 							g.style.transform = "translate(" + (i * -3 + j * 3) + "px, " + (i * 3 + j * 3 - 3) + "px) translate(" + (px * -step + py * step) + "px, " + (px * step + py * step + step) + "px) scale(" + (0.15 / rewardDimension) + ") translate(-12px, -12px)";
 							g.style.pointerEvents = "none";
-							if (rewards[k] == "experience") makeCap(g);
-							else if (rewards[k] == "healing") makePlus(g);
-							else if (rewards[k] == "victory") makeCup(g);
+							if (rewards[k] == "experience") AdventureIntroElement.makeCap(g);
+							else if (rewards[k] == "healing") AdventureIntroElement.makePlus(g);
+							else if (rewards[k] == "victory") AdventureIntroElement.makeCup(g);
+							else if (rewards[k] == "unlock") AdventureIntroElement.makeUnlock(g);
+							else if (rewards[k] == "character") AdventureIntroElement.makeCharacter(g);
 							else {
 								let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 								text.appendChild(document.createTextNode("?"));
@@ -557,6 +589,17 @@ class AdventureCompleteElement extends HTMLElement {
 		for (let a of gameState.adventureProgress) for (let b of a) if (b) numClears++;
 		gameState.numUnlocksEarned += numClears;
 		if (victory) gameState.numUnlocksEarned += numClears;
+		let newCharacters = gameState.resources.character;
+		if (newCharacters == undefined) newCharacters = 0;
+
+		let resourceAwards = [];
+		for (let r in gameState.resources) {
+			for (let i = 0; i < gameState.resources[r]; i++) resourceAwards.push(r);
+			if (r != "character") gameState.numUnlocksEarned += gameState.resources[r];
+			gameState.resources[r] = 0;
+		}
+
+		let numAwards = numClears + (victory ? numClears : 0) + resourceAwards.length;
 
 		// TODO: unlock new character types.
 		// TODO: actually add new characters.
@@ -595,9 +638,8 @@ class AdventureCompleteElement extends HTMLElement {
 						p2.setAttribute("class", "lockicon");
 						svg.appendChild(p2);
 						shadow.getElementById("clears").appendChild(svg);
-					}, (victory ? 500 : 1000) / numClears * i);
+					}, 1000 / numAwards * i);
 				}
-				let time = 1000;
 				if (victory) {
 					for (let i = 0; i < numClears; i++) {
 						window.setTimeout(() => {
@@ -613,19 +655,36 @@ class AdventureCompleteElement extends HTMLElement {
 							p2.setAttribute("class", "lockicon");
 							svg.appendChild(p2);
 							shadow.getElementById("clears").appendChild(svg);
-						}, 500 + 500 / numClears * i);
+						}, 1000 / numAwards * (i + numClears));
 					}
-					for (let i in gameState.gameOverBonus) {
-						// TODO: add bonus items here, increment time.
-						// i == unlock
-						// i == character
-						// i == experience
-						// i == healing - leftover healing and experience should convert into unlocks and get cleared.
-					}
+				}
+				for (let i = 0; i < resourceAwards.length; i++) {
+					window.setTimeout(() => {
+						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+						svg.setAttribute("viewBox", "0 0 24 24");
+						if (resourceAwards[i] == "experience") {
+							AdventureIntroElement.makeCap(svg);
+						} else if (resourceAwards[i] == "healing") {
+							AdventureIntroElement.makePlus(svg);
+						} else if (resourceAwards[i] == "unlock") {
+							AdventureIntroElement.makeUnlock(svg);
+						} else if (resourceAwards[i] == "character") {
+							AdventureIntroElement.makeCharacter(svg);
+						}
+						if (resourceAwards[i] != "character" && resourceAwards[i] != "unlock") {
+							svg.setAttribute("class", "unlockable");
+							let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+							p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
+							p2.setAttribute("class", "lockicon");
+							svg.appendChild(p2);
+						}
+						shadow.getElementById("clears").appendChild(svg);
+					}, 1000 / numAwards * (i + numClears + (victory ? numClears : 0)));
 				}
 				window.setTimeout(() => {
 					for (let e of shadow.querySelectorAll("#clears > svg.unlockable")) e.setAttribute("class", "unlocked");
-				}, time + 500);
+				}, 1500);
+				let time = 2000;
 				// TODO: at time+1000, add new characters: one per character unlock and one per bonus character. (time increases by 300 for each)
 				// TODO: at time+1000, remark on newly unlocked character types, add 1s to time per character type
 				// TODO: at time+2000, add new characters.
