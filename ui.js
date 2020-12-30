@@ -55,6 +55,7 @@ function clickOnTile(loc, quadrant) {
 			clearClickContextActors();
 			gameState.addAction(action);
 			showHideUiElements();
+			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
 		}
 	}
 }
@@ -106,6 +107,7 @@ function loadRoom(coords) {
 	for (let unit of gameState.units) if (unit.player != 0) unit.registerActor(new UnitCard(unit, false, document.getElementById("unitCardsEnemy")));
 	showSidePane();
 	showHideUiElements();
+	Tutorial.hook(Tutorial.Hook.ROOM_LOAD);
 }
 
 function hideSidePane() {
@@ -120,7 +122,7 @@ function expandAbilityDetails(descAr) {
 	let desc = descAr.join("\n");
 	let expansions = {
 		"!REACTION": "Reactions are actions that are automatically triggered by certain conditions.",
-		"!DEFEAT": "Defeated units are removed from the room. Win by defeating all enemies. Lose by having all your characters defeated.",
+		"!DEFEAT": "Defeated units are removed from the room. Win by defeating all dangers. Lose by having all your characters defeated.",
 		"!MOVE": "Moving threatened units often triggers common reactions.",
 		"!THREATEN": "Units with red markers threaten units next to those markers, and have automatic reactions to actions they take.",
 		"!RETREAT": "A unit retreats by using the first possible ability to move directly away from the unit causing it to retreat. If it cannot vacate the space, it is !DEFEATed.",

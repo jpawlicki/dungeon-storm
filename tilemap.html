@@ -42,6 +42,7 @@
 		<script src="rooms/demo_22.js"></script>
 		<script src="adventures/a_girl_and_her_dog.js"></script>
 		<script src="unlock.js"></script>
+		<script src="tutorial.js"></script>
 		<link rel="stylesheet" type="text/css" href="rendering/room.css"/>
 		<link rel="stylesheet" type="text/css" href="rendering/unit.css"/>
 		<style>
@@ -97,6 +98,7 @@
 			gameState.characterPool.push(new Unit(characterData["Wisher"]));
 			gameState.characterPool.push(new Unit(characterData["Dog"]));
 			gameState.unlockedAdventures.push("A_GIRL_AND_HER_DOG");
+			let tutorial = new Tutorial();
 			loadAdventure(adventureData.A_GIRL_AND_HER_DOG);
 		</script>
 	</body>

@@ -129,6 +129,8 @@ class AdventureIntroElement extends HTMLElement {
 				loadRoom([0, 0]);
 			}
 		});
+
+		Tutorial.hook(Tutorial.Hook.ADVENTURE_START);
 	}
 
 	charClicked() {
@@ -484,6 +486,7 @@ class AdventureNextRoomElement extends HTMLElement {
 				}
 			}
 		}
+		Tutorial.hook(Tutorial.Hook.ADVENTURE_NEXTROOM);
 	}
 }
 customElements.define("adventure-nextroom-element", AdventureNextRoomElement);
@@ -694,6 +697,7 @@ class AdventureCompleteElement extends HTMLElement {
 				}, time + 1000);
 			}, 660);
 		});
+		Tutorial.hook(Tutorial.Hook.ADVENTURE_END);
 	}
 }
 customElements.define("adventure-complete-element", AdventureCompleteElement);

@@ -57,6 +57,7 @@ class MainMenu extends HTMLElement {
 		this.addCharacters();
 		this.addAdventures();
 		// TODO: Add unlock track in #unlockTrack
+		Tutorial.hook(Tutorial.Hook.MAINMENU_START);
 	}
 
 	addCharacters() {
