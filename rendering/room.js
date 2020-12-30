@@ -2,6 +2,7 @@ let tileSize = 64;
 let angle = Math.PI * .4;
 let yShortening = Math.sin(angle);
 let zShortening = Math.cos(angle);
+let assetPrefix = "";
 
 function transformSurface(origin, element) {
 	element.setAttribute("transform", "translate(" + origin[0] + "," + origin[1] + ") scale(1, " + yShortening + ") rotate(45, 0, 0)");
@@ -75,7 +76,7 @@ function setupRoomSvg(currentState) {
 	function createTile(asset, pos) {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		let tile = document.createElementNS("http://www.w3.org/2000/svg", "image");
-		tile.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "assets/" + asset);
+		tile.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", assetPrefix + "assets/" + asset);
 		tile.setAttribute("width", tileSize);
 		tile.setAttribute("height", tileSize);
 		g.appendChild(tile);

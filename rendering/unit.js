@@ -36,7 +36,6 @@ class UnitActor {
 
 		let shadow = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		// Shadow colors could indicate team alignment.
-		// Border around portrait image?
 		shadow.innerHTML = `
 			<defs>
 				<radialGradient id="unitShadow">
@@ -193,7 +192,7 @@ class PortraitActor {
 	constructor(unit, container) {
 		this.unit = unit;
 		let portraitimg = document.createElementNS("http://www.w3.org/2000/svg", "image");
-		portraitimg.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "assets/portraits/" + unit.portrait);
+		portraitimg.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", assetPrefix + "assets/portraits/" + unit.portrait);
 		portraitimg.setAttribute("clip-path", "circle()");
 		portraitimg.setAttribute("width", 34);
 		portraitimg.setAttribute("height", 34);
