@@ -20,7 +20,7 @@
 			{
 				type: "Rat",
 				facing: 3,
-				pos: [2, 2],
+				pos: [2, 3],
 				player: 1,
 			},
 			{

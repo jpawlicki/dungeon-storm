@@ -1,8 +1,8 @@
-abilityData.ATTACK = new class extends Ability {
+abilityData.BITE = new class extends Ability {
 	constructor() {
 		super();
-		this.name = "Attack";
-		this.icon = "M6.92,5H5L14,14L15,13.06M19.96,19.12L19.12,19.96C18.73,20.35 18.1,20.35 17.71,19.96L14.59,16.84L11.91,19.5L10.5,18.09L11.92,16.67L3,7.75V3H7.75L16.67,11.92L18.09,10.5L19.5,11.91L16.83,14.58L19.95,17.7C20.35,18.1 20.35,18.73 19.96,19.12Z";
+		this.name = "Bite";
+		this.icon = "M7,2C4,2 2,5 2,8C2,10.11 3,13 4,14C5,15 6,22 8,22C12.54,22 10,15 12,15C14,15 11.46,22 16,22C18,22 19,15 20,14C21,13 22,10.11 22,8C22,5 20,2 17,2C14,2 14,3 12,3C10,3 10,2 7,2Z"
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and select an adjacent enemy:",
@@ -11,7 +11,7 @@ abilityData.ATTACK = new class extends Ability {
 			"Anyone who !RETREATs becomes !BLOODY.",
 			"This action cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 1};
+		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

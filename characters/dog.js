@@ -1,6 +1,6 @@
 {
 	let c = {
-		abilities: [abilityData.MOVE, abilityData.ATTACK, abilityData.CONTROL],
+		abilities: [abilityData.MOVE, abilityData.BITE, abilityData.CONTROL],
 		id: "Dog",
 		learnableAbilities: [abilityData.ENERGIZE, abilityData.BLOODY, abilityData.BLOODLUST],
 		portrait: "dog.png",

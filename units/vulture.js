@@ -1,7 +1,7 @@
 {
 	let unit = {
 		ai: [aiData.MOVE_CLIMB, aiData.ATTACK_NEAREST],
-		abilities: [abilityData.FLY, abilityData.ATTACK],
+		abilities: [abilityData.FLY, abilityData.BITE],
 		id: "Vulture",
 		portrait: "vulture.png",
 		strengths: [4, 2, 1, 2],
