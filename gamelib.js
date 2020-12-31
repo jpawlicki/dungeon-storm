@@ -75,7 +75,7 @@ class Room {
 }
 
 class Unit {
-	// abilities
+	// abilities[]
 	// actionPoints
 	// actors
 	// facing: 0-3
@@ -88,7 +88,7 @@ class Unit {
 	// threats[4]: bool
 	// strengthsBloodied[4]: 0-5
 	// threatsBloodied[4]: bool
-	// learnableAbilities
+	// learnableAbilities[]
 
 	static State = {
 		NORMAL: 1,
@@ -103,8 +103,18 @@ class Unit {
 		this.player = 0;
 		this.pos = [0, 0];
 		this.state = Unit.State.NORMAL;
+
 		// Remainder of attributes come from the class.
 		Object.assign(this, characterOrUnitClass);
+
+		// Copies must be made of non-primitive data that is mutable.
+		// TODO: wiser to just list the properties and ditch the Object.assign.
+		if (this.abilities != undefined) this.abilities = this.abilities.slice();
+		if (this.threats != undefined) this.threats = this.threats.slice();
+		if (this.threatsBloodied != undefined) this.threatsBloodied = this.threatsBloodied.slice();
+		if (this.strengths != undefined) this.strengths = this.strengths.slice();
+		if (this.strengthsBloodied != undefined) this.strengthsBloodied = this.strengthsBloodied.slice();
+		if (this.learnableAbilities != undefined) this.learnableAbilities = this.learnableAbilities.slice();
 	}
 
 	registerActor(actor) {
