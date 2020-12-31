@@ -1,8 +1,12 @@
 class MainMenu extends HTMLElement {
 	// victorious: true if the most recent adventure was completed victoriously, else false.
 	// message: previous adventure message.
+	// retirements[]: A list of retirements the player chooses to make.
+	// shadow
 
 	connectedCallback() {
+		this.retirements = [];
+
 		let shadow = this.attachShadow({mode: "open"});
 		this.shadow = shadow;
 		shadow.innerHTML = `
@@ -38,7 +42,7 @@ class MainMenu extends HTMLElement {
 					margin-bottom: 2em;
 					background-color: #000;
 					border-radius: 4em;
-					padding: 0.2em;
+					padding: 0.2em 0.2em 0.2em 0.65em;
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
@@ -68,9 +72,27 @@ class MainMenu extends HTMLElement {
 	}
 
 	addCharacters() {
-		// TODO: retire UI
+		let retireOptions = [];
+		let othis = this;
+		function retireCallback(who, prev, current) {
+			for (let o of retireOptions) if (o.unit == who) o.allowed = current == null;
+			if (prev != null) othis.retirements = othis.retirements.filter(a => a.unit != who);
+			if (current != null) othis.retirements.push({"unit": who, "to": current});
+			for (let x of othis.shadow.querySelectorAll("menu-character")) {
+				let bonusAbilities = [];
+				let retireable = true;
+				for (let r of othis.retirements) {
+					if (r.to == x.character) {
+						for (let a of r.unit.abilities) bonusAbilities.push(a);
+						retireable = false;
+					}
+				}
+				x.update(retireable, bonusAbilities);
+			}
+		}
+		for (let c of gameState.characterPool) retireOptions.push({"unit": c, "allowed": true});
 		for (let c of gameState.characterPool) {
-			let mc = renderMenuCharacter(c, false, true, this.shadow.getElementById("desc"));
+			let mc = renderMenuCharacter(c, false, true, this.shadow.getElementById("desc"), retireOptions, retireCallback);
 			this.shadow.getElementById("cast").appendChild(mc);
 		}
 	}
@@ -95,7 +117,8 @@ class MainMenu extends HTMLElement {
 			p.setAttribute("d", "M8,0L-4,6.9282L-4,-6.9282Z");
 			svg.appendChild(p);
 			d.appendChild(svg);
-			svg.addEventListener("click", () => loadAdventure(adventureData[adventure]));
+			let othis = this;
+			svg.addEventListener("click", () => { othis.applyRetirements(); loadAdventure(adventureData[adventure]) });
 
 			this.shadow.getElementById("adventures").appendChild(d);
 		}
@@ -146,6 +169,16 @@ class MainMenu extends HTMLElement {
 			}
 		}
 		this.shadow.getElementById("unlockTrack").appendChild(svg);
+	}
+
+	applyRetirements() {
+		for (let r of this.retirements) {
+			for (let ability of r.unit.abilities) {
+				if (r.to.abilities.includes(ability) || r.to.learnableAbilities.includes(ability)) continue;
+				r.to.learnableAbilities.push(ability);
+			}
+			gameState.characterPool = gameState.characterPool.filter(x => x != r.unit);
+		}
 	}
 }
 customElements.define("main-menu", MainMenu);

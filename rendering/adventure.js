@@ -100,7 +100,7 @@ class AdventureIntroElement extends HTMLElement {
 			<div id="characterSelect">
 				<svg id="begin" viewBox="-12 -12 24 24">
 					<circle fill="#333" r="12"></circle>
-					<text id="remaining" text-anchor="middle" alignment-baseline="central" fill="#fff">${gameState.adventure.characters}</text>
+					<text id="remaining" text-anchor="middle" alignment-baseline="central" fill="#fff">${Math.min(gameState.characterPool.length, gameState.adventure.characters)}</text>
 					<path id="play" fill="#eee" d="M8,0L-4,6.9282L-4,-6.9282Z" opacity="0"></path>
 				</svg>
 			</div>
@@ -124,7 +124,7 @@ class AdventureIntroElement extends HTMLElement {
 				}
 				i++;
 			}
-			if (chars.length == gameState.adventure.characters) {
+			if (chars.length == Math.min(gameState.characterPool.length, gameState.adventure.characters)) {
 				for (let c of chars) gameState.characters.push(c);
 				loadRoom([0, 0]);
 			}
@@ -134,7 +134,7 @@ class AdventureIntroElement extends HTMLElement {
 	}
 
 	charClicked() {
-		let count = gameState.adventure.characters;
+		let count = Math.min(gameState.characterPool.length, gameState.adventure.characters);
 		for (let x of this.shadow.querySelectorAll("menu-character")) if (x.selected()) count--;
 		this.shadow.querySelector("#remaining").style.opacity = count == 0 ? 0 : 1;
 		this.shadow.querySelector("#remaining").innerHTML = count;
