@@ -14,6 +14,7 @@
 					let closeUnits = [];
 					for (let uu of currentState.units) {
 						if (uu.player == u.player) continue;
+						if (uu.state == Unit.State.DEFEATED) continue;
 						closeUnits.push(uu);
 					}
 					closeUnits.sort((a, b) => {

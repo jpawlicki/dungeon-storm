@@ -6,6 +6,7 @@ abilityData.CHARGE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and select the first unit directly ahead. !MOVE to the space of that unit. That unit becomes !BLOODY and !RETREATs.",
+			"A rise of height 2 or more height in a single step along the path prevents the action.",
 			"Cannot select a friendly unit.",
 			"Cannot select an adjacent unit.",
 			"Cannot select a unit with greater strength."];
@@ -59,11 +60,16 @@ abilityData.CHARGE = new class extends Ability {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) <= 1) return false;
 		if (Tile.directionTo(unit.pos, loc) != unit.facing) return false;
+		let prevHeight = gameState.room.getTile(unit.pos).height;
 		let checkPoint = Tile.offset(unit.pos, unit.facing);
 		while (checkPoint[0] != loc[0] || checkPoint[1] != loc[1]) {
+			let checkHeight = gameState.room.getTile(checkPoint).height;
+			if (checkHeight >= prevHeight + 2) return false;
 			if (gameState.getUnitAt(checkPoint) != null) return false;
 			checkPoint = Tile.offset(checkPoint, unit.facing);
+			prevHeight = checkHeight;
 		}
+		if (gameState.room.getTile(loc).height >= prevHeight + 2) return false;
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;

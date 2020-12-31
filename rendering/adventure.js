@@ -570,6 +570,35 @@ class AdventureCompleteElement extends HTMLElement {
 					fill: #fff;
 					transition: fill 0.4s;
 				}
+				#newStuff div, #newStuff menu-character {
+					margin-bottom: 1em;
+				}
+				.abilityLoss {
+					border-radius: 3em;
+					height: 5em;
+					background-color: #000;
+				}
+				.abilityLoss img {
+					border-radius: 3em;
+					height: 5em;
+					width: 5em;
+				}
+				.abilityLoss svg {
+					height: 5em;
+					width: 5em;
+				}
+				.abilityLossX {
+					animation: 1s 1s forwards fadeIn;
+					fill: rgba(255, 0, 0, 0);
+				}
+				@keyframes fadeIn {
+					0% {
+						fill: rgba(255, 0, 0, 0);
+					}
+					100% {
+						fill: rgba(255, 0, 0, 1);
+					}
+				}
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
 			<div id="text">${(gameState.getAdventureVictorious() ? gameState.adventure.descriptionVictory[lang] : gameState.adventure.descriptionDefeat[lang]).replaceAll("\n", "<br/>")}</div>
@@ -579,6 +608,7 @@ class AdventureCompleteElement extends HTMLElement {
 				</svg>
 				<div id="clears"></div>
 			</div>
+			<div id="newStuff"></div>
 			<svg id="continue" viewBox="-12 -12 24 24">
 				<circle fill="#333" r="12"></circle>
 				<path id="play" fill="#eee" d="M8,0L-4,6.9282L-4,-6.9282Z"></path>
@@ -589,6 +619,7 @@ class AdventureCompleteElement extends HTMLElement {
 
 		let numClears = 0;
 		let victory = gameState.getAdventureVictorious();
+		let prevUnlockPoint = gameState.numUnlocksEarned;
 		for (let a of gameState.adventureProgress) for (let b of a) if (b) numClears++;
 		gameState.numUnlocksEarned += numClears;
 		if (victory) gameState.numUnlocksEarned += numClears;
@@ -604,9 +635,43 @@ class AdventureCompleteElement extends HTMLElement {
 
 		let numAwards = numClears + (victory ? numClears : 0) + resourceAwards.length;
 
-		// TODO: unlock new character types.
-		// TODO: actually add new characters.
-		let numNewChars = 0;
+		let addedCharacters = [];
+		let addedAdventures = [];
+		for (let u of Unlock.unlockData) {
+			if (u.at > prevUnlockPoint && u.at <= gameState.numUnlocksEarned) {
+				if (u.type == Unlock.CHARACTER) {
+					gameState.unlockedCharacters.push(u.value);
+					let c = new Unit(characterData[u.value]);
+					gameState.characterPool.push(c);
+					addedCharacters.push(c);
+				} else if (u.type == Unlock.ADVENTURE) {
+					gameState.unlockedAdventures.push(u.value);
+					addedAdventures.push(u.value);
+				}
+			}
+		}
+		for (let i = 0; i < newCharacters; i++) {
+			let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]]);
+			gameState.characterPool.push(c);
+			addedCharacters.push(c);
+		}
+		let abilityLosses = [];
+		if (!victory) {
+			for (let c of gameState.characters) {
+				if (c.abilities.length > 0) {
+					let mayLoseIndex = parseInt(Math.random() * c.abilities.length);
+					// Never remove the last ATTACK or MOVE ability.
+					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.ATTACK)) {
+						if (c.abilities.filter(a => a.aiHints.includes(AiHints.ATTACK)).length == 1) continue;
+					}
+					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.MOVE)) {
+						if (c.abilities.filter(a => a.aiHints.includes(AiHints.MOVE)).length == 1) continue;
+					}
+					let lost = c.abilities.splice(mayLoseIndex, 1)[0];
+					abilityLosses.push({"c": c, "a": lost});
+				}
+			}
+		}
 		// TODO: save game.
 
 		let boxOpened = false;
@@ -688,13 +753,48 @@ class AdventureCompleteElement extends HTMLElement {
 					for (let e of shadow.querySelectorAll("#clears > svg.unlockable")) e.setAttribute("class", "unlocked");
 				}, 1500);
 				let time = 2000;
-				// TODO: at time+1000, add new characters: one per character unlock and one per bonus character. (time increases by 300 for each)
-				// TODO: at time+1000, remark on newly unlocked character types, add 1s to time per character type
-				// TODO: at time+2000, add new characters.
-				// TODO: at time+1000
+
+				for (let a of abilityLosses) {
+					window.setTimeout(() => {
+						let div = document.createElement("div");
+						div.setAttribute("class", "abilityLoss");
+						let img = document.createElement("img");
+						img.setAttribute("src", "assets/portraits/" + a.c.portrait);
+						div.appendChild(img);
+						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+						svg.setAttribute("viewBox", "0 0 24 24");
+						let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						path.setAttribute("d", a.a.icon);
+						path.setAttribute("fill", "#fff");
+						svg.appendChild(path);
+						let path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+						path2.setAttribute("d", "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z");
+						path2.setAttribute("class", "abilityLossX");
+						svg.appendChild(path2);
+						div.appendChild(svg);
+						shadow.querySelector("#newStuff").appendChild(div);
+					}, time);
+					time += 300;
+				}
+
+				for (let c of addedCharacters) {
+					window.setTimeout(() => {
+						shadow.querySelector("#newStuff").appendChild(renderMenuCharacter(c, false, false, undefined));
+					}, time);
+					time += 300;
+				}
+				for (let a of addedAdventures) {
+					window.setTimeout(() => {
+						let div = document.createElement("div");
+						div.setAttribute("class", "newAdventure");
+						div.appendChild(document.createTextNode(adventureData[a].title[lang]));
+						shadow.querySelector("#newStuff").appendChild(div);
+					}, time);
+					time += 300;
+				}
 				window.setTimeout(() => {
 					shadow.getElementById("continue").style.visibility = "visible";
-				}, time + 1000);
+				}, time);
 			}, 660);
 		});
 		Tutorial.hook(Tutorial.Hook.ADVENTURE_END);

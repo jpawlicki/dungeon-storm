@@ -143,6 +143,7 @@ class Unit {
 	threatens(unit, pos) {
 		if (unit.player == this.player) return false;
 		if (this.state == Unit.State.DEFEATED) return false;
+		let threatGroup = this.state == Unit.State.BLOODIED ? this.threatsBloodied : this.threats;
 		let offset = [pos[0] - this.pos[0], pos[1] - this.pos[1]];
 		let facing =
 			offset[0] == -1 && offset[1] == 0 ? 0 :
@@ -151,7 +152,7 @@ class Unit {
 			offset[0] == 0 && offset[1] == -1 ? 3 :
 			-1;
 		if (facing == -1) return false;
-		return this.threats[(4 + facing - this.facing) % 4];
+		return threatGroup[(4 + facing - this.facing) % 4];
 	}
 
 	getStrength(direction) {
@@ -249,14 +250,16 @@ class GameState {
 	// currentRoom
 	// disableActions
 	// numUnlocksEarned
-	// resource: {experience: int, healing: int}
-	// gameOverBonus: {experience: int, healing: int, unlocks: int, characters: int}
+	// resource: {experience: int, healing: int, unlock: int, character: int}
 	// unlockedAdventures[]
+	// unlockedCharacters[]
 
-	constructor(adventure) {
+	constructor() {
 		this.characterPool = [];
 		this.resources = {};
 		this.unlockedAdventures = [];
+		this.unlockedCharacters = [];
+		this.numUnlocksEarned = 0;
 	}
 
 	loadAdventure(adventure) {
@@ -395,15 +398,15 @@ class GameState {
 	roomVictory() {
 		this.disableActions = true;
 		this.adventureProgress[this.currentRoom[0]][this.currentRoom[1]] = true;
+		let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
+		for (let reward in room.reward) {
+			if (this.resources.hasOwnProperty(reward)) this.resources[reward] += room.reward[reward];
+			else this.resources[reward] = room.reward[reward];
+		}
+		for (let c of this.characters) c.actionPoints = 0;
 		if (this.getAdventureVictorious()) {
 			this.adventureOver(true);
 		} else {
-			let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
-			for (let reward in room.reward) {
-				if (this.resources.hasOwnProperty(reward)) this.resources[reward] += room.reward[reward];
-				else this.resources[reward] = room.reward[reward];
-			}
-			for (let c of this.characters) c.actionPoints = 0;
 			setupVictorySituation();
 		}
 	}
@@ -425,7 +428,6 @@ class GameState {
 		if (victorious) {
 			setupAdventureVictorySituation();
 		} else {
-			// TODO: remove a random known ability from the character.
 			setupDefeatSituation();
 		}
 	}

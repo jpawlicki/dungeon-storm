@@ -48,14 +48,14 @@ abilityData.MOVE = new class extends Ability {
 class AbilityMoveActor {
 	// g
 
-	constructor(unit, loc, facing) {
+	constructor(unit, loc, facing, deductActionPoint=true) {
 		this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		this.g.style.opacity = 0.7;
 		this.g.style.pointerEvents = "none";
 		let u = Object.assign(new Unit(), unit);
 		u.facing = facing;
 		u.pos = loc;
-		u.actionPoints -= 1;
+		if (deductActionPoint) u.actionPoints -= 1;
 		new UnitActor(u, this.g, gameState.room);
 		document.getElementById("clickContextGroup").appendChild(this.g);
 	}
