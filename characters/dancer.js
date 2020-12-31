@@ -3,7 +3,7 @@
 		abilities: [abilityData.MOVE, abilityData.SWORD, abilityData.CONTROL],
 		id: "Dancer",
 		learnableAbilities: [abilityData.ENERGIZE, abilityData.SWAP],
-		portrait: "port3.png",
+		portraits: 7,
 		strengths: [3, 2, 2, 2],
 		strengthsBloodied: [2, 1, 1, 1],
 		threats: [true, true, true, true],

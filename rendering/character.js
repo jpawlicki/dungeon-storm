@@ -201,6 +201,7 @@ class MenuCharacter extends HTMLElement {
 		let addedAbilities = [];
 		for (let bonus of bonusAbilities) {
 			if (this.character.abilities.includes(bonus) || this.character.learnableAbilities.includes(bonus) || addedAbilities.includes(bonus)) continue;
+			addedAbilities.push(bonus);
 			let svg = AdventureIntroElement.makeAbilitySvg(bonus, false, this.descContainer);
 			svg.setAttribute("class", "abilityBonus");
 			this.shadow.getElementById("abilities").appendChild(svg);

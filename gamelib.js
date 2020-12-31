@@ -115,6 +115,10 @@ class Unit {
 		if (this.strengths != undefined) this.strengths = this.strengths.slice();
 		if (this.strengthsBloodied != undefined) this.strengthsBloodied = this.strengthsBloodied.slice();
 		if (this.learnableAbilities != undefined) this.learnableAbilities = this.learnableAbilities.slice();
+
+		if (this.portrait == undefined && this.id != undefined && this.portraits != undefined) {
+			this.portrait = this.id.toLowerCase() + "/" + Math.floor(Math.random() * this.portraits) + ".png";
+		}
 	}
 
 	registerActor(actor) {
