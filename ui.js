@@ -74,15 +74,22 @@ function mouseOutTile() {
 }
 
 function clickOnUndo() {
+	if (gameState.disableActions) return;
+	if (gameState.currentPlayer != 0) return;
 	gameState.undoAction();
 	showHideUiElements();
 }
 
 function clickOnDone() {
 	if (gameState.disableActions) return;
+	if (gameState.currentPlayer != 0) return;
 	clearClickContext();
 	gameState.turnDone();
 	showHideUiElements();
+}
+
+function notifyTurn() {
+	if (gameState.currentPlayer == 0) selectNext();
 }
 
 function showHideUiElements() {

@@ -299,6 +299,7 @@ class GameState {
 		}
 		this.addAction(new Action(false, effects, events, "END TURN"));
 		this.currentPlayer = (this.currentPlayer + 1) % 3;
+		notifyTurn();
 		this.runAi();
 		showHideUiElements();
 	}
