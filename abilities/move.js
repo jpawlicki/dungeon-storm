@@ -37,7 +37,7 @@ abilityData.MOVE = new class extends Ability {
 
 	isMoveLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
-		if (Tile.distanceBetween(unit.pos, loc) <= 1) return false;
+		if (Tile.distanceBetween(unit.pos, loc) > 1) return false;
 		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(loc).height - 1) return false;
 		let dstUnit = gameState.getUnitAt(loc);
 		if (dstUnit != null && dstUnit != unit) return false;
