@@ -17,7 +17,7 @@ class Tutorial {
 		EXPLAIN_MOVE: 10,
 		EXPLAIN_THREATEN: 11,
 		EXPLAIN_RETREAT: 12,
-		EXPLAIN_BLOODY: 13,
+		EXPLAIN_FRIGHTENED: 13,
 		EXPLAIN_DANGER: 14,
 		EXPLAIN_CHARACTER: 15,
 	}
@@ -131,8 +131,8 @@ class Tutorial {
 			this.addMessage("When a unit !RETREATs, it must use an ability to move directly away from the unit causing it to retreat. If it can't, then it is !DEFEATed instead.");
 		}
 
-		if (event == Tutorial.Hook.EXPLAIN_BLOODY) {
-			this.addMessage("When a unit becomes !BLOODY, it typically loses strength on each side, and becomes less !THREATENing. However, some !DANGERs become more dangerous when !BLOODY, and some abilities treat !BLOODY units differently.");
+		if (event == Tutorial.Hook.EXPLAIN_FRIGHTENED) {
+			this.addMessage("When a unit becomes !FRIGHTENED, it typically loses strength on each side, and becomes less !THREATENing. However, some !DANGERs become more dangerous when !FRIGHTENED, and some abilities treat !FRIGHTENED units differently.");
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_DANGER) {

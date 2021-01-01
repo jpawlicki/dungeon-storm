@@ -8,7 +8,7 @@ abilityData.SWORD = new class extends Ability {
 			"Spend ♦ and select an adjacent !ENEMY. Compare strengths and roll ⚅:",
 			"  The chance that the !ENEMY !RETREATs is equal to their strength divided by the sum of their strength and this !FRIEND's strength.",
 			"  If the !ENEMY does not !RETREAT, !RETREAT.",
-			"Anyone who !RETREATs becomes !BLOODY.",
+			"Anyone who !RETREATs becomes !FRIGHTENED.",
 			"This action cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 3};

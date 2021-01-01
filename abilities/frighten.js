@@ -1,10 +1,10 @@
-abilityData.BLOODY = new class extends Ability {
+abilityData.FRIGHTEN = new class extends Ability {
 	constructor() {
 		super();
-		this.name = "Bloody";
+		this.name = "Frighten";
 		this.icon = "M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z";
 		this.minActionPoints = 1;
-		this.details = ["Spend ♦ and !BLOODY an adjacent unbloodied !FRIEND or !ENEMY."];
+		this.details = ["Spend ♦ and !FRIGHTENED an adjacent unfrightened !FRIEND or !ENEMY."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 4};
 	}
@@ -50,11 +50,11 @@ class BloodyOverlayActor {
 		this.g.style.opacity = 0.9;
 		this.g.style.pointerEvents = "none";
 
-		let bloodied = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		bloodied.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
-		bloodied.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-		bloodied.setAttribute("fill", "#8a0303");
-		this.g.appendChild(bloodied);
+		let frightened = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		frightened.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
+		frightened.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
+		frightened.setAttribute("fill", "#8a0303");
+		this.g.appendChild(frightened);
 
 		let center = getTileCenter(unit.pos);
 		this.g.style.transform = "translate(" + center[0] + "px, " + center[1] + "px)";

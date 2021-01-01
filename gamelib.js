@@ -86,8 +86,8 @@ class Unit {
 	// state
 	// strengths[4]: 0-5
 	// threats[4]: bool
-	// strengthsBloodied[4]: 0-5
-	// threatsBloodied[4]: bool
+	// strengthsFrightened[4]: 0-5
+	// threatsFrightened[4]: bool
 	// learnableAbilities[]
 
 	static State = {
@@ -111,9 +111,9 @@ class Unit {
 		// TODO: wiser to just list the properties and ditch the Object.assign.
 		if (this.abilities != undefined) this.abilities = this.abilities.slice();
 		if (this.threats != undefined) this.threats = this.threats.slice();
-		if (this.threatsBloodied != undefined) this.threatsBloodied = this.threatsBloodied.slice();
+		if (this.threatsFrightened != undefined) this.threatsFrightened = this.threatsFrightened.slice();
 		if (this.strengths != undefined) this.strengths = this.strengths.slice();
-		if (this.strengthsBloodied != undefined) this.strengthsBloodied = this.strengthsBloodied.slice();
+		if (this.strengthsFrightened != undefined) this.strengthsFrightened = this.strengthsFrightened.slice();
 		if (this.learnableAbilities != undefined) this.learnableAbilities = this.learnableAbilities.slice();
 
 		if (this.portrait == undefined && this.id != undefined && this.portraits != undefined) {
@@ -157,7 +157,7 @@ class Unit {
 	threatens(unit, pos) {
 		if (unit.player == this.player) return false;
 		if (this.state == Unit.State.DEFEATED) return false;
-		let threatGroup = this.state == Unit.State.BLOODIED ? this.threatsBloodied : this.threats;
+		let threatGroup = this.state == Unit.State.BLOODIED ? this.threatsFrightened : this.threats;
 		let offset = [pos[0] - this.pos[0], pos[1] - this.pos[1]];
 		let facing =
 			offset[0] == -1 && offset[1] == 0 ? 0 :
@@ -171,12 +171,12 @@ class Unit {
 
 	getStrength(direction) {
 		let dir = (4 + direction - this.facing) % 4;
-		return this.state == Unit.State.NORMAL ? this.strengths[dir] : this.strengthsBloodied[dir];
+		return this.state == Unit.State.NORMAL ? this.strengths[dir] : this.strengthsFrightened[dir];
 	}
 
 	getThreat(direction) {
 		let dir = (4 + direction - this.facing) % 4;
-		return this.state == Unit.State.NORMAL ? this.threats[dir] : this.threatsBloodied[dir];
+		return this.state == Unit.State.NORMAL ? this.threats[dir] : this.threatsFrightened[dir];
 	}
 
 	canAct() {

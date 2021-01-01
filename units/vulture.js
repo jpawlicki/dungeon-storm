@@ -5,9 +5,9 @@
 		id: "Vulture",
 		portrait: "vulture.png",
 		strengths: [4, 2, 1, 2],
-		strengthsBloodied: [2, 1, 1, 1],
+		strengthsFrightened: [2, 1, 1, 1],
 		threats: [false, false, false, false],
-		threatsBloodied: [false, false, false, false],
+		threatsFrightened: [false, false, false, false],
 	};
 	unitData[unit.id] = unit;
 }

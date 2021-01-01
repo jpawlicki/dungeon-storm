@@ -8,7 +8,7 @@ abilityData.BITE = new class extends Ability {
 			"Spend ♦ and select an adjacent !ENEMY:",
 			"  Roll ⚅. If greater than their strength, they !RETREAT.",
 			"  Roll ⚅. If greater than your strength, !RETREAT.",
-			"Anyone who !RETREATs becomes !BLOODY.",
+			"Anyone who !RETREATs becomes !FRIGHTENED.",
 			"This action cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 3};

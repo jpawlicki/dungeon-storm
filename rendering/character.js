@@ -96,7 +96,7 @@ class MenuCharacter extends HTMLElement {
 			this.shadow.querySelector("label").style.cursor = "default";
 		}
 
-		function makeSvg(strengths, threats, bloodied) {
+		function makeSvg(strengths, threats, frightened) {
 			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			svg.setAttribute("viewBox", "-12 -12 24 24");
 
@@ -113,7 +113,7 @@ class MenuCharacter extends HTMLElement {
 					c.setAttribute("r", 1);
 					g.appendChild(c);
 				}
-				if (bloodied) {
+				if (frightened) {
 					let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
 					d.setAttribute("d", "M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
 					d.setAttribute("fill", "#8a0303");
@@ -129,7 +129,7 @@ class MenuCharacter extends HTMLElement {
 
 		let abd = shadow.getElementById("abilities");
 		abd.appendChild(makeSvg(this.character.strengths, this.character.threats, false));
-		abd.appendChild(makeSvg(this.character.strengthsBloodied, this.character.threatsBloodied, true));
+		abd.appendChild(makeSvg(this.character.strengthsFrightened, this.character.threatsFrightened, true));
 
 		for (let x of this.character.abilities) abd.appendChild(AdventureIntroElement.makeAbilitySvg(x, true, this.descContainer));
 		for (let x of this.character.learnableAbilities) abd.appendChild(AdventureIntroElement.makeAbilitySvg(x, false, this.descContainer));

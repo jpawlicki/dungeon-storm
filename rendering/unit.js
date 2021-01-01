@@ -185,7 +185,7 @@ class SelectionActor {
 // A PortraitActor has a circular portrait and some overlays indicating state.
 class PortraitActor {
 	// unit
-	// bloodied
+	// frightened
 	// defeated
 	// moveActor
 
@@ -199,11 +199,11 @@ class PortraitActor {
 		portraitimg.setAttribute("x", -17);
 		portraitimg.setAttribute("y", -17);
 
-		this.bloodied = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		this.bloodied.style.opacity = 0;
-		this.bloodied.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
-		this.bloodied.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-		this.bloodied.setAttribute("fill", "#8a0303");
+		this.frightened = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		this.frightened.style.opacity = 0;
+		this.frightened.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
+		this.frightened.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
+		this.frightened.setAttribute("fill", "#8a0303");
 
 		this.defeated = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		this.defeated.style.opacity = 0;
@@ -215,7 +215,7 @@ class PortraitActor {
 		this.defeated.setAttribute("clip-path", "circle()");
 
 		container.appendChild(portraitimg);
-		container.appendChild(this.bloodied);
+		container.appendChild(this.frightened);
 		container.appendChild(this.defeated);
 		this.moveActor = new MovePipsActor(this.unit, container);
 
@@ -223,7 +223,7 @@ class PortraitActor {
 	}
 
 	update() {
-		this.bloodied.style.opacity = this.unit.state == Unit.State.BLOODIED ? 1 : 0;
+		this.frightened.style.opacity = this.unit.state == Unit.State.BLOODIED ? 1 : 0;
 		this.defeated.style.opacity = this.unit.state == Unit.State.DEFEATED ? 1 : 0;
 		this.moveActor.update();
 	}

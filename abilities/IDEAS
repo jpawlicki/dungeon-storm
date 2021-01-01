@@ -2,6 +2,6 @@
 - attack an enemy at range 2 but at dice-2
 - attack an adjacent enemy at -1 but roll vs self at -1 as well
 - attack an enemy on a lower elevation at +1
-- attack a bloodied enemy at +2
-- defeat a bloodied enemy
+- attack a frightened enemy at +2
+- defeat a frightened enemy
 - attack an enemy unit that is not threating at +2
