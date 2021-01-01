@@ -4,7 +4,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 		this.name = "Frighten";
 		this.icon = "M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z";
 		this.minActionPoints = 1;
-		this.details = ["Spend ♦ and !FRIGHTENED an adjacent unfrightened !FRIEND or !ENEMY."];
+		this.details = ["Spend ♦ and !FRIGHTEN an adjacent unfrightened !FRIEND or !ENEMY."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 4};
 	}
@@ -29,7 +29,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 		if (target == null) return;
 
 		// Attacker
-		clickContext.actors.push(new BloodyOverlayActor(target));
+		clickContext.actors.push(new FrightenedOverlayActor(target));
 	}
 
 	isActionLegal(unit, loc, quadrant) {
@@ -42,7 +42,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 	}
 }();
 
-class BloodyOverlayActor {
+class FrightenedOverlayActor {
 	// g
 
 	constructor(unit) {
@@ -52,8 +52,10 @@ class BloodyOverlayActor {
 
 		let frightened = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		frightened.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
-		frightened.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-		frightened.setAttribute("fill", "#8a0303");
+		frightened.setAttribute("d", "M-14,-8.66C-14,-11.33 -10,-15.83 -10,-15.83C-10,-15.83 -6,-11.66 -6,-8.66A4,4 0 0,1 -14,-8.66Z");
+		frightened.setAttribute("fill", "#cdf");
+		frightened.setAttribute("stroke", "#000");
+		frightened.setAttribute("stroke-width", "1");
 		this.g.appendChild(frightened);
 
 		let center = getTileCenter(unit.pos);

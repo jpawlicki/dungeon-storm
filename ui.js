@@ -128,6 +128,7 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 		"!THREATEN": Tutorial.Hook.EXPLAIN_THREATEN,
 		"!RETREAT": Tutorial.Hook.EXPLAIN_RETREAT,
 		"!FRIGHTENED": Tutorial.Hook.EXPLAIN_FRIGHTENED,
+		"!FRIGHTEN": Tutorial.Hook.EXPLAIN_FRIGHTENED,
 		"!DANGER": Tutorial.Hook.EXPLAIN_DANGER,
 		"!CHARACTER": Tutorial.Hook.EXPLAIN_CHARACTER,
 	};

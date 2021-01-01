@@ -124,20 +124,38 @@ class MovePipsActor {
 	// unitActor
 	// diamonds[]
 
+	static POSITIONS = [
+		[0, 2],
+		[0, 1],
+		[1, 2],
+		[0, 0],
+		[2, 2],
+		[1, 1],
+		[1, 0],
+		[2, 1],
+		[2, 0],
+		[-1, 1],
+		[1, 3],
+		[1, -1],
+		[3, 1],
+		[2, -1],
+		[3, 0],
+		[2, -2],
+		[4, 0],
+	];
+
 	static getTransform(i, active) {
-		let x = (i % 2 == 0 ? 0 : 3);
-		if (i >= 5) x = x - 11 - 3;
-		else x += 11;
-		return "translate(" + x + "px," + ((i % 5) * 6) + "px)" + "scale(" + (active ? "1" : "0") + ")";
+		let x = MovePipsActor.POSITIONS[i][1] - MovePipsActor.POSITIONS[i][0];
+		let y = MovePipsActor.POSITIONS[i][1] + MovePipsActor.POSITIONS[i][0];
+		return "translate(" + (x * 3 + 11) + "px," + (y * 6) + "px)" + "scale(" + (active ? "1" : "0") + ")";
 	}
 
 	constructor(unit, group) {
 		this.unit = unit;
 		this.diamonds = [];
-		let MAX_ACTIONS = 10;
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		g.style.transform = "translate(0px,-12px) scale(0.9)";
-		for (let i = 0; i < MAX_ACTIONS; i++) {
+		for (let i = 0; i < MovePipsActor.POSITIONS.length; i++) {
 			let diamond = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			diamond.setAttribute("d", "M0,-6L3,0L0,6L-3,0Z");
 			diamond.style.fill = "#fff";
@@ -202,8 +220,10 @@ class PortraitActor {
 		this.frightened = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		this.frightened.style.opacity = 0;
 		this.frightened.style.transition = "opacity 0.5s cubic-bezier(0, 2, 1, -1)";
-		this.frightened.setAttribute("d", "M-17 0A17 13 0 0 0 17 0A17 19 0 0 1 -17 0M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-		this.frightened.setAttribute("fill", "#8a0303");
+		this.frightened.setAttribute("d", "M-14,-8.66C-14,-11.33 -10,-15.83 -10,-15.83C-10,-15.83 -6,-11.66 -6,-8.66A4,4 0 0,1 -14,-8.66Z");
+		this.frightened.setAttribute("fill", "#cdf");
+		this.frightened.setAttribute("stroke", "#000");
+		this.frightened.setAttribute("stroke-width", "1");
 
 		this.defeated = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		this.defeated.style.opacity = 0;
