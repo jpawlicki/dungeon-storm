@@ -5,7 +5,7 @@ abilityData.BITE = new class extends Ability {
 		this.icon = "M7,2C4,2 2,5 2,8C2,10.11 3,13 4,14C5,15 6,22 8,22C12.54,22 10,15 12,15C14,15 11.46,22 16,22C18,22 19,15 20,14C21,13 22,10.11 22,8C22,5 20,2 17,2C14,2 14,3 12,3C10,3 10,2 7,2Z"
 		this.minActionPoints = 1;
 		this.details = [
-			"Spend ♦ and select an adjacent enemy:",
+			"Spend ♦ and select an adjacent !ENEMY:",
 			"  Roll ⚅. If greater than their strength, they !RETREAT.",
 			"  Roll ⚅. If greater than your strength, !RETREAT.",
 			"Anyone who !RETREATs becomes !BLOODY.",
@@ -88,7 +88,7 @@ class RetreatActor {
 
 	constructor(unit, facing, chance) {
 		this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		this.g.style.opacity = 0.9;
+		this.g.style.opacity = 1;
 		this.g.style.pointerEvents = "none";
 
 		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.room.getTile(unit.pos).height);
@@ -155,14 +155,16 @@ class DefeatActor {
 
 	constructor(unit, chance) {
 		this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		this.g.style.opacity = 0.9;
+		this.g.style.opacity = 1;
 		this.g.style.pointerEvents = "none";
 
 		let corners = getTilePoints(unit.pos[0], unit.pos[1], gameState.room.getTile(unit.pos).height);
+		let center = getTileCenter(unit.pos);
 		
 		let x = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		x.setAttribute("d", "M" + (corners[0][0] + corners[1][0]) / 2 + "," + (corners[0][1] + corners[1][1]) / 2 + "L" + (corners[2][0] + corners[3][0]) / 2 + "," + (corners[2][1] + corners[3][1]) / 2);
+		x.setAttribute("d", "M" + (center[0] - 17) + "," + (center[1] - 17) + "L" + (center[0] + 17) + "," + (center[1] + 17) + "M" + (center[0] - 17) + "," + (center[1] + 17) + "L" + (center[0] + 17) + "," + (center[1] - 17));
 		x.setAttribute("stroke-width", "3");
+		x.setAttribute("clip-path", "circle()");
 		x.setAttribute("stroke", "#c00");
 		this.g.appendChild(x);
 

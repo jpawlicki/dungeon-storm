@@ -6,7 +6,7 @@ abilityData.FLY = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and either:",
-			"  1. !MOVE to an adjacent empty space, and rotate.",
+			"  1. !MOVE and rotate to an adjacent empty space.",
 			"  2. Rotate in the same space.",
 			"If you !MOVE to a space of lower elevation, gain ♦."];
 		this.aiHints = [AiHints.MOVE];

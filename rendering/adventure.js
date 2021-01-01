@@ -1,5 +1,5 @@
 class AdventureIntroElement extends HTMLElement {
-	static makeAbilitySvg(ability, known, descElement) {
+	static makeAbilitySvg(ability, known, descElement, hostileContext = false) {
 		let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("viewBox", "0 0 24 24");
 		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -8,7 +8,7 @@ class AdventureIntroElement extends HTMLElement {
 		if (descElement != undefined) {
 			let info = () => {
 				descElement.innerHTML = "";
-				descElement.appendChild(expandAbilityDetails(ability.details));
+				descElement.appendChild(expandAbilityDetails(ability.details, hostileContext));
 			};
 			svg.addEventListener("mouseover", info);
 			svg.addEventListener("click", info);

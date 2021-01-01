@@ -29,7 +29,7 @@ function clickOnAbility(unit, ability) {
 		clickContext.selectedUnit = unit;
 		clickContext.selectedAbility = ability;
 		document.getElementById("abilityDescText").innerHTML = "";
-		document.getElementById("abilityDescText").appendChild(expandAbilityDetails(ability.details));
+		document.getElementById("abilityDescText").appendChild(expandAbilityDetails(ability.details, unit.player != 0));
 		if (prev != null && prev != unit) prev.deselect();
 		unit.select();
 		if (clickContext.lastMouseOver != null) {

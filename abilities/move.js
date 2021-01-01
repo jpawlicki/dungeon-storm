@@ -6,9 +6,9 @@ abilityData.MOVE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Spend ♦ and either:",
-			"  1. !MOVE to an adjacent empty space, and rotate.",
+			"  1. !MOVE and rotate to an adjacent empty space.",
 			"  2. Rotate in the same space.",
-			"Cannot move 2 or more elevation levels upward."];
+			"Cannot !MOVE 2 or more height upward."];
 		this.aiHints = [AiHints.MOVE];
 		this.cost = {experience: 1};
 	}
