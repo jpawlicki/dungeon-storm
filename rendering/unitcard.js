@@ -15,10 +15,12 @@ class UnitCard {
 	}
 
 	select() {
+		this.div.setHighlightOverride(true)
 		this.div.update();
 	}
 
 	deselect() {
+		this.div.setHighlightOverride(false);
 		this.div.update();
 	}
 
@@ -33,8 +35,10 @@ class UnitCardElement extends HTMLElement {
 	// portraitActor
 	// unit
 	// shadow
+	// highlightOverride
 
 	connectedCallback() {
+		this.highlightOveride = false;
 		this.icons = {};
 
 		let shadow = this.attachShadow({mode: "open"});
@@ -46,22 +50,21 @@ class UnitCardElement extends HTMLElement {
 					flex-direction: row;
 				}
 				svg {
-					height: 4em;
-					width: 4em;
+					height: 5em;
+					width: 5em;
 				}
 				#abilities {
-					background-color: #000;
 					color: #888;
 					display: flex;
 					flex-direction: column;
 					flex-wrap: wrap;
-					height: 4em;
+					height: 5em;
 				}
 				#abilities svg { 
 					transition: color 0.3s;
 					cursor: pointer;
-					width: 2em;
-					height: 2em;
+					width: 2.5em;
+					height: 2.5em;
 				}
 				#abilities svg.active {
 					color: #ff0;
@@ -111,7 +114,12 @@ class UnitCardElement extends HTMLElement {
 				this.icons[i].element.setAttribute("class", "");
 			}
 		}
+		this.style.backgroundColor = (this.highlightOverride || clickContext.selectedUnit == this.unit) ? "#444" : "#000";
 		this.portraitActor.update();
+	}
+
+	setHighlightOverride(val) {
+		this.highlightOverride = val;
 	}
 
 	// num: Which ability to select, numbered from 1 to 10. Passing -1 will select the first non-hidden ability.

@@ -322,6 +322,7 @@ class GameState {
 			return true;
 		}
 		let unitSelection = units.filter(u => aiEquals(aiPattern, u.ai));
+		for (let u of unitSelection) u.select();
 		let patternIndex = 0;
 		let action = aiPattern[patternIndex].getNextMove(unitSelection, this);
 		while (action == undefined && patternIndex < aiPattern.length - 1) {
@@ -330,6 +331,7 @@ class GameState {
 		}
 		if (action == undefined) {
 			// The first unit has no valid moves. Remove it and try again.
+			for (let u of this.units) if (u.player == this.currentPlayer) u.deselect();
 			this.runAiSubtask(units.splice(1));
 			return;
 		}
@@ -338,6 +340,7 @@ class GameState {
 	}
 
 	undoAction() {
+		if (this.disableActions) return;
 		let lastUserActionIndex = this.actionHistory.length - 1;
 		while (lastUserActionIndex >= 0 && this.actionHistory[lastUserActionIndex].cause != undefined) lastUserActionIndex--;
 		if (lastUserActionIndex < 0 || !this.actionHistory[lastUserActionIndex].undoable) return;

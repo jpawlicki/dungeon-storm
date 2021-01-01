@@ -21,7 +21,6 @@ function clickOnAbility(unit, ability) {
 	if (clickContext.selectedUnit == unit && clickContext.selectedAbility == ability) {
 		clickContext.selectedUnit = null;
 		clickContext.selectedAbility = null;
-		document.getElementById("abilityDescTitle").textContent = "";
 		document.getElementById("abilityDescText").textContent = "";
 		unit.deselect();
 		return;
@@ -29,8 +28,8 @@ function clickOnAbility(unit, ability) {
 		let prev = clickContext.selectedUnit;
 		clickContext.selectedUnit = unit;
 		clickContext.selectedAbility = ability;
-		document.getElementById("abilityDescTitle").textContent = ability.name;
-		document.getElementById("abilityDescText").textContent = expandAbilityDetails(ability.details);
+		document.getElementById("abilityDescText").innerHTML = "";
+		document.getElementById("abilityDescText").appendChild(expandAbilityDetails(ability.details));
 		if (prev != null && prev != unit) prev.deselect();
 		unit.select();
 		if (clickContext.lastMouseOver != null) {
@@ -80,6 +79,7 @@ function clickOnUndo() {
 }
 
 function clickOnDone() {
+	if (gameState.disableActions) return;
 	clearClickContext();
 	gameState.turnDone();
 	showHideUiElements();
@@ -87,7 +87,7 @@ function clickOnDone() {
 
 function showHideUiElements() {
 	document.getElementById("undo").style.visibility = gameState.canPlayerUndo() ? "visible" : "hidden";
-	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) clickOnAbility(clickContext.selectedUnit, clickContext.selectedAbility);
+	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) selectNext();
 	document.getElementById("done").style.visibility = gameState.currentPlayer == 0 ? "visible" : "hidden";
 }
 
@@ -118,34 +118,52 @@ function showSidePane() {
 	document.querySelector("body").setAttribute("class", "");
 }
 
-function expandAbilityDetails(descAr) {
-	let desc = descAr.join("\n");
+function expandAbilityDetails(descAr, enemyContext = false) {
+	let p = document.createElement("p");
+	let desc = descAr.join("<br/>").replaceAll("!ENEMY", enemyContext ? "!CHARACTER" : "!DANGER").replaceAll("!FRIEND", enemyContext ? "!DANGER" : "!CHARACTER");
 	let expansions = {
-		"!REACTION": "Reactions are actions that are automatically triggered by certain conditions.",
-		"!DEFEAT": "Defeated units are removed from the room. Win by defeating all dangers. Lose by having all your characters defeated.",
-		"!MOVE": "Moving threatened units often triggers common reactions.",
-		"!THREATEN": "Units with red markers threaten units next to those markers, and have automatic reactions to actions they take.",
-		"!RETREAT": "A unit retreats by using the first possible ability to move directly away from the unit causing it to retreat. If it cannot vacate the space, it is !DEFEATed.",
-		"!BLOODY": "Bloody units typically have decreased strength on each side.",
+		"!REACTION": Tutorial.Hook.EXPLAIN_REACTION,
+		"!DEFEAT": Tutorial.Hook.EXPLAIN_DEFEAT,
+		"!MOVE": Tutorial.Hook.EXPLAIN_MOVE,
+		"!THREATEN": Tutorial.Hook.EXPLAIN_THREATEN,
+		"!RETREAT": Tutorial.Hook.EXPLAIN_RETREAT,
+		"!BLOODY": Tutorial.Hook.EXPLAIN_BLOODY,
+		"!DANGER": Tutorial.Hook.EXPLAIN_DANGER,
+		"!CHARACTER": Tutorial.Hook.EXPLAIN_CHARACTER,
 	};
 
 	let replaced = true;
-	let suffixSet = new Set();
 	while (replaced) {
 		replaced = false;
 		for (let ex in expansions) {
 			if (desc.includes(ex)) {
-				let exRead = ex.substr(1, 1) + ex.substr(2).toLowerCase();
 				replaced = true;
-				if (!suffixSet.has(ex)) {
-					desc += "\n\n(" + expansions[ex] + ")";
-					suffixSet.add(ex);
-				}
+				let exRead = "<span class=\"explicable\" onclick=\"Tutorial.hook(" + expansions[ex] + ");\">" + ex.substr(1, 1) + ex.substr(2).toLowerCase() + "</span>";
 				desc = desc.replaceAll(ex, exRead);
 			}
 		}
 	}
-	return desc;
+	p.innerHTML = desc;
+	return p;
+}
+
+function selectNext() {
+	let selected = false;
+	for (let unitCard of document.querySelectorAll("unit-card")) {
+		if (unitCard.unit.player != 0) continue;
+		if (selected == true) {
+			unitCard.selectAbility(-1);
+			return;
+		}
+		if (unitCard.unit == clickContext.selectedUnit) selected = true;
+	}
+	for (let unitCard of document.querySelectorAll("unit-card")) {
+		if (unitCard.unit.player != 0) continue;
+		if (unitCard.unit.canAct()) {
+			unitCard.selectAbility(-1);
+			return;
+		}
+	}
 }
 
 window.addEventListener("keypress", (ev) => {
@@ -155,22 +173,7 @@ window.addEventListener("keypress", (ev) => {
 	} else if (ev.key == "z") {
 		clickOnUndo();
 	} else if (ev.key == "`") {
-		let selected = false;
-		for (let unitCard of document.querySelectorAll("unit-card")) {
-			if (unitCard.unit.player != 0) continue;
-			if (selected == true) {
-				unitCard.selectAbility(-1);
-				return;
-			}
-			if (unitCard.unit == clickContext.selectedUnit) selected = true;
-		}
-		for (let unitCard of document.querySelectorAll("unit-card")) {
-			if (unitCard.unit.player != 0) continue;
-			if (unitCard.unit.canAct()) {
-				unitCard.selectAbility(-1);
-				return;
-			}
-		}
+		selectNext();
 	} else if (ev.keyCode >= 48 && ev.keyCode <= 57) {
 		let num = ev.keyCode == 48 ? 10 : ev.keyCode - 48;
 		for (let unitCard of document.querySelectorAll("unit-card")) {

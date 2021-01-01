@@ -1,22 +1,21 @@
 Short Term:
  - learning abilities should get more expensive every ability learned
- - sfx sound
+ - character portrait randomization should avoid reusing existing portraits if possible.
+ - Cap abilities at 8.
+ - Forget ability option?
+ - Room time limits
 
 Long Term:
- - Flee room UI
- - Persistence
- - Crash handling report to server logging
- - Bug report UI
- - Graphics: improve bloodied overlay & portrait sphere to look more 3D and marbleish
+ - sfx sound
+ - Settings Menu:
+   - Concede adventure / room
+	 - Toggle sound
+	 - Toggle fullscreen
+	 - Erase save data
+	 - Report bug
+ - Game saving and loading
+   - Local
+	 - Cloud
+ - Crash handling should report to the server for logging.
  - Room features (fire, sand, water, rock, gold, action-bonus, etc)
- - Character portrait randomization
- - Tools
-   - Room Editor
-   - Adventure Editor
-     - Players should be able to add rooms into a dungeon to create a custom campaign.
-  	 - Some rooms should be able to be randomized.
-
-Campaign design:
- - A player has a pool of characters that can begin a run. They may run with up to 4.
- - Characters bond by running together. When characters retire at the end of a run, each most strongly-bonded pair raises a child (of a random unlocked class) who enters the pool.
- - The pool is then filled up to 8 with random characters drawn from unlocked classes.
+ - Additional adventures, abilities, unlocks, etc.

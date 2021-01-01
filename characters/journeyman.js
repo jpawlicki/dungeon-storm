@@ -4,8 +4,8 @@
 		id: "Journeyman",
 		learnableAbilities: [abilityData.ENERGIZE],
 		portraits: 1,
-		strengths: [5, 4, 3, 3],
-		strengthsBloodied: [4, 3, 2, 2],
+		strengths: [4, 3, 2, 2],
+		strengthsBloodied: [3, 2, 2, 2],
 		threats: [true, true, false, false],
 		threatsBloodied: [false, false, false, false],
 	};

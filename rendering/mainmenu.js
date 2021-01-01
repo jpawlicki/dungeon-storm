@@ -59,6 +59,10 @@ class MainMenu extends HTMLElement {
 					overflow: hidden;
 					width: 100vw;
 				}
+				.explicable {
+					color: #ccf;
+					cursor: pointer;
+				}
 			</style>
 			<div id="cast"></div>
 			<div id="adventures"></div>

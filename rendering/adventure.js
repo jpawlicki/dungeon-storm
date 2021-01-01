@@ -7,7 +7,8 @@ class AdventureIntroElement extends HTMLElement {
 		svg.appendChild(d);
 		if (descElement != undefined) {
 			let info = () => {
-				descElement.textContent = expandAbilityDetails(ability.details);
+				descElement.innerHTML = "";
+				descElement.appendChild(expandAbilityDetails(ability.details));
 			};
 			svg.addEventListener("mouseover", info);
 			svg.addEventListener("click", info);
@@ -93,6 +94,10 @@ class AdventureIntroElement extends HTMLElement {
 				#begin:hover #play {
 					fill: #fff;
 					transition: fill 0.4s;
+				}
+				.explicable {
+					color: #ccf;
+					cursor: pointer;
 				}
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
@@ -262,6 +267,10 @@ class AdventureNextRoomElement extends HTMLElement {
 					background-color: #000;
 					border-radius: 0 1em 1em 0;
 					justify-content: space-between;
+				}
+				.explicable {
+					color: #ccf;
+					cursor: pointer;
 				}
 			</style>
 			<div id="characters">

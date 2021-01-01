@@ -12,6 +12,14 @@ class Tutorial {
 		UNIT_BLOODIED: 5, // NYI
 		UNIT_DEFEATED: 6, // NYI
 		MAINMENU_START: 7,
+		EXPLAIN_REACTION: 8,
+		EXPLAIN_DEFEAT: 9,
+		EXPLAIN_MOVE: 10,
+		EXPLAIN_THREATEN: 11,
+		EXPLAIN_RETREAT: 12,
+		EXPLAIN_BLOODY: 13,
+		EXPLAIN_DANGER: 14,
+		EXPLAIN_CHARACTER: 15,
 	}
 
 	static hook(event) {
@@ -102,11 +110,44 @@ class Tutorial {
 		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 1) {
 			this.addMessage("In between adventures, you can retire your characters. Retiring characters pass on the abilities they know to another character (though the character must still spend experience to learn them). Build up a mighty group!");
 		}
+
+		if (event == Tutorial.Hook.EXPLAIN_REACTION) {
+			this.addMessage("!REACTIONs are actions that are automatically triggered rather than deliberately used. Most !REACTIONs only apply to !THREATENed units.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_DEFEAT) {
+			this.addMessage("!DEFEATed units are removed from the room. You win when all !DANGERs are defeated, but you lose if your !CHARACTERs are all defeated.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_MOVE) {
+			this.addMessage("Most frequently units travel between spaces by using abilities that make !MOVEs. !MOVEs commonly trigger !REACTIONs, so be careful about using !MOVEs near !THREATENing !DANGERs. (Or choose a different ability that doesn't have the !MOVE keyword.)");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_THREATEN) {
+			this.addMessage("Units !THREATEN any units that are adjacent to their red threat indicators. Beware of !REACTIONs from such units!");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_RETREAT) {
+			this.addMessage("When a unit !RETREATs, it must use an ability to move directly away from the unit causing it to retreat. If it can't, then it is !DEFEATed instead.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_BLOODY) {
+			this.addMessage("When a unit becomes !BLOODY, it typically loses strength on each side, and becomes less !THREATENing. However, some !DANGERs become more dangerous when !BLOODY, and some abilities treat !BLOODY units differently.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_DANGER) {
+			this.addMessage("Each room has !DANGERs. !DEFEAT all the dangers in the room to advance.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_CHARACTER) {
+			this.addMessage("Your !CHARACTERs are the pieces you can control. Use their abilities to defeat the !DANGERs in the room.");
+		}
 	}
 
 	addMessage(msg) {
 		this.messageStack.push(msg);
-		this.tutorialWindow.querySelector("div").textContent = this.messageStack[this.messageStack.length - 1];
+		this.tutorialWindow.querySelector("div").innerHTML = "";
+		this.tutorialWindow.querySelector("div").appendChild(expandAbilityDetails([this.messageStack[this.messageStack.length - 1]]));
 		this.tutorialWindow.style.display = "block";
 	}
 
@@ -115,7 +156,8 @@ class Tutorial {
 		if (this.messageStack.length == 0) {
 			this.tutorialWindow.style.display = "none";
 		} else {
-			this.tutorialWindow.querySelector("div").textContent = this.messageStack[this.messageStack.length - 1];
+			this.tutorialWindow.querySelector("div").innerHTML = "";
+			this.tutorialWindow.querySelector("div").appendChild(expandAbilityDetails([this.messageStack[this.messageStack.length - 1]]));
 		}
 	}
 }
