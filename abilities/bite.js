@@ -75,7 +75,7 @@ abilityData.BITE = new class extends Ability {
 
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
-		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
+		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;

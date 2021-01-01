@@ -404,6 +404,7 @@ class GameState {
 		}
 		this.currentRoom = coords;
 		for (let c of this.characters) c.actionPoints = 3;
+		this.addAction(new Action(false, [], [ActionEvent.loadRoom()], "(Room Load)", () => {}));
 	}
 
 	// Returns the unit in the position, or null if there is no unit in the position.
@@ -526,6 +527,11 @@ class ActionEvent {
 	static ENDTURN = 4;
 	static endTurn(who) {
 		return new ActionEvent(who, ActionEvent.ENDTURN, {});
+	}
+
+	static LOADROOM = 5;
+	static loadRoom() {
+		return new ActionEvent(null, ActionEvent.LOADROOM, {});
 	}
 
 	constructor(who, type, data) {

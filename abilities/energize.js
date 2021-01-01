@@ -4,7 +4,7 @@ abilityData.ENERGIZE = new class extends Ability {
 		this.name = "Energize";
 		this.icon = "M7,2V13H10V22L17,10H13L17,2H7Z";
 		this.minActionPoints = 0;
-		this.details = ["!REACTION: Gain ♦ when ending the turn."];
+		this.details = ["!REACTION: Gain ♦ when ending the turn, if not !BLOODY."];
 		this.aiHints = [];
 		this.cost = {experience: 3};
 	}
@@ -17,7 +17,7 @@ abilityData.ENERGIZE = new class extends Ability {
 		let reactions = [];
 		let endedTurn = false;
 		for (let ev of action.events) if (ev.type == ActionEvent.ENDTURN && ev.who == unit) endedTurn = true;
-		if (endedTurn) {
+		if (endedTurn && unit.state != Unit.State.BLOODY) {
 			reactions.push(new Action(
 					true,
 					[

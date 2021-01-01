@@ -37,7 +37,7 @@ abilityData.MOVE = new class extends Ability {
 
 	isMoveLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
-		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) > 1) return false;
+		if (Tile.distanceBetween(unit.pos, loc) <= 1) return false;
 		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(loc).height - 1) return false;
 		let dstUnit = gameState.getUnitAt(loc);
 		if (dstUnit != null && dstUnit != unit) return false;
@@ -48,7 +48,7 @@ abilityData.MOVE = new class extends Ability {
 class AbilityMoveActor {
 	// g
 
-	constructor(unit, loc, facing, deductActionPoint=true) {
+	constructor(unit, loc, facing, deductActionPoint=true, unitTransformFunc) {
 		this.g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		this.g.style.opacity = 0.7;
 		this.g.style.pointerEvents = "none";
@@ -56,6 +56,7 @@ class AbilityMoveActor {
 		u.facing = facing;
 		u.pos = loc;
 		if (deductActionPoint) u.actionPoints -= 1;
+		if (unitTransformFunc != undefined) unitTransformFunc(u);
 		new UnitActor(u, this.g, gameState.room);
 		document.getElementById("clickContextGroup").appendChild(this.g);
 	}

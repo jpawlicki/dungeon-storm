@@ -1,8 +1,8 @@
 {
 	let c = {
-		abilities: [abilityData.MOVE, abilityData.SWORD, abilityData.CONTROL],
+		abilities: [abilityData.MOVE, abilityData.PUSH, abilityData.CONTROL],
 		id: "Dancer",
-		learnableAbilities: [abilityData.ENERGIZE, abilityData.SWAP],
+		learnableAbilities: [abilityData.SWAP, abilityData.PRESS, abilityData.SLOW],
 		portraits: 7,
 		strengths: [3, 2, 2, 2],
 		strengthsBloodied: [2, 1, 1, 1],

@@ -23,7 +23,7 @@ abilityData.STRIKE = new class extends Ability {
 		effects.push(new Effect(target, "state", Unit.State.BLOODIED));
 		events.push(ActionEvent.retreat(target, retreatDir));
 
-		return new Action(false, effects, events, this.name, () => {
+		return new Action(true, effects, events, this.name, () => {
 			SpecialEffect.abilityUse(unit, this);
 			SpecialEffect.attackClash(target.pos, unit.pos, true, false);
 		});
@@ -36,7 +36,7 @@ abilityData.STRIKE = new class extends Ability {
 		if (target == null) return;
 
 		// Defender
-		let defenderRetreatChance = Math.min(1, Math.max(0, 1 - target.getStrength(Tile.directionTo(loc, unit.pos)) / 6.0));
+		let defenderRetreatChance = 1;
 		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
 		if (target.canRetreat(defenderRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));

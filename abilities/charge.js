@@ -31,7 +31,7 @@ abilityData.CHARGE = new class extends Ability {
 
 		let tpos = target.pos;
 		let upos = unit.pos;
-		return new Action(false, effects, events, this.name, () => {
+		return new Action(true, effects, events, this.name, () => {
 			SpecialEffect.abilityUse(unit, this);
 			SpecialEffect.attackClash(Tile.offset(tpos, Tile.directionTo(tpos, upos)), upos, true, false);
 		});
