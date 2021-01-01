@@ -5,10 +5,9 @@ abilityData.PUSH = new class extends Ability {
 		this.icon = "M18,16V13H15V22H13V2H15V11H18V8L22,12L18,16M2,12L6,16V13H9V22H11V2H9V11H6V8L2,12Z"
 		this.minActionPoints = 1;
 		this.details = [
-			"Spend ♦ and select an adjacent !ENEMY. !MOVE into an open space directly away from that enemy.",
-			"Roll ⚅. If greater than their strength, they !RETREAT.",
-			"Cannot !MOVE 2 or more height upward.",
-			"This action cannot be undone."];
+			"Use ♦. Select an adjacent !ENEMY. !MOVE into an open space away from the !ENEMY. Cannot rise 2 or more steps.",
+			"Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.",
+			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 3};
 	}

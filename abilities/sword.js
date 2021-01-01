@@ -5,11 +5,11 @@ abilityData.SWORD = new class extends Ability {
 		this.icon = "M6.92,5H5L14,14L15,13.06M19.96,19.12L19.12,19.96C18.73,20.35 18.1,20.35 17.71,19.96L14.59,16.84L11.91,19.5L10.5,18.09L11.92,16.67L3,7.75V3H7.75L16.67,11.92L18.09,10.5L19.5,11.91L16.83,14.58L19.95,17.7C20.35,18.1 20.35,18.73 19.96,19.12Z";
 		this.minActionPoints = 1;
 		this.details = [
-			"Spend ♦ and select an adjacent !ENEMY. Compare strengths and roll ⚅:",
-			"  The chance that the !ENEMY !RETREATs is equal to their strength divided by the sum of their strength and this !FRIEND's strength.",
-			"  If the !ENEMY does not !RETREAT, !RETREAT.",
-			"Anyone who !RETREATs becomes !FRIGHTENED.",
-			"This action cannot be undone."];
+			"Use ♦. Select an adjacent !ENEMY. Compare ○ and roll ⚅:",
+			"  The chance that the !ENEMY !RETREATs is equal to the !ENEMY's ○ divided by the sum of its ○ and this !FRIEND's ○.",
+			"  If the !ENEMY does not !RETREAT, this !FRIEND !RETREATs.",
+			"Anyone who !RETREATs first becomes !FRIGHTENED.",
+			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 3};
 	}

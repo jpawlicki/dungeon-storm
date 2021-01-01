@@ -5,11 +5,11 @@ abilityData.CHARGE = new class extends Ability {
 		this.icon = "M15.59,9C17.7,7.74 19,5.46 19,3H17A5,5 0 0,1 12,8A5,5 0 0,1 7,3H5C5,5.46 6.3,7.74 8.41,9C5.09,11 4,15.28 6,18.6C7.97,21.92 12.27,23 15.59,21C18.91,19.04 20,14.74 18,11.42C17.42,10.43 16.58,9.59 15.59,9M12,20A5,5 0 0,1 7,15A5,5 0 0,1 12,10A5,5 0 0,1 17,15A5,5 0 0,1 12,20Z";
 		this.minActionPoints = 1;
 		this.details = [
-			"Spend ♦. Select a !ENEMY in a straight line. !MOVE to the space of that !ENEMY. That !ENEMY becomes !FRIGHTENED and !RETREATs.",
-			"An intervening rise of 2 or more height prevents the action.",
-			"An intervening !FRIEND or !ENEMY prevents the action.",
+			"Use ♦. Select a !ENEMY in a straight line and !MOVE to its space. It becomes !FRIGHTENED and !RETREATs.",
+			"Cannot select a !ENEMY behind a rise of 2 or more steps.",
+			"Cannot select a !ENEMY behind a different !ENEMY or !FRIEND.",
 			"Cannot select an adjacent !ENEMY.",
-			"Cannot select a !ENEMY with greater strength."];
+			"Cannot select a !ENEMY with greater ○."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 3};
 	}

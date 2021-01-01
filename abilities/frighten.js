@@ -4,7 +4,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 		this.name = "Frighten";
 		this.icon = "M12,20A6,6 0 0,1 6,14C6,10 12,3.25 12,3.25C12,3.25 18,10 18,14A6,6 0 0,1 12,20Z";
 		this.minActionPoints = 1;
-		this.details = ["Spend ♦ and !FRIGHTEN an adjacent unfrightened !FRIEND or !ENEMY."];
+		this.details = ["Use ♦. !FRIGHTEN an adjacent !FRIEND or !ENEMY that is not already !FRIGHTENED."];
 		this.aiHints = [AiHints.ATTACK];
 		this.cost = {experience: 4};
 	}

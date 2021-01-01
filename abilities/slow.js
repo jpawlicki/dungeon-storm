@@ -5,7 +5,7 @@ abilityData.SLOW = new class extends Ability {
 		this.icon = "M14,19H18V5H14M6,19H10V5H6V19Z";
 		this.minActionPoints = 1;
 		this.details = [
-			"Spend ♦. Select an adjacent !ENEMY with ♦. They spend ♦."];
+			"Use ♦. Remove ♦ from an adjacent !ENEMY."];
 		this.aiHints = [];
 		this.cost = {experience: 3};
 	}

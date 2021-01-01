@@ -133,15 +133,12 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 		"!CHARACTER": Tutorial.Hook.EXPLAIN_CHARACTER,
 	};
 
-	let replaced = true;
-	while (replaced) {
-		replaced = false;
-		for (let ex in expansions) {
-			if (desc.includes(ex)) {
-				replaced = true;
-				let exRead = "<span class=\"explicable\" onclick=\"Tutorial.hook(" + expansions[ex] + ");\">" + ex.substr(1, 1) + ex.substr(2).toLowerCase() + "</span>";
-				desc = desc.replaceAll(ex, exRead);
-			}
+	for (let ex in expansions) {
+		if (desc.includes(ex)) {
+			replaced = true;
+			desc = desc.replaceAll(new RegExp(ex + "[^.\\- ]*", 'g'), match => {
+				return "<span class=\"explicable\" onclick=\"Tutorial.hook(" + expansions[ex] + ");\">" + match.substr(1, 1) + match.substr(2).toLowerCase() + "</span>";
+			});
 		}
 	}
 	p.innerHTML = desc;
