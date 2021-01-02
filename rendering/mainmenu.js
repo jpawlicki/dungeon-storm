@@ -129,50 +129,7 @@ class MainMenu extends HTMLElement {
 	}
 
 	addUnlockTrack() {
-		let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		svg.setAttribute("viewBox", "-2 -2 300 6");
-		svg.style.height = "100%";
-
-		let unlockable = new Set();
-		for (let u of Unlock.unlockData) {
-			unlockable.add(u.at);
-		}
-		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		Util.makeUnlock(g);
-		svg.appendChild(g);
-		g.style.transform = "scale(0.15) translate(-12px, -12px)";
-		for (let i = 1; i < 200; i++) {
-			let v = gameState.numUnlocksEarned + i;
-			if (!unlockable.has(v)) {
-				let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-				c.setAttribute("r", v % 10 == 0 ? 0.6 : v % 5 == 0 ? 0.4 : 0.3);
-				c.setAttribute("fill", "rgba(255, 255, 255, 0.4)");
-				c.setAttribute("cx", i * 4);
-				svg.appendChild(c);
-			} else {
-				let c = document.createElementNS("http://www.w3.org/2000/svg", "text");
-				c.appendChild(document.createTextNode("?"));
-				c.setAttribute("text-anchor", "middle");
-				c.setAttribute("font-size", "4px");
-				c.style.dominantBaseline = "central";
-				c.setAttribute("fill", "#fff");
-				c.style.fontWeight = "bold";
-				c.setAttribute("x", i * 4);
-				svg.appendChild(c);
-			}
-			if (v % 10 == 0) {
-				let c = document.createElementNS("http://www.w3.org/2000/svg", "text");
-				c.appendChild(document.createTextNode(v));
-				c.setAttribute("text-anchor", "middle");
-				c.setAttribute("font-size", "2px");
-				c.style.dominantBaseline = "middle";
-				c.setAttribute("fill", "#fff");
-				c.setAttribute("x", i * 4);
-				c.setAttribute("y", 2);
-				svg.appendChild(c);
-			}
-		}
-		this.shadow.getElementById("unlockTrack").appendChild(svg);
+		new UnlockTrack(gameState.numUnlocksEarned, 0, this.shadow.getElementById("unlockTrack"));
 	}
 
 	applyRetirements() {

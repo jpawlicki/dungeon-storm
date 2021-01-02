@@ -1,7 +1,4 @@
- - show adventure failure penalty on rewards screen before the chest is opened
- - XP and cookies should turn into 1/2 unlocks, time into 1/5 unlocks?
- - show unlock progress bar moving on rewards screen, bubble awards when ?s reached
- - rewards screen polish (layout, sizing, color consistency, etc)
+ - Combine mainmenu and adventure start.
  - Settings Menu:
    - Concede adventure / room
 	 - Toggle sound

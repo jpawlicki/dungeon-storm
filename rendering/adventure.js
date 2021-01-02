@@ -526,7 +526,7 @@ class AdventureCompleteElement extends HTMLElement {
 					align-items: center;
 					width: 100%;
 					color: #fff;
-					height: 100%;
+					min-height: 100%;
 				}
 				#rewards {
 					display: flex;
@@ -555,7 +555,7 @@ class AdventureCompleteElement extends HTMLElement {
 						fill: #fff;
 					}
 					100% {
-						fill: #fc0;
+						fill: #bbb;
 					}
 				}
 				#clears {
@@ -622,9 +622,19 @@ class AdventureCompleteElement extends HTMLElement {
 						fill: rgba(255, 0, 0, 1);
 					}
 				}
+				#track {
+					height: 3em;
+					width: 100%;
+					overflow-x: hidden;
+				}
+				#rewards {
+					max-width: 40em;
+				}
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
 			<div id="text">${(gameState.getAdventureVictorious() ? gameState.adventure.descriptionVictory[lang] : gameState.adventure.descriptionDefeat[lang]).replaceAll("\n", "<br/>")}</div>
+			<div id="losses"></div>
+			<div id="track"></div>
 			<div id="rewards">
 				<svg id="treasureBox" viewBox="0 0 24 24">
 					<path class="clickMe" d="M5,4H19A3,3 0 0,1 22,7V11H15V10H9V11H2V7A3,3 0 0,1 5,4M11,11L13,11L13,13L11,13M2,12H9V13L11,15H13L15,13V12H22V20H2V12Z" />
@@ -698,6 +708,29 @@ class AdventureCompleteElement extends HTMLElement {
 		}
 		// TODO: save game.
 
+		let unlockTrack = new UnlockTrack(gameState.numUnlocksEarned - numAwards, numAwards, shadow.getElementById("track"));
+
+		for (let a of abilityLosses) {
+			let div = document.createElement("div");
+			div.setAttribute("class", "abilityLoss");
+			let img = document.createElement("img");
+			img.setAttribute("src", "assets/portraits/" + a.c.portrait);
+			div.appendChild(img);
+			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			svg.setAttribute("viewBox", "0 0 24 24");
+			let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path.setAttribute("d", a.a.icon);
+			path.setAttribute("fill", "#fff");
+			svg.appendChild(path);
+			let path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path2.setAttribute("d", "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z");
+			path2.setAttribute("class", "abilityLossX");
+			svg.appendChild(path2);
+			div.appendChild(svg);
+			shadow.querySelector("#losses").appendChild(div);
+		}
+
+
 		let boxOpened = false;
 		shadow.getElementById("treasureBox").addEventListener("click", () => {
 			if (boxOpened) return;
@@ -712,6 +745,7 @@ class AdventureCompleteElement extends HTMLElement {
 				// Show rewards.
 				shadow.querySelector("#treasureBox > path").style.fill = "#888";
 				for (let i = 0; i < numClears; i++) {
+					let index = i;
 					window.setTimeout(() => {
 						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 						svg.setAttribute("class", "unlockable");
@@ -728,10 +762,16 @@ class AdventureCompleteElement extends HTMLElement {
 						Util.makeUnlock(svg);
 						svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 						shadow.getElementById("clears").appendChild(svg);
+						for (let u of Unlock.unlockData) {
+							if (u.at != prevUnlockPoint + index + 1) continue;
+							if (u.type == Unlock.CHARACTER) svg.setAttribute("show", "character");
+							if (u.type == Unlock.ADVENTURE) svg.setAttribute("show", "adventure");
+						}
 					}, 1000 / numAwards * i);
 				}
 				if (victory) {
 					for (let i = 0; i < numClears; i++) {
+						let index = i + numClears;
 						window.setTimeout(() => {
 							let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 							svg.setAttribute("class", "unlockable");
@@ -743,10 +783,16 @@ class AdventureCompleteElement extends HTMLElement {
 							Util.makeUnlock(svg);
 							svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 							shadow.getElementById("clears").appendChild(svg);
-						}, 1000 / numAwards * (i + numClears));
+							for (let u of Unlock.unlockData) {
+								if (u.at != prevUnlockPoint + index + 1) continue;
+								if (u.type == Unlock.CHARACTER) svg.setAttribute("show", "character");
+								if (u.type == Unlock.ADVENTURE) svg.setAttribute("show", "adventure");
+							}
+						}, 1000 / numAwards * index);
 					}
 				}
 				for (let i = 0; i < resourceAwards.length; i++) {
+					let index = i + numClears + (victory ? numClears : 0);
 					window.setTimeout(() => {
 						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 						svg.setAttribute("viewBox", "0 0 24 24");
@@ -758,61 +804,50 @@ class AdventureCompleteElement extends HTMLElement {
 							Util.makeUnlock(svg);
 						} else if (resourceAwards[i] == "character") {
 							Util.makeCharacter(svg);
+							svg.setAttribute("show", "character");
+							svg.setAttribute("steps", "skip");
 						}
 						if (resourceAwards[i] != "character" && resourceAwards[i] != "unlock") {
 							svg.setAttribute("class", "unlockable");
 							Util.makeUnlock(svg);
 							svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 						}
+						if (svg.getAttribute("steps") != "skip") {
+							for (let u of Unlock.unlockData) {
+								if (u.at != prevUnlockPoint + index + 1) continue;
+								if (u.type == Unlock.CHARACTER) svg.setAttribute("show", "character");
+								if (u.type == Unlock.ADVENTURE) svg.setAttribute("show", "adventure");
+							}
+						}
 						shadow.getElementById("clears").appendChild(svg);
-					}, 1000 / numAwards * (i + numClears + (victory ? numClears : 0)));
+					}, 1000 / numAwards * index);
 				}
 				window.setTimeout(() => {
+					let time = 500;
 					for (let e of shadow.querySelectorAll("#clears > svg.unlockable")) e.setAttribute("class", "unlocked");
+					for (let x of shadow.querySelectorAll("#clears svg")) {
+						window.setTimeout(() => {
+							x.style.opacity = 0;
+							if (x.getAttribute("steps") != "skip") {
+								unlockTrack.step(.1);
+							}
+							window.setTimeout(() => {
+								if (x.getAttribute("show") == "character") {
+									shadow.querySelector("#newStuff").appendChild(renderMenuCharacter(addedCharacters.shift(), false, false, undefined));
+								} else if (x.getAttribute("show") == "adventure") {
+									let div = document.createElement("div");
+									div.setAttribute("class", "newAdventure");
+									div.appendChild(document.createTextNode(adventureData[addedAdventures.shift()].title[lang]));
+									shadow.querySelector("#newStuff").appendChild(div);
+								}
+							}, 110);
+						}, time);
+						time += 100;
+					}
+					window.setTimeout(() => {
+						shadow.getElementById("continue").style.visibility = "visible";
+					}, time);
 				}, 1500);
-				let time = 2000;
-
-				for (let a of abilityLosses) {
-					window.setTimeout(() => {
-						let div = document.createElement("div");
-						div.setAttribute("class", "abilityLoss");
-						let img = document.createElement("img");
-						img.setAttribute("src", "assets/portraits/" + a.c.portrait);
-						div.appendChild(img);
-						let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-						svg.setAttribute("viewBox", "0 0 24 24");
-						let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						path.setAttribute("d", a.a.icon);
-						path.setAttribute("fill", "#fff");
-						svg.appendChild(path);
-						let path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						path2.setAttribute("d", "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z");
-						path2.setAttribute("class", "abilityLossX");
-						svg.appendChild(path2);
-						div.appendChild(svg);
-						shadow.querySelector("#newStuff").appendChild(div);
-					}, time);
-					time += 300;
-				}
-
-				for (let c of addedCharacters) {
-					window.setTimeout(() => {
-						shadow.querySelector("#newStuff").appendChild(renderMenuCharacter(c, false, false, undefined));
-					}, time);
-					time += 300;
-				}
-				for (let a of addedAdventures) {
-					window.setTimeout(() => {
-						let div = document.createElement("div");
-						div.setAttribute("class", "newAdventure");
-						div.appendChild(document.createTextNode(adventureData[a].title[lang]));
-						shadow.querySelector("#newStuff").appendChild(div);
-					}, time);
-					time += 300;
-				}
-				window.setTimeout(() => {
-					shadow.getElementById("continue").style.visibility = "visible";
-				}, time);
 			}, 660);
 		});
 		Tutorial.hook(Tutorial.Hook.ADVENTURE_END);

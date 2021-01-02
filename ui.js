@@ -66,7 +66,7 @@ function clickOnTile(loc, quadrant) {
 			gameState.addAction(action, () => {
 				unlockUi();
 				showHideUiElements();
-				if (clickContext != null) mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
+				if (clickContext.lastMouseOver != null) mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 			});
 			showHideUiElements();
 			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
