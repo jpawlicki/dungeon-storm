@@ -7,9 +7,9 @@
   "id": "BUILTIN_DEMO_20",
   "random": false,
   "reward": {
-    "experience": 2,
+    "experience": 3,
     "healing": 0,
-    "unlock": 3,
+    "unlock": 0,
     "character": 0
   },
   "tiles": [

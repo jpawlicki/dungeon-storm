@@ -7,7 +7,7 @@
 		id: "BUILTIN_DEMO_10",
 		random: false,
 		reward: {
-			experience: 2,
+			experience: 1,
 			healing: 0,
 		},
 		tiles: [
