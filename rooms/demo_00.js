@@ -7,8 +7,8 @@
 		id: "BUILTIN_DEMO_00",
 		random: false,
 		reward: {
-			experience: 2,
-			healing: 1,
+			experience: 1,
+			healing: 2,
 		},
 		tiles: [
 			[{t: "portuguese1", h: 1}, {t: "portuguese2", h: 0}, {t: "portuguese2", h: 0}, {t: "portuguese1", h: 1}],

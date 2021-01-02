@@ -117,7 +117,20 @@ class Unit {
 		if (this.learnableAbilities != undefined) this.learnableAbilities = this.learnableAbilities.slice();
 
 		if (this.portrait == undefined && this.id != undefined && this.portraits != undefined) {
-			this.portrait = this.id.toLowerCase() + "/" + Math.floor(Math.random() * this.portraits) + ".png";
+			let options = [];
+			let usedSet = new Set();
+			for (let c of gameState.characterPool) {
+				usedSet.add(c.portrait); 
+			}
+			for (let i = 0; i < this.portraits; i++) {
+				let opt = this.id.toLowerCase() + "/" + i + ".png";
+				if (!usedSet.has(opt)) options.push(opt);
+			}
+			if (options.length > 0) {
+				this.portrait = options[Math.floor(Math.random() * options.length)];
+			} else {
+				this.portrait = this.id.toLowerCase() + "/" + Math.floor(Math.random() * this.portraits) + ".png";
+			}
 		}
 	}
 
@@ -288,20 +301,28 @@ class GameState {
 				this.adventureProgress[i][j] = false;
 			}
 		}
+		this.resources.time = adventure.timeLimit;
 	}
 
 	turnDone() {
 		let effects = [];
 		let events = [];
+		if (this.currentPlayer == 0) {
+			this.resources.time = Math.max(0, this.resources.time - 1);
+		}
 		for (let u of this.units) if (u.player == this.currentPlayer) {
 			effects.push(new Effect(u, "actionPoints", 3));
 			events.push(ActionEvent.endTurn(u));
 		}
-		this.addAction(new Action(false, effects, events, "END TURN"));
-		this.currentPlayer = (this.currentPlayer + 1) % 3;
-		notifyTurn();
-		this.runAi();
-		showHideUiElements();
+		this.addAction(new Action(false, effects, events, "END TURN"), () => {
+			this.currentPlayer = (this.currentPlayer + 1) % 3;
+			notifyTurn();
+			this.runAi();
+			if (this.currentPlayer == 0 && this.resources.time <= 0) {
+				this.roomDefeat();
+			}
+			showHideUiElements();
+		});
 	}
 
 	runAi() {

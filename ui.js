@@ -63,10 +63,13 @@ function clickOnTile(loc, quadrant) {
 		if (action != null) {
 			if(lockUi());
 			clearClickContextActors();
-			gameState.addAction(action, () => unlockUi());
+			gameState.addAction(action, () => {
+				unlockUi();
+				showHideUiElements();
+				if (clickContext != null) mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
+			});
 			showHideUiElements();
 			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
-			mouseOverTile(loc, quadrant);
 		}
 	}
 }
@@ -110,6 +113,7 @@ function showHideUiElements() {
 	document.getElementById("undo").style.visibility = gameState.canPlayerUndo() ? "visible" : "hidden";
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null && clickContext.selectedUnit.actionPoints < clickContext.selectedAbility.minActionPoints) selectNext();
 	document.getElementById("done").style.visibility = gameState.currentPlayer == 0 ? "visible" : "hidden";
+	document.getElementById("timeleft").textContent = gameState.resources.time != undefined ? gameState.resources.time : "";
 }
 
 function loadAdventure(adventure) {
@@ -172,10 +176,11 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 	}
 
 	let icons = {
-		"!EXPERIENCE": AdventureIntroElement.makeCap,
-		"!UNLOCK": AdventureIntroElement.makeUnlock,
-		"!HEALING": AdventureIntroElement.makePlus,
-		"!VICTORY": AdventureIntroElement.makeCup,
+		"!EXPERIENCE": Util.makeCap,
+		"!UNLOCK": Util.makeUnlock,
+		"!HEALING": Util.makePlus,
+		"!VICTORY": Util.makeCup,
+		"!TIME": Util.makeTime,
 	};
 
 	for (let ex in icons) {

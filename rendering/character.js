@@ -131,8 +131,8 @@ class MenuCharacter extends HTMLElement {
 		abd.appendChild(makeSvg(this.character.strengths, this.character.threats, false));
 		abd.appendChild(makeSvg(this.character.strengthsFrightened, this.character.threatsFrightened, true));
 
-		for (let x of this.character.abilities) abd.appendChild(AdventureIntroElement.makeAbilitySvg(x, true, this.descContainer));
-		for (let x of this.character.learnableAbilities) abd.appendChild(AdventureIntroElement.makeAbilitySvg(x, false, this.descContainer));
+		for (let x of this.character.abilities) abd.appendChild(Util.makeAbilitySvg(x, true, this.descContainer));
+		for (let x of this.character.learnableAbilities) abd.appendChild(Util.makeAbilitySvg(x, false, this.descContainer));
 
 		if (this.retireable) {
 			this.retireOption = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -202,7 +202,7 @@ class MenuCharacter extends HTMLElement {
 		for (let bonus of bonusAbilities) {
 			if (this.character.abilities.includes(bonus) || this.character.learnableAbilities.includes(bonus) || addedAbilities.includes(bonus)) continue;
 			addedAbilities.push(bonus);
-			let svg = AdventureIntroElement.makeAbilitySvg(bonus, false, this.descContainer);
+			let svg = Util.makeAbilitySvg(bonus, false, this.descContainer);
 			svg.setAttribute("class", "abilityBonus");
 			this.shadow.getElementById("abilities").appendChild(svg);
 		}

@@ -86,11 +86,11 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {
-			window.setTimeout(() => this.addMessage("Hotkeys:<br/><b>Backtick (`)</b>: Select next character<br/><b>1 - 8</b>: Select the corresponding ability<br/><b>z</b>: Undo<br/><b>Enter</b>: end turn or close popup<br/><b>d</b>: end turn or close popup<br/><b>Escape</b>: close popup."), 750);
+			window.setTimeout(() => this.addMessage("Hotkeys:<br/><br/><b>Backtick (`)</b>: Select next character<br/><b>1 - 8</b>: Select the corresponding ability<br/><b>z</b>: Undo<br/><b>Enter</b>: end turn or close popup<br/><b>d</b>: end turn or close popup<br/><b>Escape</b>: close popup."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
-			this.addMessage("Congratulations! You have defeated the !DANGERs. Now, click a flashing diamond to select the next area. Different rooms have different rewards.");
+			this.addMessage("Congratulations! You have defeated the !DANGERs. Now, click a flashing diamond to select the next area. Different choices earn different rewards.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 2) {
@@ -98,16 +98,16 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 3) {
-			this.addMessage("Your goal is to defeat the !DANGERs in the room with the !VICTORY icons.");
+			this.addMessage("Your goal is to defeat the !DANGERs in the room with the !VICTORY icons before you run out of !TIME.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_END && this.eventCounts[event] == 1) {
-			this.addMessage("Caution: when you are defeated in an adventure, your characters each lose an ability. This loss is permanent - try to avoid this.");
-			this.addMessage("This adventure is over! All adventures yield rewards (unless you are defeated in the very first room - it happens), but successful adventures yield more. Click on the treasure chest to view your rewards. Accumulate rewards to unlock new character types and new adventures.");
+			this.addMessage("Caution: if you are !DEFEATED or run out of !TIME in an adventure, your !CHARACTERS may lose abilities. This loss is permanent - try to avoid this.");
+			this.addMessage("This adventure is over! All adventures yield rewards (unless you are defeated at the very start - it happens), but successful adventures yield more. Click on the treasure chest to view your rewards. Accumulate rewards to unlock !CHARACTERs and new adventures.");
 		}
 		
 		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 1) {
-			this.addMessage("In between adventures, you can retire your characters. Retiring characters pass on the abilities they know to another character (though the character must still spend experience to learn them). Build up a mighty group!");
+			this.addMessage("In between adventures, you can retire your !CHARACTERs. Retiring !CHARACTERs pass on the abilities they know to another !CHARACTER (though the student must still spend experience to learn them). Build up a mighty group!");
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_REACTION) {

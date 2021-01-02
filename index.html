@@ -2,6 +2,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script src="crashreporting.js"></script>
+		<script src="util.js"></script>
 		<script src="gamelib.js"></script>
 		<script src="ui.js"></script>
 		<script src="abilities/bite.js"></script>
@@ -72,10 +73,6 @@
 				height: 100%;
 				justify-content: space-between;
 			}
-			#undo, #done {
-				width: 3em;
-				height: 3em;
-			}
 			body.nosidePane {
 				grid-template-columns: 1fr;
 			}
@@ -98,6 +95,12 @@
 					<svg id="done" title="End Turn" viewBox="0 0 24 24" onClick="clickOnDone()">
 						<path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
 					</svg>
+					<span id="time">
+						<span id="timeleft"></span>
+						<svg title="End Turn" viewBox="0 0 24 24" onClick="clickOnDone()">
+							<path fill="currentColor" d="M6,2V8H6V8L10,12L6,16V16H6V22H18V16H18V16L14,12L18,8V8H18V2H6Z" />
+						</svg>
+					</span>
 				</div>
 			</div>
 			<div>

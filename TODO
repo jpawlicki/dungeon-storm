@@ -1,10 +1,7 @@
-Short Term:
- - character portrait randomization should avoid reusing existing portraits if possible.
- - Forget ability option?
- - Room time limits
-
-Long Term:
- - sfx sound
+ - show adventure failure penalty on rewards screen before the chest is opened
+ - XP and cookies should turn into 1/2 unlocks, time into 1/5 unlocks?
+ - show unlock progress bar moving on rewards screen, bubble awards when ?s reached
+ - rewards screen polish (layout, sizing, color consistency, etc)
  - Settings Menu:
    - Concede adventure / room
 	 - Toggle sound
@@ -14,6 +11,10 @@ Long Term:
  - Game saving and loading
    - Local
 	 - Cloud
+	 - To / From File
+	 - Probably need a list of reward points in the save file to allow for additional rewards to be added prior to the unlock point
+ - sfx sounds
+ - Additional adventures, abilities, characters, units, unlocks, etc.
+ - new tileset
  - Crash handling should report to the server for logging.
  - Room features (fire, sand, water, rock, gold, action-bonus, etc)
- - Additional adventures, abilities, unlocks, etc.

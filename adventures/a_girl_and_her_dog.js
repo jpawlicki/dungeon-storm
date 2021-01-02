@@ -20,6 +20,7 @@
 		title: {
 			"en": "A Girl and Her Dog",
 		},
+		timeLimit: 40,
 		victory: [[2, 2]],
 	};
 	adventureData[adventure.id] = adventure;

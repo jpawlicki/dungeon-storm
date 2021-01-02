@@ -138,7 +138,7 @@ class MainMenu extends HTMLElement {
 			unlockable.add(u.at);
 		}
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		AdventureIntroElement.makeUnlock(g);
+		Util.makeUnlock(g);
 		svg.appendChild(g);
 		g.style.transform = "scale(0.15) translate(-12px, -12px)";
 		for (let i = 1; i < 200; i++) {
