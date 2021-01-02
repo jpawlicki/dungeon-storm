@@ -39,6 +39,17 @@ function clickOnAbility(unit, ability) {
 	}
 }
 
+let uiLocked = false;
+function lockUi() {
+	if (uiLocked) return false;
+	uiLocked = true;
+	return true;
+}
+
+function unlockUi() {
+	uiLocked = false;
+}
+
 // Tile quadrants:
 //      /\
 //     /30\
@@ -50,8 +61,9 @@ function clickOnTile(loc, quadrant) {
 		if (clickContext.selectedUnit.player != 0) return;
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, loc, quadrant);
 		if (action != null) {
+			if(lockUi());
 			clearClickContextActors();
-			gameState.addAction(action);
+			gameState.addAction(action, () => unlockUi());
 			showHideUiElements();
 			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
 			mouseOverTile(loc, quadrant);
@@ -74,6 +86,7 @@ function mouseOutTile() {
 }
 
 function clickOnUndo() {
+	if (uiLocked) return;
 	if (gameState.disableActions) return;
 	if (gameState.currentPlayer != 0) return;
 	gameState.undoAction();
@@ -81,6 +94,7 @@ function clickOnUndo() {
 }
 
 function clickOnDone() {
+	if (uiLocked) return;
 	if (gameState.disableActions) return;
 	if (gameState.currentPlayer != 0) return;
 	clearClickContext();

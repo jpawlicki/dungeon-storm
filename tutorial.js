@@ -86,7 +86,7 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {
-			window.setTimeout(() => this.addMessage("Hotkeys:<br/>Backtick (`): Select next character<br/>1 - 8<br/>Select the corresponding ability<br/>z: Undo<br/>Enter: end turn or close popup<br/>d: end turn or close popup<br/>Escape: close popup."), 750);
+			window.setTimeout(() => this.addMessage("Hotkeys:<br/>Backtick (`): Select next character<br/>1 - 8:Select the corresponding ability<br/>z: Undo<br/>Enter: end turn or close popup<br/>d: end turn or close popup<br/>Escape: close popup."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
