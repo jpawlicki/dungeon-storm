@@ -40,7 +40,7 @@ class AdventureIntroElement extends HTMLElement {
 
 	static makeUnlock(container) {
 		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		d.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
+		d.setAttribute("d", "M7,14A2,2 0 0,1 5,12A2,2 0 0,1 7,10A2,2 0 0,1 9,12A2,2 0 0,1 7,14M12.65,10C11.83,7.67 9.61,6 7,6A6,6 0 0,0 1,12A6,6 0 0,0 7,18C9.61,18 11.83,16.33 12.65,14H17V18H21V14H23V10H12.65Z");
 		d.setAttribute("fill", "currentColor");
 		container.appendChild(d);
 	}
@@ -710,10 +710,8 @@ class AdventureCompleteElement extends HTMLElement {
 						text.setAttribute("x", "12");
 						text.setAttribute("y", "12");
 						svg.appendChild(text);
-						let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-						p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
-						p2.setAttribute("class", "lockicon");
-						svg.appendChild(p2);
+						AdventureIntroElement.makeUnlock(svg);
+						svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 						shadow.getElementById("clears").appendChild(svg);
 					}, 1000 / numAwards * i);
 				}
@@ -727,10 +725,8 @@ class AdventureCompleteElement extends HTMLElement {
 							d.setAttribute("d", "M18 2C17.1 2 16 3 16 4H8C8 3 6.9 2 6 2H2V11C2 12 3 13 4 13H6.2C6.6 15 7.9 16.7 11 17V19.08C8 19.54 8 22 8 22H16C16 22 16 19.54 13 19.08V17C16.1 16.7 17.4 15 17.8 13H20C21 13 22 12 22 11V2H18M6 11H4V4H6V11M20 11H18V4H20V11Z");
 							d.setAttribute("fill", "#fc0");
 							svg.appendChild(d);
-							let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-							p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
-							p2.setAttribute("class", "lockicon");
-							svg.appendChild(p2);
+							AdventureIntroElement.makeUnlock(svg);
+							svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 							shadow.getElementById("clears").appendChild(svg);
 						}, 1000 / numAwards * (i + numClears));
 					}
@@ -750,10 +746,8 @@ class AdventureCompleteElement extends HTMLElement {
 						}
 						if (resourceAwards[i] != "character" && resourceAwards[i] != "unlock") {
 							svg.setAttribute("class", "unlockable");
-							let p2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-							p2.setAttribute("d", "M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V10A2,2 0 0,1 6,8H15V6A3,3 0 0,0 12,3A3,3 0 0,0 9,6H7A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17Z");
-							p2.setAttribute("class", "lockicon");
-							svg.appendChild(p2);
+							AdventureIntroElement.makeUnlock(svg);
+							svg.querySelector("path:nth-child(2)").setAttribute("class", "lockicon");
 						}
 						shadow.getElementById("clears").appendChild(svg);
 					}, 1000 / numAwards * (i + numClears + (victory ? numClears : 0)));

@@ -141,13 +141,28 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 	};
 
 	for (let ex in expansions) {
-		if (desc.includes(ex)) {
-			replaced = true;
-			desc = desc.replaceAll(new RegExp(ex + "[^.\\- ]*", 'g'), match => {
-				return "<span class=\"explicable\" onclick=\"Tutorial.hook(" + expansions[ex] + ");\">" + match.substr(1, 1) + match.substr(2).toLowerCase() + "</span>";
-			});
-		}
+		desc = desc.replaceAll(new RegExp(ex + "[^.\\- ]*", 'g'), match => {
+			return "<span class=\"explicable\" onclick=\"Tutorial.hook(" + expansions[ex] + ");\">" + match.substr(1, 1) + match.substr(2).toLowerCase() + "</span>";
+		});
 	}
+
+	let icons = {
+		"!EXPERIENCE": AdventureIntroElement.makeCap,
+		"!UNLOCK": AdventureIntroElement.makeUnlock,
+		"!HEALING": AdventureIntroElement.makePlus,
+	};
+
+	for (let ex in icons) {
+		desc = desc.replaceAll(new RegExp(ex, 'g'), match => {
+			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			svg.setAttribute("viewBox", "0 0 24 24");
+			svg.style.height = "1em";
+			svg.style.verticalAlign = "bottom";
+			icons[ex](svg);
+			return svg.outerHTML;
+		});
+	}
+
 	p.innerHTML = desc;
 	return p;
 }

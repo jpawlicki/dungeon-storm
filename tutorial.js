@@ -34,11 +34,14 @@ class Tutorial {
 		this.tutorialWindow = document.createElement("div");
 		this.tutorialWindow.style.display = "none";
 		this.tutorialWindow.style.position = "absolute";
-		this.tutorialWindow.style.right = 0;
-		this.tutorialWindow.style.bottom = 0;
-		this.tutorialWindow.style.borderRadius = "2em 0 0 0";
+		this.tutorialWindow.style.margin = "auto";
+		this.tutorialWindow.style.top = "20%";
+		this.tutorialWindow.style.bottom = "20%";
+		this.tutorialWindow.style.left = "20%";
+		this.tutorialWindow.style.right = "20%";
+		this.tutorialWindow.style.borderRadius = "2em";
+		this.tutorialWindow.style.border = "2px solid #fff";
 		this.tutorialWindow.style.backgroundColor = "#000";
-		this.tutorialWindow.style.maxWidth = "30em";
 		this.tutorialWindow.style.color = "#fff";
 		this.tutorialWindow.style.padding = "1em";
 		document.querySelector("body").appendChild(this.tutorialWindow);
@@ -50,8 +53,8 @@ class Tutorial {
 		path.setAttribute("d", "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z");
 		closeSvg.appendChild(path);
 		closeSvg.style.cssFloat = "right";
-		closeSvg.style.height = "1em";
-		closeSvg.style.width = "1em";
+		closeSvg.style.height = "2em";
+		closeSvg.style.width = "2em";
 		closeSvg.style.cursor = "pointer";
 		let othis = this;
 		closeSvg.addEventListener("click", () => othis.tutorialClose());
@@ -67,7 +70,7 @@ class Tutorial {
 		this.eventCounts[event]++;
 		
 		if (event == Tutorial.Hook.ADVENTURE_START && this.eventCounts[event] == 1) {
-			this.addMessage("Welcome! Tips and explanations will appear here. To get started, click on two !CHARACTERs and press play. To learn more about abilities, mouse over the icons beside the !CHARACTERs.");
+			this.addMessage("Welcome! To get started, click on two !CHARACTERs and press play. To learn more about abilities, mouse over the icons beside the !CHARACTERs.");
 		}
 		
 		if (event == Tutorial.Hook.ROOM_LOAD && this.eventCounts[event] == 1) {
@@ -75,31 +78,31 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 1) {
-			this.addMessage("Using abilities costs ♦. ♦ are replenished when you end your turn. Most actions can be undone by clicking the undo arrow in the upper left. Continue using abilities to !DEFEAT the !DANGERs. When you are ready, end your turn by clicking the check mark in the upper left.");
+			window.setTimeout(() => this.addMessage("Using abilities costs ♦. ♦ are replenished when you end your turn. Most actions can be undone by clicking the undo arrow in the upper left. Continue using abilities to !DEFEAT the !DANGERs. When you are ready, end your turn by clicking the check mark in the upper left."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 2) {
-			this.addMessage("Tip: Avoid spending your final ♦ on an attack: if you lose the ⚅ roll, your character must !RETREAT. If they don't have ♦ to retreat, they will be !DEFEATed.");
+			window.setTimeout(() => this.addMessage("Tip: Avoid spending your final ♦ on an attack: if you lose the ⚅ roll, your character must !RETREAT. If they don't have another ♦ to retreat, they will be !DEFEATed."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 6) {
-			this.addMessage("You can also end your turn by pressing 'Enter' on the keyboard.");
+			window.setTimeout(() => this.addMessage("You can also end your turn by pressing 'Enter' on the keyboard."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {
-			this.addMessage("Other hotkeys: you can use number keys to switch abilities of the currently-selected character, and the backtick (`) key to cycle through your characters. You can undo actions by pressing 'z'.");
+			window.setTimeout(() => this.addMessage("Other hotkeys: you can use number keys to switch abilities of the currently-selected character, and the backtick (`) key to cycle through your characters. You can undo actions by pressing 'z'."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
-			this.addMessage("Congratulations! You have defeated the dangers in the room. Now, you can select the next room go to by clicking a flashing diamond. Different rooms have different rewards.");
+			this.addMessage("Congratulations! You have defeated the !DANGERs. Now, click a flashing diamond to select the next area. Different rooms have different rewards.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 2) {
-			this.addMessage("Your characters can spend experience rewards to permanently learn new abilities, or healing rewards to recover from injury or defeat.");
+			this.addMessage("Spend !EXPERIENCE to learn new abilities, and !HEALING to recover !FRIGHTENED or !DEFEATED !CHARACTERs.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 3) {
-			this.addMessage("Your goal is to defeat the dangers in the room with the victory cup rewards.");
+			this.addMessage("Your goal is to defeat the !DANGERs in the room with the victory cups.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_END && this.eventCounts[event] == 1) {
@@ -120,7 +123,7 @@ class Tutorial {
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_MOVE) {
-			this.addMessage("!MOVEing !THREATENed !CHRACTERs is dangerous because it often causes !REACTIONs from !DANGERs. Check the abilities of each !DANGER and consider using abilities without the !MOVE keyword.");
+			this.addMessage("!MOVEing !THREATENed !CHARACTERs is dangerous because it often causes !REACTIONs from !DANGERs. Check the abilities of each !DANGER and consider using abilities without the !MOVE keyword.");
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_THREATEN) {
