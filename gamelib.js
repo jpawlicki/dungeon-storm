@@ -336,8 +336,7 @@ class GameState {
 			this.runAiSubtask(units.splice(1));
 			return;
 		}
-		this.addAction(action);
-		window.setTimeout(() => this.runAiSubtask(units), 700);
+		this.addAction(action, () => window.setTimeout(() => this.runAiSubtask(units), 700));
 	}
 
 	undoAction() {
@@ -355,7 +354,7 @@ class GameState {
 		return true;
 	}
 
-	addAction(action) {
+	addAction(action, callback) {
 		if (this.disableActions) return;
 		this.actionHistory.push(action);
 		action.apply();
@@ -366,8 +365,12 @@ class GameState {
 				this.reactionQueue.push(reaction);
 			}
 		}
-		if (this.reactionQueue.length > 0) this.addAction(this.reactionQueue.shift());
-		else this.checkRoomClear();
+		if (this.reactionQueue.length > 0) {
+			window.setTimeout(() => this.addAction(this.reactionQueue.shift(), callback), 250);
+		}	else {
+			this.checkRoomClear();
+			if (callback != undefined) callback();
+		}
 	}
 
 	checkRoomClear() {

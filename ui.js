@@ -189,7 +189,8 @@ function selectNext() {
 window.addEventListener("keypress", (ev) => {
 	if (document.querySelector("body").getAttribute("class") == "nosidepane") return;
 	if (ev.key == "Enter" || ev.key == "d") {
-		clickOnDone();
+		if (tutorial != undefined && tutorial.isOpen()) tutorial.tutorialClose();
+		else clickOnDone();
 	} else if (ev.key == "z") {
 		clickOnUndo();
 	} else if (ev.key == "`") {
@@ -201,5 +202,11 @@ window.addEventListener("keypress", (ev) => {
 				unitCard.selectAbility(num);
 			}
 		}
+	}
+});
+
+window.addEventListener("keyup", (ev) => {
+	if (ev.key == "Escape") {
+		if (tutorial != undefined) tutorial.tutorialClose();
 	}
 });

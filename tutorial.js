@@ -85,12 +85,8 @@ class Tutorial {
 			window.setTimeout(() => this.addMessage("Tip: Avoid spending your final ♦ on an attack: if you lose the ⚅ roll, your character must !RETREAT. If they don't have another ♦ to retreat, they will be !DEFEATed."), 750);
 		}
 		
-		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 6) {
-			window.setTimeout(() => this.addMessage("You can also end your turn by pressing 'Enter' on the keyboard."), 750);
-		}
-		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {
-			window.setTimeout(() => this.addMessage("Other hotkeys: you can use number keys to switch abilities of the currently-selected character, and the backtick (`) key to cycle through your characters. You can undo actions by pressing 'z'."), 750);
+			window.setTimeout(() => this.addMessage("Hotkeys:<br/>Backtick (`): Select next character<br/>1 - 8<br/>Select the corresponding ability<br/>z: Undo<br/>Enter: end turn or close popup<br/>d: end turn or close popup<br/>Escape: close popup."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
@@ -162,5 +158,9 @@ class Tutorial {
 			this.tutorialWindow.querySelector("div").innerHTML = "";
 			this.tutorialWindow.querySelector("div").appendChild(expandAbilityDetails([this.messageStack[this.messageStack.length - 1]]));
 		}
+	}
+
+	isOpen() {
+		return this.messageStack.length != 0;
 	}
 }

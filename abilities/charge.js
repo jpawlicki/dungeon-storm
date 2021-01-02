@@ -3,9 +3,9 @@ abilityData.CHARGE = new class extends Ability {
 		super();
 		this.name = "Charge";
 		this.icon = "M15.59,9C17.7,7.74 19,5.46 19,3H17A5,5 0 0,1 12,8A5,5 0 0,1 7,3H5C5,5.46 6.3,7.74 8.41,9C5.09,11 4,15.28 6,18.6C7.97,21.92 12.27,23 15.59,21C18.91,19.04 20,14.74 18,11.42C17.42,10.43 16.58,9.59 15.59,9M12,20A5,5 0 0,1 7,15A5,5 0 0,1 12,10A5,5 0 0,1 17,15A5,5 0 0,1 12,20Z";
-		this.minActionPoints = 1;
+		this.minActionPoints = 2;
 		this.details = [
-			"Use ♦. Select a !ENEMY in a straight line and !MOVE to its space. It becomes !FRIGHTENED and !RETREATs.",
+			"Use ♦♦. Select a !ENEMY in a straight line and !MOVE to its space. It becomes !FRIGHTENED and !RETREATs.",
 			"Cannot select a !ENEMY behind a rise of 2 or more steps.",
 			"Cannot select a !ENEMY behind a different !ENEMY or !FRIEND.",
 			"Cannot select an adjacent !ENEMY.",
@@ -20,7 +20,7 @@ abilityData.CHARGE = new class extends Ability {
 		if (target == null) return;
 
 		let effects = [
-			new Effect(unit, "actionPoints", unit.actionPoints - 1),
+			new Effect(unit, "actionPoints", unit.actionPoints - 2),
 			new Effect(unit, "pos", loc),
 			new Effect(target, "state", Unit.State.BLOODIED),
 		];
@@ -57,7 +57,7 @@ abilityData.CHARGE = new class extends Ability {
 	}
 
 	isActionLegal(unit, loc, quadrant) {
-		if (unit.actionPoints < 1) return false;
+		if (unit.actionPoints < 2) return false;
 		if (Tile.distanceBetween(unit.pos, loc) <= 1) return false;
 		let dirTo = Tile.directionTo(unit.pos, loc);
 		if (dirTo == -1) return false;
