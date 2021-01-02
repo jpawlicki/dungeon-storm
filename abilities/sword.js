@@ -11,7 +11,6 @@ abilityData.SWORD = new class extends Ability {
 			"Anyone who !RETREATs first becomes !FRIGHTENED.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

@@ -10,7 +10,6 @@ abilityData.MOVE = new class extends Ability {
 			"Or:",
 			"  2. Rotate in the same space."];
 		this.aiHints = [AiHints.MOVE];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

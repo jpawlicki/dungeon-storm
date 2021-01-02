@@ -142,6 +142,17 @@ function showSidePane() {
 function expandAbilityDetails(descAr, enemyContext = false) {
 	let p = document.createElement("p");
 	let desc = descAr.join("<br/>").replaceAll("!ENEMY", enemyContext ? "!CHARACTER" : "!DANGER").replaceAll("!FRIEND", enemyContext ? "!DANGER" : "!CHARACTER");
+
+	let expandable = {
+		"!NOTLEARNED": "This !CHARACTER does not yet know this ability, but can learn it by spending !EXPERIENCE.",
+	};
+
+	for (let ex in expandable) {
+		desc = desc.replaceAll(new RegExp(ex, 'g'), match => {
+			return expandable[ex];
+		});
+	}
+
 	let expansions = {
 		"!REACTION": Tutorial.Hook.EXPLAIN_REACTION,
 		"!DEFEAT": Tutorial.Hook.EXPLAIN_DEFEAT,
@@ -164,6 +175,7 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 		"!EXPERIENCE": AdventureIntroElement.makeCap,
 		"!UNLOCK": AdventureIntroElement.makeUnlock,
 		"!HEALING": AdventureIntroElement.makePlus,
+		"!VICTORY": AdventureIntroElement.makeCup,
 	};
 
 	for (let ex in icons) {

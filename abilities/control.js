@@ -6,7 +6,6 @@ abilityData.CONTROL = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = ["!REACTION: !ENEMYs !THREATENed by this !FRIEND are !DEFEATed if they !MOVE in any direction other than directly away from this !FRIEND."];
 		this.aiHints = [];
-		this.cost = {experience: 1};
 	}
 
 	clickOnTile(unit, loc, quadrant) {}

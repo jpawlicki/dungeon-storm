@@ -6,7 +6,6 @@ abilityData.STRIKE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Select an adjacent !ENEMY with less ○. They become !FRIGHTENED and !RETREAT."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 2};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

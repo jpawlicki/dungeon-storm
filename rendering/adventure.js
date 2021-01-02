@@ -5,10 +5,12 @@ class AdventureIntroElement extends HTMLElement {
 		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		d.setAttribute("d", ability.icon);
 		svg.appendChild(d);
+		let details = ability.details.slice();
+		if (!known) details.push("!NOTLEARNED");
 		if (descElement != undefined) {
 			let info = () => {
 				descElement.innerHTML = "";
-				descElement.appendChild(expandAbilityDetails(ability.details, hostileContext));
+				descElement.appendChild(expandAbilityDetails(details, hostileContext));
 			};
 			svg.addEventListener("mouseover", info);
 			svg.addEventListener("click", info);
@@ -205,6 +207,9 @@ class AdventureNextRoomElement extends HTMLElement {
 					align-items: center;
 					transition: color 0.3s;
 				}
+				.healing {
+					margin-left: 1em;
+				}
 				#characters .learnable svg {
 					height: 2em;
 					width: 2em;
@@ -347,18 +352,24 @@ class AdventureNextRoomElement extends HTMLElement {
 			{
 				let learnableAbilityDiv = document.createElement("div");
 
+				// Returns a function that can be called to update the cost, which is saved by reference.
 				function makeLearnableSpot(icon, cost, effect, undoEffect) {
 					let miniDiv = document.createElement("div");
-					miniDiv.appendChild(icon);
-					for (let r in cost) {
-						if (r == "experience") miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makeCap));
-						else if (r == "healing") miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makePlus));
-						else miniDiv.appendChild(document.createTextNode(cost[r] + "?"));
-					}
-					miniDiv.setAttribute("class", "learnable");
 					let state = false;
+					function updateMiniDiv() {
+						miniDiv.innerHTML = "";
+						miniDiv.appendChild(icon);
+						if (state) return;
+						if (character.abilities.length == 8) return;
+						for (let r in cost) {
+							miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makeCap));
+						}
+					}
+					updateMiniDiv();
+					miniDiv.setAttribute("class", "learnable");
 					miniDiv.addEventListener("click", () => {
 						if (!state) {
+							if (character.abilities.length == 8) return;
 							for (let r in cost) if (gameState.resources[r] < cost[r]) return;
 							for (let r in cost) gameState.resources[r] -= cost[r];
 							state = true;
@@ -373,25 +384,74 @@ class AdventureNextRoomElement extends HTMLElement {
 						updateResources();
 					});
 					learnableAbilityDiv.appendChild(miniDiv);
+					return updateMiniDiv;
 				}
 
+				function makeHealSpot(icon, cost, effect, undoEffect) {
+					let miniDiv = document.createElement("div");
+					let state = false;
+					function updateMiniDiv() {
+						miniDiv.innerHTML = "";
+						miniDiv.appendChild(icon);
+						if (state) return;
+						for (let r in cost) {
+							miniDiv.appendChild(addText(-cost[r], AdventureIntroElement.makePlus));
+						}
+					}
+					updateMiniDiv();
+					miniDiv.setAttribute("class", "learnable healing");
+					miniDiv.addEventListener("click", () => {
+						if (!state) {
+							for (let r in cost) if (gameState.resources[r] < cost[r]) return;
+							for (let r in cost) gameState.resources[r] -= cost[r];
+							state = true;
+							effect();
+							miniDiv.setAttribute("class", "learnable healing activated");
+							updateMiniDiv();
+						} else {
+							for (let r in cost) gameState.resources[r] += cost[r];
+							state = false;
+							undoEffect();
+							miniDiv.setAttribute("class", "learnable healing");
+							updateMiniDiv();
+						}
+						updateResources();
+					});
+					learnableAbilityDiv.appendChild(miniDiv);
+				}
+
+				let updaters = [];
+				let learnAbilityCosts = {"experience": 0};
+				function updateCosts() {
+					learnAbilityCosts.experience = Math.max(0, character.abilities.length - 1);
+					for (let u of updaters) u();
+				}
+				updateCosts();
 				for (let a of character.learnableAbilities) {
-					makeLearnableSpot(AdventureIntroElement.makeAbilitySvg(a, false, shadow.getElementById("abilityDescText2")), a.cost, () => {character.learn(a)}, () => {character.unlearn(a)});
+					updaters.push(makeLearnableSpot(AdventureIntroElement.makeAbilitySvg(a, false, shadow.getElementById("abilityDescText2")), learnAbilityCosts, () => {character.learn(a); updateCosts();}, () => {character.unlearn(a); gameState.resources.experience--; updateCosts();}));
 				}
 				if (character.state == Unit.State.DEFEATED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					img.setAttribute("viewBox", "0 0 24 24");
 					AdventureIntroElement.makePlus(img);
-					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
-					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
-					makeLearnableSpot(img, {healing: 3}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.DEFEATED; portrait.update();});
+					function details() {
+						shadow.getElementById("abilityDescText2").innerHTML = "";
+						shadow.getElementById("abilityDescText2").appendChild(expandAbilityDetails(["Use !HEALING to encourage this !CHARACTER so that they are no longer !DEFEATED."]));
+					}
+					img.addEventListener("mouseover", details);
+					img.addEventListener("click", details);
+					makeHealSpot(img, {healing: 2}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.DEFEATED; portrait.update();});
 				} else if (character.state == Unit.State.BLOODIED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					img.setAttribute("viewBox", "0 0 24 24");
 					AdventureIntroElement.makePlus(img);
-					img.addEventListener("mouseover", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
-					img.addEventListener("click", () => shadow.getElementById("abilityDescText2").textContent = "Heal character.");
-					makeLearnableSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.BLOODIED; portrait.update();});
+					function details() {
+						shadow.getElementById("abilityDescText2").innerHTML = "";
+						shadow.getElementById("abilityDescText2").appendChild(expandAbilityDetails(["Use !HEALING to encourage this !CHARACTER so that they are no longer !FRIGHTENED."]));
+					}
+					img.addEventListener("mouseover", details);
+					img.addEventListener("click", details);
+					makeHealSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.BLOODIED; portrait.update();});
 				}
 				cdiv.appendChild(learnableAbilityDiv);
 			}

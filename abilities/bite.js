@@ -10,7 +10,6 @@ abilityData.BITE = new class extends Ability {
 			"  Roll ⚅. If greater than this !FRIEND's ○, this !FRIEND becomes !FRIGHTENED and !RETREATs.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

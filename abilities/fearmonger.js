@@ -6,7 +6,6 @@ abilityData.FEARMONGER = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = ["!REACTION: Gain ♦ whenever a !ENEMY becomes !FRIGHTENED."];
 		this.aiHints = [];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {}

@@ -6,7 +6,6 @@ abilityData.FRIGHTEN = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. !FRIGHTEN an adjacent !FRIEND or !ENEMY that is not already !FRIGHTENED."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 4};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

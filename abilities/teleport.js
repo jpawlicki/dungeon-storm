@@ -6,7 +6,6 @@ abilityData.TELEPORT = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Teleport to an empty space adjacent to a !FRIEND, with any facing."];
 		this.aiHints = [AiHints.MOVE];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

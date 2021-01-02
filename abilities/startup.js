@@ -6,7 +6,6 @@ abilityData.STARTUP = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = ["!REACTION: Gain ♦♦♦♦ on the first turn, or ♦♦ if !FRIGHTENED."];
 		this.aiHints = [];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {}

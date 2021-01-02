@@ -11,7 +11,6 @@ abilityData.CHARGE = new class extends Ability {
 			"Cannot select an adjacent !ENEMY.",
 			"Cannot select a !ENEMY with greater ○."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

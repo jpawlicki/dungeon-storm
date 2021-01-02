@@ -6,7 +6,6 @@ abilityData.ENERGIZE = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = ["!REACTION: Gain ♦ at the end of the turn, if not !FRIGHTENED."];
 		this.aiHints = [];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {}

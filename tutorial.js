@@ -86,7 +86,7 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {
-			window.setTimeout(() => this.addMessage("Hotkeys:<br/>Backtick (`): Select next character<br/>1 - 8:Select the corresponding ability<br/>z: Undo<br/>Enter: end turn or close popup<br/>d: end turn or close popup<br/>Escape: close popup."), 750);
+			window.setTimeout(() => this.addMessage("Hotkeys:<br/><b>Backtick (`)</b>: Select next character<br/><b>1 - 8</b>: Select the corresponding ability<br/><b>z</b>: Undo<br/><b>Enter</b>: end turn or close popup<br/><b>d</b>: end turn or close popup<br/><b>Escape</b>: close popup."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
@@ -98,7 +98,7 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 3) {
-			this.addMessage("Your goal is to defeat the !DANGERs in the room with the victory cups.");
+			this.addMessage("Your goal is to defeat the !DANGERs in the room with the !VICTORY icons.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_END && this.eventCounts[event] == 1) {

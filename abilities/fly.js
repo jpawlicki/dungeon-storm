@@ -6,7 +6,6 @@ abilityData.FLY = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. !MOVE to an adjacent empty space and rotate. If the destination has lower elevation, gain ♦."];
 		this.aiHints = [AiHints.MOVE];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

@@ -6,7 +6,6 @@ abilityData.SWAP = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Swap positions and facing with an adjacent !FRIEND or !ENEMY."];
 		this.aiHints = [AiHints.MOVE];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

@@ -6,7 +6,6 @@ abilityData.DISTRACT = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Rotate an adjacent !FRIEND or !ENEMY."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

@@ -7,7 +7,6 @@ abilityData.SLOW = new class extends Ability {
 		this.details = [
 			"Use ♦. Remove ♦ from an adjacent !ENEMY."];
 		this.aiHints = [];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {

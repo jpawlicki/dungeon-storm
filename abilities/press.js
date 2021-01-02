@@ -6,7 +6,6 @@ abilityData.PRESS = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = ["!REACTION: Gain ♦ whenever a !ENEMY !THREATENed by this !FRIEND !RETREATs."];
 		this.aiHints = [];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {}

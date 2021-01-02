@@ -9,7 +9,6 @@ abilityData.PUSH = new class extends Ability {
 			"Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
-		this.cost = {experience: 3};
 	}
 
 	clickOnTile(unit, loc, quadrant) {
