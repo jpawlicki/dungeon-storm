@@ -5,6 +5,8 @@ let clickContext = {
 	actors: [],
 };
 
+let soundEnabled = false;
+
 function clearClickContextActors() {
 	for (let a of clickContext.actors) a.destroy();
 	clickContext.actors = [];
@@ -117,13 +119,16 @@ function showHideUiElements() {
 }
 
 function loadAdventure(adventure) {
-	document.querySelector("#mapDiv").innerHTML = "";
 	gameState.loadAdventure(adventure);
-	document.querySelector("#mapDiv").appendChild(setupAdventureSituation());
 }
 
 function loadRoom(coords) {
 	gameState.loadRoom(coords);
+	setupRoomSituation();
+	Tutorial.hook(Tutorial.Hook.ROOM_LOAD);
+}
+
+function setupRoomSituation() {
 	for (let c of gameState.characters) c.clearActors();
 	document.querySelector("#mapDiv").innerHTML = "";
 	document.querySelector("#mapDiv").appendChild(setupRoomSvg(gameState));
@@ -132,7 +137,6 @@ function loadRoom(coords) {
 	for (let unit of gameState.units) if (unit.player != 0) unit.registerActor(new UnitCard(unit, false, document.getElementById("unitCardsEnemy")));
 	showSidePane();
 	showHideUiElements();
-	Tutorial.hook(Tutorial.Hook.ROOM_LOAD);
 }
 
 function hideSidePane() {

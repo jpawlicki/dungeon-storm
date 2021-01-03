@@ -35,15 +35,15 @@ class UnitActor {
 		this.edges.style.transition = "transform 0.3s";
 
 		let shadow = document.createElementNS("http://www.w3.org/2000/svg", "g");
-		// Shadow colors could indicate team alignment.
+		let color = unit.player == 0 ? "white" : unit.player == 1 ? "black" : "orange";
 		shadow.innerHTML = `
 			<defs>
-				<radialGradient id="unitShadow">
-					<stop offset="30%" stop-color="white"/>
-					<stop offset="100%" stop-color="white" stop-opacity="0"/>
+				<radialGradient id="unitShadow${unit.player}">
+					<stop offset="30%" stop-color="${color}"/>
+					<stop offset="100%" stop-color="${color}" stop-opacity="0"/>
 				</radialGradient>
 			</defs>
-			<circle fill="url(#unitShadow)" cx="32" cy="32" r="32"/>
+			<circle fill="url(#unitShadow${unit.player})" cx="32" cy="32" r="${32 * (unit.player / 3 + 1)}"/>
 		`;
 		plane.appendChild(shadow);
 		plane.appendChild(this.edges);

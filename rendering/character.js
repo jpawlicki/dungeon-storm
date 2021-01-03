@@ -1,9 +1,15 @@
 // Returns a DOM node for the character.
-function renderMenuCharacter(character, selectable, retireable, descContainer, retireTargetOptions, retireCallback) {
+//   character: the Unit represented
+//   selectCallback: a function() called when the character is selected or deselected. If undefined, selection is not possible.
+//   retireCallback: a function(unit, previousRetire, currentRetire) called when the character retirement is changed. If undefined, retirement is disabled.
+//   descContainer: a DOM node to render ability mouseover text into. If undefined, mousing over abilities does nothing.
+//   retireTargetOptions: a [{unit: unit, allowed: bool}, ...] representing what options are allowed for retirement. Saved by reference, so mutations will be observed.
+function renderMenuCharacter(character, selectCallback, retireCallback, descContainer, retireTargetOptions) {
 	let e = document.createElement("menu-character");
 	e.character = character;
-	e.selectable = selectable;
-	e.retireable = retireable;
+	e.selectCallback = selectCallback;
+	e.selectable = selectCallback != undefined;
+	e.retireable = retireCallback != undefined;
 	e.descContainer = descContainer;
 	e.retireTargetOptions = retireTargetOptions;
 	e.retireCallback = retireCallback;
@@ -16,7 +22,9 @@ class MenuCharacter extends HTMLElement {
 	// selectable
 	// retireable
 	// retireTargetOptions[]
-	// retireOption
+	// retireTargetOptions
+	// selectCallback
+	// retireCallback
 
 	connectedCallback() {
 		let shadow = this.attachShadow({mode: "open"});
@@ -94,6 +102,12 @@ class MenuCharacter extends HTMLElement {
 			this.shadow.querySelector("img").style.filter = "brightness(100%) grayscale(0%)";
 			this.shadow.querySelector("input").disabled = true;
 			this.shadow.querySelector("label").style.cursor = "default";
+		} else {
+			let othis = this;
+			this.shadow.querySelector("input").addEventListener("change", () => {
+				if (othis.retireable) othis.retireOption.style.visibility = !this.selected() ? "visible" : "hidden";
+				othis.selectCallback();
+			});
 		}
 
 		function makeSvg(strengths, threats, frightened) {
@@ -166,7 +180,9 @@ class MenuCharacter extends HTMLElement {
 			}
 
 			let othis = this;
-			this.retireOption.addEventListener("click", () => {
+			this.retireOption.addEventListener("click", (ev) => {
+				ev.stopPropagation();
+				ev.preventDefault();
 				for (let img of othis.retireOption.querySelectorAll("image")) img.style.opacity = 0;
 				let pos = 0;
 				while (pos < othis.retireTargetOptions.length && othis.retireTargetOptions[pos].unit != currentRetireUnit) pos++;
@@ -182,12 +198,20 @@ class MenuCharacter extends HTMLElement {
 					currentRetireUnit = null;
 					othis.shadow.getElementById("abilities").style.opacity = 1;
 					othis.shadow.querySelector("label > img").style.filter = "brightness(100%) grayscale(0%)";
+					if (this.selectable) {
+						this.shadow.querySelector("input").disabled = false;
+						this.shadow.querySelector("label").style.cursor = "pointer";
+					}
 				} else {
 					othis.retireCallback(othis.character, currentRetireUnit, othis.retireTargetOptions[pos].unit);
 					currentRetireUnit = othis.retireTargetOptions[pos].unit;
 					othis.retireOption.querySelectorAll("image")[pos].style.opacity = 1;
 					othis.shadow.getElementById("abilities").style.opacity = 0.1;
 					othis.shadow.querySelector("label > img").style.filter = "brightness(30%) grayscale(80%)";
+					if (this.selectable) {
+						this.shadow.querySelector("input").disabled = true;
+						this.shadow.querySelector("label").style.cursor = "default";
+					}
 				}
 			});
 
@@ -196,7 +220,7 @@ class MenuCharacter extends HTMLElement {
 	}
 
 	update(retireable, bonusAbilities) {
-		this.retireOption.style.visibility = retireable ? "visible" : "hidden";
+		this.retireOption.style.visibility = retireable && !this.selected() ? "visible" : "hidden";
 		for (let a of this.shadow.querySelectorAll(".abilityBonus")) a.parentNode.removeChild(a);
 		let addedAbilities = [];
 		for (let bonus of bonusAbilities) {

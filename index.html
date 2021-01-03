@@ -40,6 +40,7 @@
 		<script src="rendering/effects.js"></script>
 		<script src="rendering/mainmenu.js"></script>
 		<script src="rendering/room.js"></script>
+		<script src="rendering/settingsmenu.js"></script>
 		<script src="rendering/unit.js"></script>
 		<script src="rendering/unitcard.js"></script>
 		<script src="rendering/unlocks.js"></script>
@@ -83,18 +84,25 @@
 		<script src="adventures/forest.js"></script>
 		<script src="unlock.js"></script>
 		<script src="tutorial.js"></script>
+		<script src="persistence.js"></script>
 		<link rel="stylesheet" type="text/css" href="rendering/room.css"/>
 		<link rel="stylesheet" type="text/css" href="rendering/unit.css"/>
 		<style>
+			::backdrop {
+				background-color: #024;
+			}
 			body {
 				background-color: #024;
 				display: grid;
 				font-family: sans-serif;
 				grid-template-rows: auto;
 				grid-template-columns: 20em 1fr;
-				min-height: 100vh;
+				height: 100vh;
 				margin: 0;
 				padding: 0;
+			}
+			body > div {
+				overflow-y: auto;
 			}
 			#abilityDesc {
 				display: flex;
@@ -111,6 +119,11 @@
 			.explicable {
 				color: #ccf;
 				cursor: pointer;
+			}
+			settings-menu {
+				position: absolute;
+				top: 0;
+				right: 0;
 			}
 		</style>
 	</head>
@@ -141,18 +154,12 @@
 		</div>
 		<div id="mapDiv">
 		</div>
+		<settings-menu></settings-menu>
 		<script>
 			let lang = "en";
-			let gameState = new GameState();
-			gameState.characterPool.push(new Unit(characterData["Wisher"]));
-			gameState.characterPool.push(new Unit(characterData["Dog"]));
-			//gameState.characterPool.push(new Unit(characterData["Journeyman"]));
-			gameState.unlockedAdventures.push("A_GIRL_AND_HER_DOG");
-			gameState.unlockedCharacters.push("Dog");
-			gameState.unlockedCharacters.push("Wisher");
 			let tutorial = new Tutorial();
-			loadAdventure(adventureData.A_GIRL_AND_HER_DOG);
-			//loadAdventure(adventureData.FOREST);
+			let gameState = undefined;
+			Persistence.load();
 		</script>
 	</body>
 </html>

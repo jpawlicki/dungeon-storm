@@ -10,7 +10,7 @@ class Unlock {
 		{type: Unlock.CHARACTER, value: "Dancer", at: 26},
 	];
 
-	// Every 10 unlocks will unlock a random one from this set.
-	static unlockDataRandom10 = [
-	];
+	static getMaxUnlock() {
+		return Unlock.unlockData.map(a => a.at).reduce((a, b) => Math.max(a, b));
+	}
 }

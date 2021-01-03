@@ -4,7 +4,7 @@ class Tutorial {
 	// tutorialWindow
 
 	static Hook = {
-		ADVENTURE_START: 0,
+		ADVENTURE_START: 0, // DEPRECATED
 		ADVENTURE_NEXTROOM: 1,
 		ADVENTURE_END: 2,
 		ROOM_LOAD: 3,
@@ -69,7 +69,7 @@ class Tutorial {
 		if (this.eventCounts[event] == undefined) this.eventCounts[event] = 0;
 		this.eventCounts[event]++;
 		
-		if (event == Tutorial.Hook.ADVENTURE_START && this.eventCounts[event] == 1) {
+		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 1) {
 			this.addMessage("Welcome! To get started, click on two !CHARACTERs and press play. To learn more about abilities, mouse over the icons beside the !CHARACTERs.");
 		}
 		
@@ -106,7 +106,7 @@ class Tutorial {
 			this.addMessage("This adventure is over! All adventures yield rewards (unless you are defeated at the very start - it happens), but successful adventures yield more. Click on the treasure chest to view your rewards. Accumulate rewards to unlock !CHARACTERs and new adventures.");
 		}
 		
-		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 1) {
+		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 2) {
 			this.addMessage("In between adventures, you can retire your !CHARACTERs. Retiring !CHARACTERs pass on the abilities they know to another !CHARACTER (though the student must still spend experience to learn them). Build up a mighty group!");
 		}
 

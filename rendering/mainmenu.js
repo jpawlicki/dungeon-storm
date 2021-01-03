@@ -2,10 +2,12 @@ class MainMenu extends HTMLElement {
 	// victorious: true if the most recent adventure was completed victoriously, else false.
 	// message: previous adventure message.
 	// retirements[]: A list of retirements the player chooses to make.
+	// charSelectListeners[]: A list of callback(player count)s.
 	// shadow
 
 	connectedCallback() {
 		this.retirements = [];
+		this.charSelectListeners = [];
 
 		let shadow = this.attachShadow({mode: "open"});
 		this.shadow = shadow;
@@ -36,7 +38,7 @@ class MainMenu extends HTMLElement {
 					padding-right: 0.5em;
 				}
 				#cast, #adventures {
-					padding-top: 1em;
+					padding-top: 3em;
 				}
 				#adventures > div {
 					margin-bottom: 2em;
@@ -62,6 +64,12 @@ class MainMenu extends HTMLElement {
 				.explicable {
 					color: #ccf;
 					cursor: pointer;
+				}
+				.begin path {
+					transition: fill 0.4s;
+				}
+				.begin:hover path {
+					fill: #fff;
 				}
 			</style>
 			<div id="cast"></div>
@@ -96,9 +104,15 @@ class MainMenu extends HTMLElement {
 		}
 		for (let c of gameState.characterPool) retireOptions.push({"unit": c, "allowed": true});
 		for (let c of gameState.characterPool) {
-			let mc = renderMenuCharacter(c, false, true, this.shadow.getElementById("desc"), retireOptions, retireCallback);
+			let mc = renderMenuCharacter(c, () => othis.charClicked(), gameState.numUnlocksEarned != 0 ? retireCallback : undefined, this.shadow.getElementById("desc"), retireOptions);
 			this.shadow.getElementById("cast").appendChild(mc);
 		}
+	}
+
+	charClicked() {
+		let count = 0;
+		for (let x of this.shadow.querySelectorAll("menu-character")) if (x.selected()) count++;
+		for (let c of this.charSelectListeners) c(count);
 	}
 
 	addAdventures() {
@@ -112,19 +126,52 @@ class MainMenu extends HTMLElement {
 
 			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			svg.setAttribute("viewBox", "-12 -12 24 24");
+			svg.setAttribute("class", "begin");
 			let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 			c.setAttribute("r", "12");
 			c.setAttribute("fill", "#333");
 			svg.appendChild(c);
+			let t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			svg.appendChild(t);
+			t.setAttribute("text-anchor", "middle");
+			t.setAttribute("alignment-baseline", "central");
+			t.setAttribute("fill", "#fff");
+			t.appendChild(document.createTextNode(Math.min(gameState.characterPool.length, adventureData[adventure].characters)));
 			let p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			p.setAttribute("fill", "#eee");
 			p.setAttribute("d", "M8,0L-4,6.9282L-4,-6.9282Z");
+			p.style.opacity = 0;
 			svg.appendChild(p);
 			d.appendChild(svg);
 			let othis = this;
-			svg.addEventListener("click", () => { othis.applyRetirements(); loadAdventure(adventureData[adventure]) });
+			svg.addEventListener("click", () => { othis.adventureClicked(adventure); });
+
+			this.charSelectListeners.push(count => {
+				count = Math.min(adventureData[adventure].characters, gameState.characterPool.length) - count;
+				t.style.opacity = count == 0 ? 0 : 1;
+				t.innerHTML = count;
+				p.style.opacity = count != 0 ? 0 : 1;
+				svg.style.cursor = count == 0 ? "pointer" : "default";
+			});
 
 			this.shadow.getElementById("adventures").appendChild(d);
+		}
+	}
+
+	adventureClicked(adventure) {
+		let chars = [];
+		let i = 0;
+		for (let x of this.shadow.querySelectorAll("menu-character")) {
+			if (x.selected()) {
+				chars.push(gameState.characterPool[i]);
+			}
+			i++;
+		}
+		if (chars.length == Math.min(gameState.characterPool.length, adventureData[adventure].characters)) {
+			this.applyRetirements();
+			loadAdventure(adventureData[adventure])
+			for (let c of chars) gameState.characters.push(c);
+			loadRoom([0, 0]);
 		}
 	}
 

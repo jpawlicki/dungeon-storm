@@ -96,7 +96,7 @@ class Unit {
 	// actionPoints
 	// actors
 	// facing: 0-3
-	// name
+	// id
 	// player
 	// portrait
 	// pos[2]: rank, file
@@ -149,6 +149,24 @@ class Unit {
 				this.portrait = this.id.toLowerCase() + "/" + Math.floor(Math.random() * this.portraits) + ".png";
 			}
 		}
+	}
+
+	serialize() {
+		return JSON.stringify(this, (key, value) => {
+			if (key == "ai") return;
+			if (key == "actors") return [];
+			if (value instanceof Ability) return value.serialize();
+			return value;
+		});
+	}
+
+	static deserialize(val) {
+		let obj = new Unit(JSON.parse(val, (key, value) => {
+			if (key == "abilities" || key == "learnableAbilities") return value.map(x => Ability.deserialize(x));
+			return value;
+		}));
+		if (unitData[obj.id]) obj.ai = unitData[obj.id].ai;
+		return obj;
 	}
 
 	registerActor(actor) {
@@ -274,6 +292,14 @@ class Ability {
 	// cost
 
 	actionEvent(unit, action) { return []; }
+
+	serialize() {
+		return this.name.toUpperCase();
+	}
+
+	static deserialize(val) {
+		return abilityData[val];
+	}
 }
 
 class RandomRoomProvider {
@@ -333,13 +359,21 @@ class Adventure {
 			this.rooms.push(row);
 		}
 	}
+
+	serialize() {
+		return JSON.stringify(this);
+	}
+
+	static deserialize(val) {
+		return new Adventure(JSON.parse(val));
+	}
 }
 
 class GameState {
 	// room
-	// units
+	// units[]
 	// currentPlayer
-	// actionHistory
+	// actionHistory[]
 	// reactionQueue
 	// characters
 	// characterPool
@@ -351,6 +385,39 @@ class GameState {
 	// resource: {experience: int, healing: int, unlock: int, character: int}
 	// unlockedAdventures[]
 	// unlockedCharacters[]
+
+	static load(data) {
+	}
+
+	serialize() {
+		return JSON.stringify(
+				this,
+				(key, value) => {
+					if (key == "actionHistory") return null;
+					if (key == "units") return value.filter(x => !this.characters.includes(x)).map(x => x.serialize());
+					if (key == "characters" && Array.isArray(value)) return value.map(x => this.characterPool.indexOf(x));
+					if (key == "characterPool") return value.map(x => x.serialize(x));
+					if (value instanceof Adventure) return value.serialize();
+					if (value instanceof Tile) return {"h": value.height, "t": value.decoration.substring(0, value.decoration.length - 4)};
+					return value;
+				});
+	}
+
+	static deserialize(val) {
+		let obj = new GameState();
+		Object.assign(obj, JSON.parse(val, (key, value) => {
+			if (key == "units" || key == "characterPool") return value.map(x => Unit.deserialize(x));
+			if (key == "room") return new Room(value);
+			if (key == "adventure") return Adventure.deserialize(value);
+			return value;
+		}));
+		obj.actionHistory = [];
+		if (obj.characters) {
+			obj.characters = obj.characters.map(x => obj.characterPool[x]);
+			if (obj.units) for (let c of obj.characters.slice().reverse()) obj.units.splice(0, 0, c);
+		}
+		return obj;
+	}
 
 	constructor() {
 		this.characterPool = [];
@@ -379,6 +446,7 @@ class GameState {
 		let effects = [];
 		let events = [];
 		if (this.currentPlayer == 0) {
+			Persistence.save();
 			this.resources.time = Math.max(0, this.resources.time - 1);
 		}
 		for (let u of this.units) if (u.player == this.currentPlayer) {
@@ -518,6 +586,7 @@ class GameState {
 			else this.resources[reward] = room.reward[reward];
 		}
 		for (let c of this.characters) c.actionPoints = 0;
+		this.currentRoom = null;
 		if (this.getAdventureVictorious()) {
 			this.adventureOver(true);
 		} else {
@@ -526,6 +595,7 @@ class GameState {
 	}
 
 	roomDefeat() {
+		this.currentRoom = null;
 		this.disableActions = true;
 		this.adventureOver(false);
 	}

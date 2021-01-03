@@ -1,101 +1,3 @@
-class AdventureIntroElement extends HTMLElement {
-	connectedCallback() {
-		let shadow = this.attachShadow({mode: "open"});
-		this.shadow = shadow;
-		shadow.innerHTML = `
-			<style>
-				:host {
-					display: grid;
-					grid-template-rows: min-content min-content 1fr;
-					grid-template-columns: 40% 60%;
-					color: #fff;
-					height: 100%;
-				}
-				h1, #desc {
-					grid-column: 1 / 3;
-					text-align: center;
-				}
-				h2 {
-					text-align: center;
-				}
-				#begin {
-					height: calc(5em + 6px);
-					width: calc(5em + 6px);
-				}
-				input {
-					display: none;
-				}
-				#abilityDescText2 {
-					white-space: pre-wrap;
-					padding: 2em;
-				}
-				#begin:hover #play {
-					fill: #fff;
-					transition: fill 0.4s;
-				}
-				#desc {
-					max-width: 50em;
-					margin: auto;
-					overflow: auto;
-				}
-				#begin:hover #play {
-					fill: #fff;
-					transition: fill 0.4s;
-				}
-				.explicable {
-					color: #ccf;
-					cursor: pointer;
-				}
-			</style>
-			<h1>${gameState.adventure.title[lang]}</h1>
-			<div id="desc">${gameState.adventure.description[lang].replaceAll("\n", "<br/>")}<hr width="50%"/></div>
-			<div id="characterSelect">
-				<svg id="begin" viewBox="-12 -12 24 24">
-					<circle fill="#333" r="12"></circle>
-					<text id="remaining" text-anchor="middle" alignment-baseline="central" fill="#fff">${Math.min(gameState.characterPool.length, gameState.adventure.characters)}</text>
-					<path id="play" fill="#eee" d="M8,0L-4,6.9282L-4,-6.9282Z" opacity="0"></path>
-				</svg>
-			</div>
-			<div id="abilityDescText2">
-			</div>
-		`;
-		for (let c of gameState.characterPool) {
-			// Add character.
-			let d = renderMenuCharacter(c, true, false, shadow.getElementById("abilityDescText2"));
-			let othis = this;
-			d.addEventListener("click", () => othis.charClicked());
-			shadow.querySelector("#characterSelect").insertBefore(d, shadow.querySelector("#begin"));
-		}
-
-		this.shadow.querySelector("#begin").addEventListener("click", () => {
-			let chars = [];
-			let i = 0;
-			for (let x of this.shadow.querySelectorAll("menu-character")) {
-				if (x.selected()) {
-					chars.push(gameState.characterPool[i]);
-				}
-				i++;
-			}
-			if (chars.length == Math.min(gameState.characterPool.length, gameState.adventure.characters)) {
-				for (let c of chars) gameState.characters.push(c);
-				loadRoom([0, 0]);
-			}
-		});
-
-		Tutorial.hook(Tutorial.Hook.ADVENTURE_START);
-	}
-
-	charClicked() {
-		let count = Math.min(gameState.characterPool.length, gameState.adventure.characters);
-		for (let x of this.shadow.querySelectorAll("menu-character")) if (x.selected()) count--;
-		this.shadow.querySelector("#remaining").style.opacity = count == 0 ? 0 : 1;
-		this.shadow.querySelector("#remaining").innerHTML = count;
-		this.shadow.querySelector("#play").style.opacity = count != 0 ? 0 : 1;
-		this.shadow.querySelector("#begin").style.cursor = count == 0 ? "pointer" : "default";
-	}
-}
-customElements.define("adventure-intro-element", AdventureIntroElement);
-
 class AdventureNextRoomElement extends HTMLElement {
 	connectedCallback() {
 		let shadow = this.attachShadow({mode: "open"});
@@ -133,15 +35,15 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters > div > div:nth-child(1) {
 					flex-direction: column;
 					flex-wrap: wrap;
-					max-height: 4em;
+					max-height: 6em;
 				}
 				#characters > div > div > svg:nth-child(1) {
-					height: 4em;
-					width: 4em;
+					height: 6em;
+					width: 6em;
 				}
 				#characters > div > div > svg {
-					height: 2em;
-					width: 2em;
+					height: 3em;
+					width: 3em;
 				}
 				#characters > div > div > svg:nth-child(n + 2) path {
 					fill: #eee;
@@ -156,8 +58,8 @@ class AdventureNextRoomElement extends HTMLElement {
 					margin-left: 1em;
 				}
 				#characters .learnable svg {
-					height: 2em;
-					width: 2em;
+					height: 3em;
+					width: 3em;
 				}
 				.learnable svg path {
 					fill: #888;
@@ -172,6 +74,7 @@ class AdventureNextRoomElement extends HTMLElement {
 				#abilityDescText2 {
 					white-space: pre-wrap;
 					overflow: auto;
+					font-size: 150%;
 				}
 				#adventure {
 					width: 100%;
@@ -513,6 +416,7 @@ class AdventureNextRoomElement extends HTMLElement {
 				}
 			}
 		}
+		Persistence.save();
 		Tutorial.hook(Tutorial.Hook.ADVENTURE_NEXTROOM);
 	}
 }
@@ -678,6 +582,7 @@ class AdventureCompleteElement extends HTMLElement {
 			gameState.resources[r] = 0;
 		}
 
+		gameState.numUnlocksEarned = Math.min(gameState.numUnlocksEarned, Unlock.getMaxUnlock());
 		let numAwards = numClears + (victory ? numClears : 0) + resourceAwards.length;
 
 		let addedCharacters = [];
@@ -717,9 +622,10 @@ class AdventureCompleteElement extends HTMLElement {
 				}
 			}
 		}
-		// TODO: save game.
+		delete gameState.adventure;
+		Persistence.save();
 
-		let unlockTrack = new UnlockTrack(gameState.numUnlocksEarned - numAwards, numAwards, shadow.getElementById("track"));
+		let unlockTrack = new UnlockTrack(prevUnlockPoint, numAwards, shadow.getElementById("track"));
 
 		for (let a of abilityLosses) {
 			let div = document.createElement("div");
@@ -844,7 +750,7 @@ class AdventureCompleteElement extends HTMLElement {
 							}
 							window.setTimeout(() => {
 								if (x.getAttribute("show") == "character") {
-									shadow.querySelector("#newStuff").appendChild(renderMenuCharacter(addedCharacters.shift(), false, false, undefined));
+									shadow.querySelector("#newStuff").appendChild(renderMenuCharacter(addedCharacters.shift()));
 								} else if (x.getAttribute("show") == "adventure") {
 									let div = document.createElement("div");
 									div.setAttribute("class", "newAdventure");
@@ -865,11 +771,6 @@ class AdventureCompleteElement extends HTMLElement {
 	}
 }
 customElements.define("adventure-complete-element", AdventureCompleteElement);
-
-function setupAdventureSituation() {
-	hideSidePane();
-	return document.createElement("adventure-intro-element");
-}
 
 function setupRoomClear() {
 	let div = document.createElement("div");

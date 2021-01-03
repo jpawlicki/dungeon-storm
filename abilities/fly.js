@@ -33,7 +33,7 @@ abilityData.FLY = new class extends Ability {
 	mouseOverTile(unit, loc, quadrant) {
 		clearClickContextActors();
 		if (!this.isMoveLegal(unit, loc, quadrant)) return;
-		clickContext.actors.push(new AbilityMoveActor(unit, loc, quadrant));
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, quadrant, gameState.room.getTile(unit.pos).height <= gameState.room.getTile(loc).height));
 	}
 
 	isMoveLegal(unit, loc, quadrant) {

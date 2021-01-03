@@ -1,26 +1,12 @@
- - Combine mainmenu and adventure start.
  - Settings Menu:
-   - Concede adventure / room
-	 - Toggle sound
-	 - Toggle fullscreen
-	 - Erase save data
 	 - Report bug
  - Game saving and loading
-   - Local
 	 - Cloud
 	 - To / From File
-	 - Probably need a list of reward points in the save file to allow for additional rewards to be added prior to the unlock point
  - sfx sounds
  - Additional adventures, abilities, characters, units, unlocks, etc.
- - new tileset
  - Crash handling should report to the server for logging.
- - Room features (fire, sand, water, rock, gold, action-bonus, etc)
 
  - Forest Zone:
-Need 12-24 FOREST_RR rooms.
+Need 24 or so FOREST_RR rooms.
 Check rooms for missing rewards
-
- - Actors
-Fly preview should refund AP if descending
-Move preview should blot out other actors on the tile
-Dangers should have different glow colors

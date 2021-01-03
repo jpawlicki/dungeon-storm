@@ -25,7 +25,7 @@ class UnlockTrack {
 		this.g = g;
 		g.style.transform = "translate(0px, 0px)";
 		svg.appendChild(g);
-		for (let i = 1; i < 200 + buffer; i++) {
+		for (let i = 1; i < Math.min(200 + buffer, Unlock.getMaxUnlock() + 1 - start); i++) {
 			let v = start + i;
 			if (!unlockable.has(v)) {
 				let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
