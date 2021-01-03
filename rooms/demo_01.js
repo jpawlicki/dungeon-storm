@@ -5,7 +5,7 @@
 		entry: [0, 0],
 		exit: [3, 3],
 		id: "BUILTIN_DEMO_01",
-		random: false,
+		random: "",
 		reward: {
 			healing: 2,
 		},

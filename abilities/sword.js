@@ -29,12 +29,12 @@ abilityData.SWORD = new class extends Ability {
 		if (success) {
 			// Defender retreats
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
-			effects.push(new Effect(target, "state", Unit.State.BLOODIED));
+			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(target, retreatDir));
 		} else {
 		  // Attacker retreats
 			let retreatDir = Tile.directionTo(target.pos, unit.pos);
-			effects.push(new Effect(unit, "state", Unit.State.BLOODIED));
+			effects.push(new Effect(unit, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(unit, retreatDir));
 		}
 

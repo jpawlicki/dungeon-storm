@@ -71,6 +71,7 @@ function setupRoomSvg(currentState) {
 	let room = currentState.room;
 	let h = [];
 	let width = (room.tiles.length + room.tiles[1].length + 1) * tileSize * Math.sqrt(2) / 2;
+	let widthBias = (room.tiles[1].length - room.tiles.length) * tileSize * Math.sqrt(2) / 4;
 	let height = (room.tiles.length + room.tiles[1].length + 1) * tileSize * yShortening * Math.sqrt(2) / 2;
 
 	function createTile(asset, pos) {
@@ -108,7 +109,7 @@ function setupRoomSvg(currentState) {
 	}
 
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	svg.setAttribute("viewBox", -width / 2 + " " + -tileSize / 2 + " " + width + " " + height);
+	svg.setAttribute("viewBox", -width / 2 + widthBias + " " + -tileSize / 2 + " " + width + " " + height);
 	svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 

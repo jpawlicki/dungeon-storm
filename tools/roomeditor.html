@@ -6,8 +6,10 @@
 		<script src="../rendering/unit.js"></script>
 		<script src="../units/bull.js"></script>
 		<script src="../units/rat.js"></script>
+		<script src="../units/snake.js"></script>
 		<script src="../units/statue.js"></script>
 		<script src="../units/vulture.js"></script>
+		<script src="../units/wolf.js"></script>
 		<link rel="stylesheet" type="text/css" href="../rendering/room.css"/>
 		<link rel="stylesheet" type="text/css" href="../rendering/unit.css"/>
 		<style>
@@ -33,9 +35,12 @@
 				display: flex;
 				align-items: center;
 			}
+			#swatches {
+				width: 12em;
+			}
 			#swatches > img {
-				width: 2em;
-				height: 2em;
+				width: 2.5em;
+				height: 2.5em;
 				border: 2px solid #000;
 			}
 			textarea {
@@ -66,10 +71,9 @@
 		<script>
 			assetPrefix = "../";
 			let room = {
-				difficulty: 0,
 				entry: [0, 0],
 				id: "",
-				random: false,
+				random: "",
 				reward: {
 				  experience: 0,
 					healing: 0,
@@ -101,14 +105,14 @@
 
 			function update() {
 				room.id = document.getElementById("id").value;
-				room.difficulty = parseInt(document.getElementById("difficulty").value);
 				room.reward.experience = parseInt(document.getElementById("rewardExperience").value);
 				room.reward.healing = parseInt(document.getElementById("rewardHealing").value);
 				room.reward.unlock = parseInt(document.getElementById("rewardUnlocks").value);
 				room.reward.character = parseInt(document.getElementById("rewardCharacters").value);
+				room.reward.time = parseInt(document.getElementById("rewardTime").value);
 				room.entry[0] = parseInt(document.getElementById("entry_x").value);
 				room.entry[1] = parseInt(document.getElementById("entry_y").value);
-				room.random = document.getElementById("random").checked;
+				room.random = document.getElementById("random").value;
 				let x = parseInt(document.getElementById("x").value);
 				let y = parseInt(document.getElementById("y").value);
 				if (room.tiles.length > x) room.tiles.splice(x, room.tiles.length - x);
@@ -308,15 +312,9 @@
 			</div>
 			<div>
 				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
-					<path fill="currentColor" d="M13 14H11V9H13M13 18H11V16H13M1 21H23L12 2L1 21Z" />
-				</svg>
-				<input id="difficulty" type="number" min="0" max="10" value="1"></input>
-			</div>
-			<div>
-				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
 					<path fill="currentColor" d="M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M7,5A2,2 0 0,0 5,7A2,2 0 0,0 7,9A2,2 0 0,0 9,7A2,2 0 0,0 7,5M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15M17,5A2,2 0 0,0 15,7A2,2 0 0,0 17,9A2,2 0 0,0 19,7A2,2 0 0,0 17,5M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10M7,15A2,2 0 0,0 5,17A2,2 0 0,0 7,19A2,2 0 0,0 9,17A2,2 0 0,0 7,15Z" />
 				</svg>
-				<input id="random" type="checkbox"></input>
+				<input id="random" type="text"></input>
 			</div>
 			<div>
 				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
@@ -356,6 +354,15 @@
 			</div>
 			<div>
 				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+			    <path fill="currentColor" d="M5,4H19A3,3 0 0,1 22,7V11H15V10H9V11H2V7A3,3 0 0,1 5,4M11,11H13V13H11V11M2,12H9V13L11,15H13L15,13V12H22V20H2V12Z" />
+				</svg>
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
+			    <path fill="currentColor" d="M6,2V8H6V8L10,12L6,16V16H6V22H18V16H18V16L14,12L18,8V8H18V2H6Z" />
+				</svg>
+				<input id="rewardTime" type="number" min="0" max="9" value="0"></input>
+			</div>
+			<div>
+				<svg style="width:24px;height:24px" viewBox="0 0 24 24">
 			    <path fill="currentColor" d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z" />
 				</svg>
 				<select onchange="addUnit();" id="addUnit">
@@ -381,6 +388,14 @@
 						"portuguese6",
 						"portuguese7",
 						"portuguese8",
+						"forest_1",
+						"forest_2",
+						"forest_3",
+						"forest_4",
+						"forest_5",
+						"forest_6",
+						"forest_7",
+						"forest_8",
 					];
 					for (let swatch of swatches) {
 						let img = document.createElement("img");

@@ -20,7 +20,7 @@ abilityData.STARTUP = new class extends Ability {
 			reactions.push(new Action(
 					true,
 					[
-						new Effect(unit, "actionPoints", unit.actionPoints + (unit.state == Unit.State.BLOODIED ? 2 : 4)),
+						new Effect(unit, "actionPoints", unit.actionPoints + (unit.state == Unit.State.FRIGHTENED ? 2 : 4)),
 					],
 					[],
 					this.name,

@@ -1,7 +1,7 @@
-- sap an AP from enemy
 - attack an enemy at range 2 but at dice-2
 - attack an adjacent enemy at -1 but roll vs self at -1 as well
 - attack an enemy on a lower elevation at +1
-- attack a frightened enemy at +2
-- defeat a frightened enemy
+- force a frightened enemy to retreat
 - attack an enemy unit that is not threating at +2
+- frighten self to force unit to retreat
+- frighten self to encourage friend

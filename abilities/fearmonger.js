@@ -15,7 +15,7 @@ abilityData.FEARMONGER = new class extends Ability {
 	actionEvent(unit, action) {
 		let reactions = [];
 		let newFrightened = 0;
-		for (let e of action.effects) if (e.property == "state" && e.unit.player != unit.player && e.value == Unit.State.BLOODIED && e.oldValue != Unit.State.BLOODIED) newFrightened++;
+		for (let e of action.effects) if (e.property == "state" && e.unit.player != unit.player && e.value == Unit.State.FRIGHTENED && e.oldValue != Unit.State.FRIGHTENED) newFrightened++;
 		if (newFrightened > 0) {
 			reactions.push(new Action(
 					true,

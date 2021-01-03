@@ -29,18 +29,7 @@
 						let directCloseUnits = closeUnits.filter(uu => Tile.directionTo(u.pos, uu.pos) != -1);
 						if (directCloseUnits.length != 0) closeUnits = directCloseUnits;
 
-						function directionToLenient(loc) {
-							let directions = [];
-							let offsetX = loc[0] - u.pos[0];
-							let offsetY = loc[1] - u.pos[1];
-							if (offsetX < 0 && Math.abs(offsetX) >= Math.abs(offsetY)) directions.push(0);
-							if (offsetY > 0 && Math.abs(offsetY) >= Math.abs(offsetX)) directions.push(1);
-							if (offsetX > 0 && Math.abs(offsetX) >= Math.abs(offsetY)) directions.push(2);
-							if (offsetY < 0 && Math.abs(offsetY) >= Math.abs(offsetX)) directions.push(3);
-							return directions;
-						}
-
-						for (let uu of closeUnits) for (let d of directionToLenient(uu.pos)) objectiveFacings.add(d);
+						for (let uu of closeUnits) for (let d of Tile.directionsToLenient(u.pos, uu.pos)) objectiveFacings.add(d);
 					}
 				}
 
@@ -49,7 +38,7 @@
 				let moveAbilities = u.abilities.filter(a => a.aiHints.includes(AiHints.MOVE));
 				let coords = [];
 				for (let i = 0; i < currentState.room.tiles.length; i++) {
-					for (let j = 0; j < currentState.room.tiles.length; j++) {
+					for (let j = 0; j < currentState.room.tiles[i].length; j++) {
 						for (let q = 0; q < 4; q++) {
 							coords.push([i, j, q]);
 						}

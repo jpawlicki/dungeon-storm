@@ -243,7 +243,7 @@ class PortraitActor {
 	}
 
 	update() {
-		this.frightened.style.opacity = this.unit.state == Unit.State.BLOODIED ? 1 : 0;
+		this.frightened.style.opacity = this.unit.state == Unit.State.FRIGHTENED ? 1 : 0;
 		this.defeated.style.opacity = this.unit.state == Unit.State.DEFEATED ? 1 : 0;
 		this.moveActor.update();
 	}

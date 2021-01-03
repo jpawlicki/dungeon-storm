@@ -25,14 +25,14 @@ abilityData.BITE = new class extends Ability {
 		let retreat1 = parseInt(Math.random() * 6 + 1) > target.getStrength(Tile.directionTo(target.pos, unit.pos));
 		if (retreat1) {
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
-			effects.push(new Effect(target, "state", Unit.State.BLOODIED));
+			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(target, retreatDir));
 		}
 
 		let retreat2 = parseInt(Math.random() * 6 + 1) > unit.getStrength(Tile.directionTo(unit.pos, target.pos));
 		if (retreat2) {
 			let retreatDir = Tile.directionTo(target.pos, unit.pos);
-			effects.push(new Effect(unit, "state", Unit.State.BLOODIED));
+			effects.push(new Effect(unit, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(unit, retreatDir));
 		}
 

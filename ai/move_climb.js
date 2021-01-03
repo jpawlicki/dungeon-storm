@@ -8,7 +8,7 @@
 				let currentHeight = currentState.room.getTile(u.pos).height;
 				let coords = [];
 				for (let i = 0; i < currentState.room.tiles.length; i++) {
-					for (let j = 0; j < currentState.room.tiles.length; j++) {
+					for (let j = 0; j < currentState.room.tiles[i].length; j++) {
 						if (currentState.room.getTile([i, j]).height <= currentHeight) continue;
 						for (let q = 0; q < 4; q++) {
 							coords.push([i, j, q]);

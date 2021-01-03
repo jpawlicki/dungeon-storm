@@ -15,3 +15,6 @@
  - new tileset
  - Crash handling should report to the server for logging.
  - Room features (fire, sand, water, rock, gold, action-bonus, etc)
+
+ - Forest Zone:
+Need 12-24 FOREST_RR rooms.

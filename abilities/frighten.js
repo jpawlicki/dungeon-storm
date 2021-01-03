@@ -15,7 +15,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 
 		let effects = [
 			new Effect(unit, "actionPoints", unit.actionPoints - this.minActionPoints),
-			new Effect(target, "state", Unit.State.BLOODIED),
+			new Effect(target, "state", Unit.State.FRIGHTENED),
 		];
 		return new Action(true, effects, [], this.name, () => {
 			SpecialEffect.abilityUse(unit, this);
@@ -36,7 +36,7 @@ abilityData.FRIGHTEN = new class extends Ability {
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
-		if (target.state == Unit.State.BLOODIED) return false;
+		if (target.state == Unit.State.FRIGHTENED) return false;
 		return true;
 	}
 }();

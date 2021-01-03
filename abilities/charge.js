@@ -21,7 +21,7 @@ abilityData.CHARGE = new class extends Ability {
 		let effects = [
 			new Effect(unit, "actionPoints", unit.actionPoints - 2),
 			new Effect(unit, "pos", loc),
-			new Effect(target, "state", Unit.State.BLOODIED),
+			new Effect(target, "state", Unit.State.FRIGHTENED),
 		];
 		let events = [
 			ActionEvent.retreat(target, Tile.directionTo(unit.pos, loc)),

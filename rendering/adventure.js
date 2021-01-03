@@ -395,7 +395,7 @@ class AdventureNextRoomElement extends HTMLElement {
 					img.addEventListener("mouseover", details);
 					img.addEventListener("click", details);
 					makeHealSpot(img, {healing: 2}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.DEFEATED; portrait.update();});
-				} else if (character.state == Unit.State.BLOODIED) {
+				} else if (character.state == Unit.State.FRIGHTENED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					img.setAttribute("viewBox", "0 0 24 24");
 					Util.makePlus(img);
@@ -405,7 +405,7 @@ class AdventureNextRoomElement extends HTMLElement {
 					}
 					img.addEventListener("mouseover", details);
 					img.addEventListener("click", details);
-					makeHealSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.BLOODIED; portrait.update();});
+					makeHealSpot(img, {healing: 1}, () => {character.state = Unit.State.NORMAL; portrait.update();}, () => {character.state = Unit.State.FRIGHTENED; portrait.update();});
 				}
 				cdiv.appendChild(learnableAbilityDiv);
 			}
@@ -546,6 +546,13 @@ class AdventureCompleteElement extends HTMLElement {
 				#treasureBox > path {
 					transition: d 0.3s, fill 1s;
 					fill: #fff;
+				}
+				.newAdventure {
+					background: #000;
+					border-radius: 2em;
+					text-align: center;
+					padding: 0.5em;
+					font-size: 200%;
 				}
 				.clickMe {
 					animation: clickMe 1s alternate infinite;

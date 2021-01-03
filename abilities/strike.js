@@ -19,7 +19,7 @@ abilityData.STRIKE = new class extends Ability {
 		let events = [];
 
 		let retreatDir = Tile.directionTo(unit.pos, target.pos);
-		effects.push(new Effect(target, "state", Unit.State.BLOODIED));
+		effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 		events.push(ActionEvent.retreat(target, retreatDir));
 
 		return new Action(true, effects, events, this.name, () => {

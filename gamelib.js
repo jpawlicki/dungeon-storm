@@ -31,6 +31,23 @@ class Tile {
 		return -1;
 	}
 
+	// Returns a list of fuzzy directions from pos1 to pos2:
+	//  3  3,0  0
+	//    3   0
+	// 2,3  .  0,1
+	//    2   1
+	//  2  2,1  1
+	static directionsToLenient(pos1, pos2) {
+		let directions = [];
+		let offsetX = pos2[0] - pos1[0];
+		let offsetY = pos2[1] - pos1[1];
+		if (offsetX < 0 && Math.abs(offsetX) >= Math.abs(offsetY)) directions.push(0);
+		if (offsetY > 0 && Math.abs(offsetY) >= Math.abs(offsetX)) directions.push(1);
+		if (offsetX > 0 && Math.abs(offsetX) >= Math.abs(offsetY)) directions.push(2);
+		if (offsetY < 0 && Math.abs(offsetY) >= Math.abs(offsetX)) directions.push(3);
+		return directions;
+	}
+
 	static distanceBetween(pos1, pos2) {
 		return Math.abs(pos1[0] - pos2[0]) + Math.abs(pos1[1] - pos2[1]);
 	}
@@ -92,7 +109,7 @@ class Unit {
 
 	static State = {
 		NORMAL: 1,
-		BLOODIED: 2,
+		FRIGHTENED: 2,
 		DEFEATED: 3
 	}
 
@@ -170,15 +187,10 @@ class Unit {
 	threatens(unit, pos) {
 		if (unit.player == this.player) return false;
 		if (this.state == Unit.State.DEFEATED) return false;
-		let threatGroup = this.state == Unit.State.BLOODIED ? this.threatsFrightened : this.threats;
-		let offset = [pos[0] - this.pos[0], pos[1] - this.pos[1]];
-		let facing =
-			offset[0] == -1 && offset[1] == 0 ? 0 :
-			offset[0] == 0 && offset[1] == 1 ? 1 :
-			offset[0] == 1 && offset[1] == 0 ? 2 :
-			offset[0] == 0 && offset[1] == -1 ? 3 :
-			-1;
+		if (Tile.distanceBetween(this.pos, pos) != 1) return false;
+		let facing = Tile.directionTo(this.pos, pos);
 		if (facing == -1) return false;
+		let threatGroup = this.state == Unit.State.FRIGHTENED ? this.threatsFrightened : this.threats;
 		return threatGroup[(4 + facing - this.facing) % 4];
 	}
 
@@ -264,6 +276,64 @@ class Ability {
 	actionEvent(unit, action) { return []; }
 }
 
+class RandomRoomProvider {
+	// randomRooms{}: A map of sets to shuffles of random rooms.
+
+	constructor() {
+		this.randomRooms = {};
+		for (let r in roomData) {
+			let room = roomData[r];
+			if (room.random != undefined) {
+				if (this.randomRooms[room.random] == undefined) this.randomRooms[room.random] = [];
+				this.randomRooms[room.random].push(roomData[r]);
+			}
+		}
+		for (let k in this.randomRooms) Util.shuffle(this.randomRooms[k]);
+	}
+
+	replenish(set) {
+		for (let r in roomData) if (roomData[r].random == set) this.randomRooms[set].push(roomData[r]);
+		Util.shuffle(this.randomRooms[set]);
+	}
+
+	draw(set) {
+		if (this.randomRooms[set].length == 0) this.replenish(set);
+		return this.randomRooms[set].pop();
+	}
+}
+
+class Adventure {
+	// description{}: lang strings
+	// descriptionDefeat{}: lang strings
+	// descriptionVictory{}: lang strings
+	// characters
+	// rooms[][]: rooms
+	// title{}: lang strings
+	// timeLimit
+	// victory[]
+
+	constructor(spec) {
+		this.description = spec.description;
+		this.descriptionDefeat = spec.descriptionDefeat;
+		this.characters = spec.characters;
+		this.title = spec.title;
+		this.timeLimit = spec.timeLimit;
+		this.victory = spec.victory;
+		this.rooms = [];
+
+		let randomRooms = new RandomRoomProvider();
+
+		for (let r of spec.rooms) {
+			let row = [];
+			for (let cell of r) {
+				if (typeof cell === "string") cell = randomRooms.draw(cell);
+				row.push(cell);
+			}
+			this.rooms.push(row);
+		}
+	}
+}
+
 class GameState {
 	// room
 	// units
@@ -290,7 +360,7 @@ class GameState {
 	}
 
 	loadAdventure(adventure) {
-		this.adventure = adventure;
+		this.adventure = new Adventure(adventure);
 		this.characters = [];
 		this.actionHistory = [];
 		this.reactionQueue = [];

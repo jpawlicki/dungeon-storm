@@ -202,6 +202,7 @@ function selectNext() {
 	let selected = false;
 	for (let unitCard of document.querySelectorAll("unit-card")) {
 		if (unitCard.unit.player != 0) continue;
+		if (!unitCard.unit.canAct()) continue;
 		if (selected == true) {
 			unitCard.selectAbility(-1);
 			return;
