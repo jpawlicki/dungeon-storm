@@ -273,6 +273,10 @@ class AdventureNextRoomElement extends HTMLElement {
 				Util.makeTime(svg);
 				span.appendChild(svg);
 			} else {
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "0 0 24 24");
+				Util.makeQuestion(svg);
+				span.appendChild(svg);
 				span.appendChild(document.createTextNode("?"));
 			}
 			this.shadow.querySelector("#resources").appendChild(span);

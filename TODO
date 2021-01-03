@@ -18,3 +18,9 @@
 
  - Forest Zone:
 Need 12-24 FOREST_RR rooms.
+Check rooms for missing rewards
+
+ - Actors
+Fly preview should refund AP if descending
+Move preview should blot out other actors on the tile
+Dangers should have different glow colors
