@@ -315,6 +315,7 @@ class Adventure {
 	constructor(spec) {
 		this.description = spec.description;
 		this.descriptionDefeat = spec.descriptionDefeat;
+		this.descriptionVictory = spec.descriptionVictory;
 		this.characters = spec.characters;
 		this.title = spec.title;
 		this.timeLimit = spec.timeLimit;
