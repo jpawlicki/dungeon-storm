@@ -84,4 +84,33 @@ class SpecialEffect {
 			}
 		}
 	}
+
+	static arrowShot(from, to, retreats) {
+		let flightTime = 0.2;
+		from = [from[0], from[1], gameState.room.getTile(from).height];
+		let velocity = [(to[0] - from[0]) / flightTime, (to[1] - from[1]) / flightTime, (gameState.room.getTile(to).height - from[2]) / flightTime];
+		SpecialEffect.particle(
+			from,
+			-Math.PI / 4 -Math.atan2(velocity[1], velocity[0]),
+			velocity,
+			0,
+			"M6.45,5.45L1,0L6.45,-5.45L7.86,-4.04L4.83,-1H20V1H4.83L7.86,4.04L6.45,5.45Z",
+			1,
+			[[255, 255, 255, 1], [255, 255, 255, 1], [255, 255, 255, 0]],
+			[0, !retreats ? flightTime : flightTime - 0.01, !retreats ? flightTime + 0.001 : flightTime + 0.001 - 0.01]);
+		if (!retreats) {
+			window.setTimeout(() => {
+				flightTime -= 0.01;
+				SpecialEffect.particle(
+					[from[0] + velocity[0] * flightTime, from[1] + velocity[1] * flightTime, from[2] + velocity[2] * flightTime],
+					-Math.PI / 4 -Math.atan2(velocity[1], velocity[0]),
+					[-velocity[0] / 20 + Math.random() * .2, -velocity[1] / 20 + Math.random() * .2, velocity[2] / 15],
+					Math.random() * 16 - 8,
+					"M6.45,5.45L1,0L6.45,-5.45L7.86,-4.04L4.83,-1H20V1H4.83L7.86,4.04L6.45,5.45Z",
+					1,
+					[[255, 255, 255, 1], [255, 255, 255, 0.8], [255, 255, 255, 0]],
+					[0, 0.2, 0.35]);
+			}, 95);
+		}
+	}
 }

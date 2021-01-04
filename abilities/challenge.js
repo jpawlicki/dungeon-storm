@@ -1,10 +1,10 @@
-abilityData.TELEPORT = new class extends Ability {
+abilityData.CHALLENGE = new class extends Ability {
 	constructor() {
 		super();
-		this.name = "Teleport";
-		this.icon = "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z";
+		this.name = "Challenge";
+		this.icon = "M11,17H4A2,2 0 0,1 2,15V3A2,2 0 0,1 4,1H16V3H4V15H11V13L15,16L11,19V17M19,21V7H8V13H6V7A2,2 0 0,1 8,5H19A2,2 0 0,1 21,7V21A2,2 0 0,1 19,23H8A2,2 0 0,1 6,21V19H8V21H19Z";
 		this.minActionPoints = 1;
-		this.details = ["Use ♦. Teleport to an empty space adjacent to a !FRIEND, with any facing."];
+		this.details = ["Use ♦. Teleport to an empty space !THREATENED by an !ENEMY, with any facing."];
 		this.aiHints = [AiHints.MOVE];
 	}
 
@@ -33,12 +33,12 @@ abilityData.TELEPORT = new class extends Ability {
 	isLegal(unit, loc, quadrant) {
 		if (gameState.getUnitAt(loc) != null) return false;
 		if (unit.abilityPoints < 1) return false;
-		let hasFriend = false;
+		let hasEnemyThreat = false;
 		for (let d = 0; d < 4; d++) {
 			let u = gameState.getUnitAt(Tile.offset(loc, d));
-			if (u != null && u.player == unit.player) hasFriend = true;
+			if (u != null && u.threatens(unit, loc)) hasEnemyThreat = true;
 		}
-		if (!hasFriend) return false;
+		if (!hasEnemyThreat) return false;
 		return true;
 	}
 }();

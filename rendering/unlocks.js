@@ -75,6 +75,7 @@ class UnlockTrack {
 	// Animates the step. If it strikes an unlock, animates the lock burst. 
 	step(time) {
 		let icon = this.icons[this.steps];
+		if (icon == undefined) return;
 		let burst = undefined;
 		if (icon.getAttribute("data-bursts") == "true") burst = this.bursts.pop();
 		this.steps++;

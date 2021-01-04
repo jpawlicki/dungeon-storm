@@ -4,7 +4,7 @@
 		abilities: [abilityData.MOVE, abilityData.FRIGHTEN],
 		id: "Snake",
 		portrait: "snake.png",
-		strengths: [2, 2, 2, 2],
+		strengths: [3, 3, 3, 3],
 		strengthsFrightened: [2, 1, 1, 1],
 		threats: [false, false, false, false],
 		threatsFrightened: [false, false, false, false],

@@ -9,6 +9,7 @@ let unitData = {};
 const AiHints = {
 	ATTACK: 0,
 	MOVE: 1,
+	BUFF: 2,
 }
 
 class Tile {
@@ -446,7 +447,6 @@ class GameState {
 		let effects = [];
 		let events = [];
 		if (this.currentPlayer == 0) {
-			Persistence.save();
 			this.resources.time = Math.max(0, this.resources.time - 1);
 		}
 		for (let u of this.units) if (u.player == this.currentPlayer) {
@@ -457,8 +457,12 @@ class GameState {
 			this.currentPlayer = (this.currentPlayer + 1) % 3;
 			notifyTurn();
 			this.runAi();
-			if (this.currentPlayer == 0 && this.resources.time <= 0) {
-				this.roomDefeat();
+			if (this.currentPlayer == 0) {
+				if (this.resources.time <= 0) {
+					this.roomDefeat();
+				} else {
+					Persistence.save();
+				}
 			}
 			showHideUiElements();
 		});

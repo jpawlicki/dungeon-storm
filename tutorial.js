@@ -107,9 +107,9 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 2) {
-			this.addMessage("In between adventures, you can retire your !CHARACTERs. Retiring !CHARACTERs pass on the abilities they know to another !CHARACTER (though the student must still spend experience to learn them). Build up a mighty group!");
+			this.addMessage("In between adventures, you can retire your !CHARACTERs. !CHARACTERs that retire pass on the abilities they know to another !CHARACTER. (The student must still spend !EXPERIENCE to learn them, and can never learn more than eight abilities total.) Build up a mighty team!");
 		}
-
+		
 		if (event == Tutorial.Hook.EXPLAIN_REACTION) {
 			this.addMessage("!REACTIONs are abilities that are automatically used. Most !REACTIONs only apply to !THREATENed units.");
 		}

@@ -44,7 +44,15 @@ class Persistence {
 			gameState = new GameState();
 			gameState.characterPool.push(new Unit(characterData["Wisher"]));
 			gameState.characterPool.push(new Unit(characterData["Dog"]));
-			//gameState.characterPool.push(new Unit(characterData["Journeyman"]));
+
+			// For playtesting FOREST
+			// gameState.characterPool.push(new Unit(characterData["Journeyman"]));
+
+			// Testing charset 2
+			// gameState.characterPool.push(new Unit(characterData["Berserker"]));
+			// gameState.characterPool.push(new Unit(characterData["Thief"]));
+			// gameState.characterPool.push(new Unit(characterData["Archer"]));
+
 			gameState.unlockedAdventures.push("A_GIRL_AND_HER_DOG");
 			gameState.unlockedCharacters.push("Dog");
 			gameState.unlockedCharacters.push("Wisher");

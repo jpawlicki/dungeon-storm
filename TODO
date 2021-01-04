@@ -1,6 +1,7 @@
  - Settings Menu:
 	 - Report bug
  - Game saving and loading
+   - Autosaving should happen at the start of the turn, since undo history is lost anyways
 	 - Cloud
 	 - To / From File
  - sfx sounds

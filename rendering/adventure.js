@@ -180,7 +180,6 @@ class AdventureNextRoomElement extends HTMLElement {
 				svg.setAttribute("viewBox", "0 0 24 24");
 				Util.makeQuestion(svg);
 				span.appendChild(svg);
-				span.appendChild(document.createTextNode("?"));
 			}
 			this.shadow.querySelector("#resources").appendChild(span);
 		}
@@ -399,14 +398,8 @@ class AdventureNextRoomElement extends HTMLElement {
 							else if (rewards[k] == "victory") Util.makeCup(g);
 							else if (rewards[k] == "unlock") Util.makeUnlock(g);
 							else if (rewards[k] == "character") Util.makeCharacter(g);
-							else {
-								let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-								text.appendChild(document.createTextNode("?"));
-								text.setAttribute("text-anchor", "middle");
-								text.setAttribute("font-size", "3px");
-								text.setAttribute("style", "text-shadow: #000 2px 2px 3px, #000 0 0 5px; pointer-events: none; dominant-baseline: middle");
-								g.appendChild(text);
-							}
+							else if (rewards[k] == "time") Util.makeTime(g);
+							else Util.makeQuestion(g);
 							for (let ele of g.querySelectorAll("path")) {
 								ele.style.fill = "#444";
 							}
