@@ -1,7 +1,7 @@
 {
 	let adventure = {
 		description: {
-			"en": "Two journey into the garden...",
+			"en": "Journey into the garden...",
 		},
 		descriptionDefeat: {
 			"en": "Forced from the garden by fear, the companions gave up on their wish.",
@@ -10,7 +10,7 @@
 			"en": "Overcoming fear, the companions passed through the garden, and made their wish.",
 		},
 		characters: 2,
-		id: "A_GIRL_AND_HER_DOG",
+		id: "GARDEN",
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],

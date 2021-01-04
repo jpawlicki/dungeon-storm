@@ -53,7 +53,7 @@ class Persistence {
 			// gameState.characterPool.push(new Unit(characterData["Thief"]));
 			// gameState.characterPool.push(new Unit(characterData["Archer"]));
 
-			gameState.unlockedAdventures.push("A_GIRL_AND_HER_DOG");
+			gameState.unlockedAdventures.push("GARDEN");
 			gameState.unlockedCharacters.push("Dog");
 			gameState.unlockedCharacters.push("Wisher");
 			setupMainMenu();

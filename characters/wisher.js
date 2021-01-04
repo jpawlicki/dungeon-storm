@@ -3,7 +3,7 @@
 		abilities: [abilityData.MOVE, abilityData.SWORD, abilityData.CONTROL],
 		id: "Wisher",
 		learnableAbilities: [abilityData.FLY, abilityData.TELEPORT, abilityData.DISTRACT],
-		portraits: 41,
+		portraits: 29,
 		strengths: [4, 3, 2, 3],
 		strengthsFrightened: [3, 2, 1, 2],
 		threats: [true, false, false, false],

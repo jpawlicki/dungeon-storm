@@ -144,14 +144,14 @@ class MainMenu extends HTMLElement {
 			svg.appendChild(p);
 			d.appendChild(svg);
 			let othis = this;
-			svg.addEventListener("click", () => { othis.adventureClicked(adventure); });
+			d.addEventListener("click", () => { othis.adventureClicked(adventure); });
 
 			this.charSelectListeners.push(count => {
 				count = Math.min(adventureData[adventure].characters, gameState.characterPool.length) - count;
 				t.style.opacity = count == 0 ? 0 : 1;
 				t.innerHTML = count;
 				p.style.opacity = count != 0 ? 0 : 1;
-				svg.style.cursor = count == 0 ? "pointer" : "default";
+				d.style.cursor = count == 0 ? "pointer" : "default";
 			});
 
 			this.shadow.getElementById("adventures").appendChild(d);
