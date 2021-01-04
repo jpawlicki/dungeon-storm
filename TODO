@@ -1,15 +1,8 @@
- - Settings Menu:
-	 - Report bug
- - Game saving and loading
-   - Autosaving should happen at the start of the turn, since undo history is lost anyways
-	 - Cloud
-	 - To / From File
  - sfx sounds
  - Additional adventures, abilities, characters, units, unlocks, etc.
  - Crash handling should report to the server for logging.
- - Portraits:
-   - Need to redo character portraits.
+ - Game saving to cloud.
+ - Settings Menu bug report option
 
  - Forest Zone:
 Need 24 or so FOREST_RR rooms.
-Check rooms for missing rewards

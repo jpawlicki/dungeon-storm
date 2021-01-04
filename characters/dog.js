@@ -3,7 +3,7 @@
 		abilities: [abilityData.MOVE, abilityData.BITE, abilityData.CONTROL],
 		id: "Dog",
 		learnableAbilities: [abilityData.ENERGIZE, abilityData.FRIGHTEN, abilityData.FEARMONGER],
-		portraits: 10,
+		portraits: 12,
 		strengths: [5, 2, 1, 2],
 		strengthsFrightened: [4, 1, 1, 1],
 		threats: [true, false, false, false],

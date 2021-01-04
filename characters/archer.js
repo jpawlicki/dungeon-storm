@@ -3,7 +3,7 @@
 		abilities: [abilityData.MOVE, abilityData.SHOOT, abilityData.CONTROL],
 		id: "Archer",
 		learnableAbilities: [abilityData.SOLARPOWER, abilityData.HIGHGROUND, abilityData.EMPATHY],
-		portraits: 1,
+		portraits: 8,
 		strengths: [2, 1, 1, 1],
 		strengthsFrightened: [2, 1, 1, 1],
 		threats: [true, false, false, false],
