@@ -22,7 +22,7 @@
 		title: {
 			"en": "The Forest",
 		},
-		timeLimit: 40,
+		timeLimit: 30,
 		victory: [[4, 4]],
 	};
 	adventureData[adventure.id] = adventure;

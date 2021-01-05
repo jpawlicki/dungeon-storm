@@ -43,7 +43,8 @@ class Tutorial {
 		this.tutorialWindow.style.border = "2px solid #fff";
 		this.tutorialWindow.style.backgroundColor = "#000";
 		this.tutorialWindow.style.color = "#fff";
-		this.tutorialWindow.style.padding = "1em";
+		this.tutorialWindow.style.padding = "0.5em";
+		this.tutorialWindow.style.fontSize = "150%";
 		document.querySelector("body").appendChild(this.tutorialWindow);
 
 		let closeSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
