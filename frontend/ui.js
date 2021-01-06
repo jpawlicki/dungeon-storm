@@ -57,11 +57,12 @@ function unlockUi() {
 //     /30\
 //     \21/
 //      \/
-function clickOnTile(loc, quadrant) {
+function clickOnTile() {
 	if (gameState.currentPlayer != 0) return;
+	if (clickContext.lastMouseOver == null) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		if (clickContext.selectedUnit.player != 0) return;
-		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, loc, quadrant);
+		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 		if (action != null) {
 			if(lockUi());
 			clearClickContextActors();
@@ -83,6 +84,22 @@ function mouseOverTile(loc, quadrant) {
 		if (clickContext.selectedUnit.player != 0) return;
 		clickContext.selectedAbility.mouseOverTile(clickContext.selectedUnit, loc, quadrant);
 	}
+}
+
+function mouseMoveTile(tile, loc, event) {
+	let bounds = tile.getBoundingClientRect();
+	if (event.clientX > bounds.x + bounds.width * 2.2
+			|| event.clientX < bounds.x - bounds.width * 1.2
+			|| event.clientY < bounds.y - bounds.height * 1.2
+			|| event.clientY > bounds.y + bounds.height * 2.2) {
+		mouseOutTile();
+		return;
+	}
+	let quad =
+			event.clientX >= bounds.x + bounds.width / 2 && event.clientY < bounds.y + bounds.height / 2 ? 0 :
+			event.clientX >= bounds.x + bounds.width / 2 && event.clientY >= bounds.y + bounds.height / 2 ? 1 :
+			event.clientX < bounds.x + bounds.width / 2 && event.clientY >= bounds.y + bounds.height / 2 ? 2 : 3;
+	if (clickContext.lastMouseOver == null || clickContext.lastMouseOver.loc[0] != loc[0] || clickContext.lastMouseOver.loc[1] != loc[1] || clickContext.lastMouseOver.quadrant != quad) mouseOverTile(loc, quad);
 }
 
 function mouseOutTile() {

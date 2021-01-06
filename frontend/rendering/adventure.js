@@ -6,7 +6,7 @@ class AdventureNextRoomElement extends HTMLElement {
 			<style>
 				:host {
 					display: grid;
-					grid-template-rows: 1fr 30em;
+					grid-template-rows: 1fr minmax(3em, 35%);
 					grid-template-columns: 50% 50%;
 					color: #fff;
 					height: 100%;
@@ -17,8 +17,9 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters {
 					display: flex;
 					flex-direction: column;
-					justify-content: space-around;
-					min-height: 100%;
+					justify-content: space-between;
+					min-height: 80%;
+					overflow-y: auto;
 				}
 				#characters > div {
 					display: flex;
@@ -58,8 +59,8 @@ class AdventureNextRoomElement extends HTMLElement {
 					margin-left: 1em;
 				}
 				#characters .learnable svg {
-					height: 3em;
-					width: 3em;
+					height: 2.5em;
+					width: 2.5em;
 				}
 				.learnable svg path {
 					fill: #888;
@@ -109,7 +110,8 @@ class AdventureNextRoomElement extends HTMLElement {
 					display: flex;
 					width: 100%;
 					justify-content: space-around;
-					font-size: 300%;
+					align-items: center;
+					font-size: 270%;
 					background-color: transparent;
 				}
 				#characters #resources > span {
@@ -119,6 +121,9 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters #resources svg {
 					height: 1em;
 					width: 1em;
+				}
+				#characters #resources svg > path {
+					fill: #ccc;
 				}
 				#characters div {
 					background-color: #000;

@@ -18,7 +18,7 @@ class MainMenu extends HTMLElement {
 					grid-template-rows: min-content 1fr min-content;
 					grid-template-columns: 1fr 1fr;
 					color: #fff;
-					height: 100%;
+					min-height: 100%;
 				}
 				#cast {
 					grid-row: 1 / 3;

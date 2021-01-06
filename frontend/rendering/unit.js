@@ -18,6 +18,7 @@ class UnitActor {
 		this.unit = unit;
 		this.room = room;
 		this.group = g;
+		g.style.pointerEvents = "none";
 		let plane = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		this.edges = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		let portrait = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -47,7 +48,6 @@ class UnitActor {
 		`;
 		plane.appendChild(shadow);
 		plane.appendChild(this.edges);
-		plane.style.pointerEvents = "none";
 		transformSurface([0, 0], plane);
 
 		g.appendChild(plane);

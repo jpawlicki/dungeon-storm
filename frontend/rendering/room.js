@@ -82,21 +82,11 @@ function setupRoomSvg(currentState) {
 		tile.setAttribute("height", tileSize);
 		g.appendChild(tile);
 
-		let points = [
-			"0,0",
-			tileSize + ",0",
-			tileSize + "," + tileSize,
-			"0," + tileSize
-		];
-		for (let i = 0; i < 4; i++) {
-			let quad = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			quad.setAttribute("fill", "transparent");
-			quad.addEventListener("mouseover", () => mouseOverTile(pos, i));
-			quad.addEventListener("mouseout", () => mouseOutTile());
-			quad.addEventListener("click", () => clickOnTile(pos, i));
-			quad.setAttribute("d", "M" + points[i] + "L" + points[(i + 1) % 4] + "L" + tileSize / 2 + "," + tileSize / 2 + "Z");
-			g.appendChild(quad);
-		}
+		tile.addEventListener("pointerdown", event => mouseMoveTile(tile, pos, event));
+		tile.addEventListener("pointermove", event => mouseMoveTile(tile, pos, event));
+		tile.addEventListener("pointerout", () => mouseOutTile());
+		tile.addEventListener("pointercancel", () => mouseOutTile());
+		tile.addEventListener("pointerup", () => clickOnTile());
 
 		let shade = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		shade.setAttribute("opacity", 0.3);
@@ -112,6 +102,7 @@ function setupRoomSvg(currentState) {
 	svg.setAttribute("viewBox", -width / 2 + widthBias + " " + -tileSize / 2 + " " + width + " " + height);
 	svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 	svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+	svg.style.touchAction = "none";
 
 	for (let i = 0; i < room.tiles.length; i++) {
 		h[i] = [];
