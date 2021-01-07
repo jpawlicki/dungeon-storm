@@ -82,8 +82,8 @@ class Tutorial {
 			window.setTimeout(() => this.addMessage("Using abilities costs ♦. ♦ are replenished when you end your turn. Most actions can be undone by clicking the undo arrow in the upper left. Continue using abilities to !DEFEAT the !DANGERs. When you are ready, end your turn by clicking the check mark in the upper left."), 750);
 		}
 		
-		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 2) {
-			window.setTimeout(() => this.addMessage("Tip: Avoid spending your final ♦ on an attack: if you lose the ⚅ roll, your character must !RETREAT. If they don't have another ♦ to retreat, they will be !DEFEATed."), 750);
+		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 5) {
+			window.setTimeout(() => this.addMessage("When !DANGERs or !CHARACTERs !RETREAT, they must spend ♦ to use an ability to exit the space they occupy. If they can't, they are !DEFEATed. Be careful about spending a !CHARACTER's last ♦ on an ability that might cause that !CHARACTER to retreat."), 750);
 		}
 		
 		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 10) {

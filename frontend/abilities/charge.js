@@ -52,7 +52,7 @@ abilityData.CHARGE = new class extends Ability {
 		}
 
 		// Attacker
-		clickContext.actors.push(new AbilityMoveActor(unit, loc, unit.facing));
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, unit.facing, false, u => u.actionPoints -= 2));
 	}
 
 	isActionLegal(unit, loc, quadrant) {

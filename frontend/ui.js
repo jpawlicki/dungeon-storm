@@ -64,7 +64,7 @@ function clickOnTile() {
 		if (clickContext.selectedUnit.player != 0) return;
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 		if (action != null) {
-			if(lockUi());
+			if (!lockUi()) return;
 			clearClickContextActors();
 			gameState.addAction(action, () => {
 				unlockUi();

@@ -1,6 +1,47 @@
+Misc improvements:
  - sfx sounds
- - Additional adventures, abilities, characters, units, unlocks, etc.
- - Crash handling should report to the server for logging.
- - Game saving to cloud.
- - Settings Menu bug report option
- - multiplayer support
+ - Additional adventures, abilities, characters, units, etc.
+ - PWA-ify for native-like installation.
+
+Server capabilities:
+ - Accept uncaught exception reports.
+ - Accept balance reports.
+ - Accept connections to multiplayer sessions, reply with seed and command history.
+ - Accept bug reports?
+ - Account management and cloud saves?
+
+Multiplayer:
+ - Goals:
+   - A means for two friends to take their characters head-to-head.
+	 - Easy connectivity.
+	 - Session recovery.
+	 - Rewards. (Potentially, could wager resources or characters, and gain some free XP.)
+ - Non-Goals:
+   - Cheat-proof multiplayer is a non-goal. Players should play with friends they trust.
+   - Matchmaking is a non-goal. Players should play with friends they trust.
+   - In-game chat / audio is a non-goal. Players can use an external service for communication.
+ - The clients must agree on a random seed.
+ - The clients must agree on a map and who is which player.
+ - The clients must agree on a wager (if any).
+ - The clients must agree on a team experience budget.
+ - Design:
+	 - Server implements a simple COMET-style shared JSON object, opaque to the server.
+	 - Clients connect and view a lobby screen. The lobby screen is roughly:
++------------------------+---------------------------+----------------------+
+|                        | XP Balance (X vs Y)       |                      |
+| Character ✓            |                           |                      |
+| Character ✓            |                           |                      |
+|                        |          /\               |                      |
+|                        |         /  \  ↑↓ Select   |           ?          |
+|                        |        /    \ Randomize?  |                      |
+|                        |       /      \            |                      |
+|                        |      /   MAP  \           |                      |
+|                        |      \ PREVIEW/           |                      |
+|                        |       \      /            |                      |
+|      [WAGER]           |        \    /             |      [OPFOR WAGER]   |
+|                        |         \  /              |                      |
+|      [OK?]             |          \/               |      [OPFOR OK?]     |
++------------------------+---------------------------+----------------------+
+   - Once both sides accept, they load the map and character sets.
+	 - Which player goes first is randomly chosen. On the first turn, that player only gets 1♦.
+	 - Each (clickOnTile, turn end, undo) is put into the shared object, and shown on both clients.

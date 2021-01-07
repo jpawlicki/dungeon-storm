@@ -444,6 +444,7 @@ class GameState {
 	}
 
 	turnDone() {
+		if (this.disableActions) return;
 		let effects = [];
 		let events = [];
 		if (this.currentPlayer == 0) {

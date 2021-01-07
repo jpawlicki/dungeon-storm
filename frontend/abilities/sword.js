@@ -5,10 +5,7 @@ abilityData.SWORD = new class extends Ability {
 		this.icon = "M6.92,5H5L14,14L15,13.06M19.96,19.12L19.12,19.96C18.73,20.35 18.1,20.35 17.71,19.96L14.59,16.84L11.91,19.5L10.5,18.09L11.92,16.67L3,7.75V3H7.75L16.67,11.92L18.09,10.5L19.5,11.91L16.83,14.58L19.95,17.7C20.35,18.1 20.35,18.73 19.96,19.12Z";
 		this.minActionPoints = 1;
 		this.details = [
-			"Use ♦. Select an adjacent !ENEMY. Compare ○ and roll ⚅:",
-			"  The chance that the !ENEMY !RETREATs is equal to the !ENEMY's ○ divided by the sum of its ○ and this !FRIEND's ○.",
-			"  If the !ENEMY does not !RETREAT, this !FRIEND !RETREATs.",
-			"Anyone who !RETREATs first becomes !FRIGHTENED.",
+			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATS.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 	}
@@ -25,24 +22,19 @@ abilityData.SWORD = new class extends Ability {
 
 		let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
 		let attackerStr = unit.getStrength(Tile.directionTo(unit.pos, target.pos));
-		let success = Math.random() * (defenderStr + attackerStr) < attackerStr;
+		let success = Math.floor(Math.random() * 6 + 1) > defenderStr;
 		if (success) {
 			// Defender retreats
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
 			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(target, retreatDir));
-		} else {
-		  // Attacker retreats
-			let retreatDir = Tile.directionTo(target.pos, unit.pos);
-			effects.push(new Effect(unit, "state", Unit.State.FRIGHTENED));
-			events.push(ActionEvent.retreat(unit, retreatDir));
 		}
 
 		let tpos = target.pos;
 		let upos = unit.pos;
 		return new Action(false, effects, events, this.name, () => {
 			SpecialEffect.abilityUse(unit, this);
-			SpecialEffect.attackClash(tpos, upos, success, !success);
+			SpecialEffect.attackClash(tpos, upos, success, false);
 		});
 	}
 
@@ -55,19 +47,8 @@ abilityData.SWORD = new class extends Ability {
 		let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
 		let attackerStr = unit.getStrength(Tile.directionTo(unit.pos, target.pos));
 
-		// Attacker
-		let hypo = Object.assign(new Unit(), unit);
-		hypo.actionPoints--;
-		let attackerRetreatChance = defenderStr / (attackerStr + defenderStr);
-		let attackerRetreatDir = Tile.directionTo(loc, unit.pos);
-		if (hypo.canRetreat(attackerRetreatDir)) {
-			clickContext.actors.push(new RetreatActor(unit, attackerRetreatDir, attackerRetreatChance));
-		} else {
-			clickContext.actors.push(new DefeatActor(unit, attackerRetreatChance));
-		}
-
 		// Defender
-		let defenderRetreatChance = attackerStr / (attackerStr + defenderStr);
+		let defenderRetreatChance = Math.min(1, Math.max(0, 1 - target.getStrength(Tile.directionTo(target.pos, unit.pos)) / 6.0));
 		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
 		if (target.canRetreat(defenderRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));

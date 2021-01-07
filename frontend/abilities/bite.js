@@ -1,13 +1,13 @@
 abilityData.BITE = new class extends Ability {
+
 	constructor() {
 		super();
 		this.name = "Bite";
 		this.icon = "M7,2C4,2 2,5 2,8C2,10.11 3,13 4,14C5,15 6,22 8,22C12.54,22 10,15 12,15C14,15 11.46,22 16,22C18,22 19,15 20,14C21,13 22,10.11 22,8C22,5 20,2 17,2C14,2 14,3 12,3C10,3 10,2 7,2Z"
 		this.minActionPoints = 1;
 		this.details = [
-			"Use ♦. Select an adjacent !ENEMY:",
-			"  Roll ⚅. If greater than the !ENEMY's ○, it becomes !FRIGHTENED and !RETREAT.",
-			"  Roll ⚅. If greater than this !FRIEND's ○, this !FRIEND becomes !FRIGHTENED and !RETREATs.",
+			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than or equal to the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs.",
+			"Otherwise, this !FRIEND becomes !FRIGHTENED and !RETREATs.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 	}
@@ -22,14 +22,14 @@ abilityData.BITE = new class extends Ability {
 		];
 		let events = [];
 
-		let retreat1 = parseInt(Math.random() * 6 + 1) > target.getStrength(Tile.directionTo(target.pos, unit.pos));
+		let retreat1 = parseInt(Math.random() * 6 + 1) >= target.getStrength(Tile.directionTo(target.pos, unit.pos));
 		if (retreat1) {
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
 			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 			events.push(ActionEvent.retreat(target, retreatDir));
 		}
 
-		let retreat2 = parseInt(Math.random() * 6 + 1) > unit.getStrength(Tile.directionTo(unit.pos, target.pos));
+		let retreat2 = !retreat1;
 		if (retreat2) {
 			let retreatDir = Tile.directionTo(target.pos, unit.pos);
 			effects.push(new Effect(unit, "state", Unit.State.FRIGHTENED));
@@ -50,10 +50,12 @@ abilityData.BITE = new class extends Ability {
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return;
 
+		let successChance = Math.min(1, Math.max(0, 1 - (target.getStrength(Tile.directionTo(target.pos, unit.pos)) - 1) / 6.0));
+
 		// Attacker
 		let hypo = Object.assign(new Unit(), unit);
 		hypo.actionPoints--;
-		let attackerRetreatChance = Math.min(1, Math.max(0, 1 - unit.getStrength(Tile.directionTo(unit.pos, loc)) / 6.0));
+		let attackerRetreatChance = 1 - successChance;
 		let attackerRetreatDir = Tile.directionTo(loc, unit.pos);
 		if (hypo.canRetreat(attackerRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(unit, attackerRetreatDir, attackerRetreatChance));
@@ -62,7 +64,7 @@ abilityData.BITE = new class extends Ability {
 		}
 
 		// Defender
-		let defenderRetreatChance = Math.min(1, Math.max(0, 1 - target.getStrength(Tile.directionTo(loc, unit.pos)) / 6.0));
+		let defenderRetreatChance = successChance;
 		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
 		if (target.canRetreat(defenderRetreatDir)) {
 			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));
