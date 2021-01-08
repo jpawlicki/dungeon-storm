@@ -10,7 +10,8 @@ class Unlock {
 		{type: Unlock.CHARACTER, value: "Dancer", at: 26},
 		{type: Unlock.CHARACTER, value: "Archer", at: 56},
 		{type: Unlock.CHARACTER, value: "Berserker", at: 86},
-		{type: Unlock.CHARACTER, value: "Thief", at: 116},
+		{type: Unlock.ADVENTURE, value: "CEREMONY", at: 116},
+		{type: Unlock.CHARACTER, value: "Thief", at: 136},
 	];
 
 	static getMaxUnlock() {

@@ -1,4 +1,6 @@
 Misc improvements:
+ - favicon
+ - page title
  - sfx sounds
  - Additional adventures, abilities, characters, units, etc.
  - PWA-ify for native-like installation.
@@ -45,3 +47,5 @@ Multiplayer:
    - Once both sides accept, they load the map and character sets.
 	 - Which player goes first is randomly chosen. On the first turn, that player only gets 1♦.
 	 - Each (clickOnTile, turn end, undo) is put into the shared object, and shown on both clients.
+ - Some abilities need adjustment for multiplayer.
+   - DESPERATION (Pay !FRIGHTENED, get !DEFEAT.)

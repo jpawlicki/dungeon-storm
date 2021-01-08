@@ -457,7 +457,7 @@ class GameState {
 		this.addAction(new Action(false, effects, events, "END TURN"), () => {
 			this.currentPlayer = (this.currentPlayer + 1) % 3;
 			notifyTurn();
-			this.runAi();
+			showHideUiElements();
 			if (this.currentPlayer == 0) {
 				if (this.resources.time <= 0) {
 					this.roomDefeat();
@@ -465,7 +465,7 @@ class GameState {
 					Persistence.save();
 				}
 			}
-			showHideUiElements();
+			this.runAi();
 		});
 	}
 
@@ -547,8 +547,8 @@ class GameState {
 			if (u.player == 0) numPlayer++;
 			if (u.player == 1) numEnemy++;
 		}
-		if (numEnemy == 0) this.roomVictory();
-		else if (numPlayer == 0) this.roomDefeat();
+		if (numPlayer == 0) this.roomDefeat();
+		else if (numEnemy == 0) this.roomVictory();
 	}
 
 	loadRoom(coords) {
