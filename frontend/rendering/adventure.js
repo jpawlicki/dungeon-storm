@@ -598,8 +598,16 @@ class AdventureCompleteElement extends HTMLElement {
 				}
 			}
 		}
+		if (victory) {
+			for (let adv of gameState.adventure.unlocks) {
+				if (!gameState.unlockedAdventures.includes(adv) && !addedAdventures.includes(adv)) {
+					gameState.unlockedAdventures.push(adv);
+					addedAdventures.push(adv);
+				}
+			}
+		}
 		for (let i = 0; i < newCharacters; i++) {
-			let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]]);
+			let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]], true);
 			gameState.characterPool.push(c);
 			addedCharacters.push(c);
 		}
@@ -738,7 +746,7 @@ class AdventureCompleteElement extends HTMLElement {
 					}, 1000 / numAwards * index);
 				}
 				window.setTimeout(() => {
-					let time = 500;
+					let time = 200;
 					for (let e of shadow.querySelectorAll("#clears > svg.unlockable")) e.setAttribute("class", "unlocked");
 					for (let x of shadow.querySelectorAll("#clears svg")) {
 						window.setTimeout(() => {
@@ -760,8 +768,16 @@ class AdventureCompleteElement extends HTMLElement {
 						time += 100;
 					}
 					window.setTimeout(() => {
-						shadow.getElementById("continue").style.visibility = "visible";
+						while (addedAdventures.length > 0) {
+							let div = document.createElement("div");
+							div.setAttribute("class", "newAdventure");
+							div.appendChild(document.createTextNode(adventureData[addedAdventures.shift()].title[lang]));
+							shadow.querySelector("#newStuff").appendChild(div);
+						}
 					}, time);
+					window.setTimeout(() => {
+						shadow.getElementById("continue").style.visibility = "visible";
+					}, time + 300);
 				}, 1500);
 			}, 660);
 		});

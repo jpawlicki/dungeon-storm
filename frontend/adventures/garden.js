@@ -1,13 +1,13 @@
 {
 	let adventure = {
 		description: {
-			"en": "Journey into the garden...",
+			"en": "Two started in the garden...",
 		},
 		descriptionDefeat: {
-			"en": "Forced from the garden by fear, the companions gave up on their wish.",
+			"en": "...but the garden terrified them.",
 		},
 		descriptionVictory: {
-			"en": "Overcoming fear, the companions passed through the garden, and made their wish.",
+			"en": "...and the garden paths showed them the way to greater things.",
 		},
 		characters: 2,
 		id: "GARDEN",
@@ -21,6 +21,7 @@
 			"en": "The Garden",
 		},
 		timeLimit: 40,
+		unlocks: ["FOREST"],
 		victory: [[2, 2]],
 	};
 	adventureData[adventure.id] = adventure;

@@ -114,7 +114,9 @@ class Unit {
 		DEFEATED: 3
 	}
 
-	constructor(characterOrUnitClass) {
+	// characterOrUnitClass: the template for this unit
+	// randomizeAbilities: whether to randomize the unit's abilities from all known abilities.
+	constructor(characterOrUnitClass, randomizeAbilities=false) {
 		this.actionPoints = 3;
 		this.actors = [];
 		this.facing = 0;
@@ -149,6 +151,43 @@ class Unit {
 			} else {
 				this.portrait = this.id.toLowerCase() + "/" + Math.floor(Math.random() * this.portraits) + ".png";
 			}
+		}
+
+		if (randomizeAbilities) {
+			this.abilities = [];
+			this.learnableAbilities = [];
+			let possibleAbilities = [];
+			{
+				let possibleAbilitiesSet = new Set();
+				for (let c of gameState.unlockedCharacters) {
+					for (let a of characterData[c].abilities) possibleAbilitiesSet.add(a.name.toUpperCase());
+					for (let a of characterData[c].learnableAbilities) possibleAbilitiesSet.add(a.name.toUpperCase());
+				}
+				for (let a of possibleAbilitiesSet) possibleAbilities.push(a);
+			}
+			let moveAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.MOVE));
+			let attackAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.ATTACK));
+			Util.shuffle(possibleAbilities);
+			Util.shuffle(moveAbilities);
+			Util.shuffle(attackAbilities);
+
+			let added = new Set();
+			let othis = this;
+			function addOne(abilityArray, learnable) {
+				for (let a of abilityArray) {
+					if (added.has(a)) continue;
+					added.add(a);
+					if (learnable) othis.learnableAbilities.push(abilityData[a]);
+					else othis.abilities.push(abilityData[a]);
+					break;
+				}
+			}
+			addOne(moveAbilities, false);
+			addOne(attackAbilities, false);
+			addOne(possibleAbilities, false);
+			addOne(possibleAbilities, true);
+			addOne(possibleAbilities, true);
+			addOne(possibleAbilities, true);
 		}
 	}
 
@@ -334,9 +373,11 @@ class Adventure {
 	// descriptionDefeat{}: lang strings
 	// descriptionVictory{}: lang strings
 	// characters
+	// id
 	// rooms[][]: rooms
 	// title{}: lang strings
 	// timeLimit
+	// unlocks[]
 	// victory[]
 
 	constructor(spec) {
@@ -344,9 +385,11 @@ class Adventure {
 		this.descriptionDefeat = spec.descriptionDefeat;
 		this.descriptionVictory = spec.descriptionVictory;
 		this.characters = spec.characters;
+		this.id = spec.id;
 		this.title = spec.title;
 		this.timeLimit = spec.timeLimit;
 		this.victory = spec.victory;
+		this.unlocks = spec.unlocks;
 		this.rooms = [];
 
 		let randomRooms = new RandomRoomProvider();
@@ -385,6 +428,7 @@ class GameState {
 	// numUnlocksEarned
 	// resource: {experience: int, healing: int, unlock: int, character: int}
 	// unlockedAdventures[]
+	// completedAdventures[]
 	// unlockedCharacters[]
 
 	static load(data) {
@@ -424,6 +468,7 @@ class GameState {
 		this.characterPool = [];
 		this.resources = {};
 		this.unlockedAdventures = [];
+		this.completedAdventures = [];
 		this.unlockedCharacters = [];
 		this.numUnlocksEarned = 0;
 	}
@@ -595,6 +640,7 @@ class GameState {
 		if (this.getAdventureVictorious()) {
 			this.adventureOver(true);
 		} else {
+			if (!this.completedAdventures.includes(this.adventure.id)) this.completedAdventures.push(this.adventure.id);
 			setupVictorySituation();
 		}
 	}

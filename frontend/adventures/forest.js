@@ -1,13 +1,13 @@
 {
 	let adventure = {
 		description: {
-			"en": "Three journey into the forest...",
+			"en": "Three journey into the wild, dark forest...",
 		},
 		descriptionDefeat: {
-			"en": "Forced from the forest by fear, the companions gave up on their wish.",
+			"en": "...but the darkness of the forest overcame them.",
 		},
 		descriptionVictory: {
-			"en": "Overcoming fear, the companions passed through the forest, and made their wish.",
+			"en": "...and in the forest, they discovered who they are and who they wish to be.",
 		},
 		characters: 3,
 		id: "FOREST",
@@ -23,6 +23,7 @@
 			"en": "The Forest",
 		},
 		timeLimit: 30,
+		unlocks: ["CEREMONY"],
 		victory: [[4, 4]],
 	};
 	adventureData[adventure.id] = adventure;

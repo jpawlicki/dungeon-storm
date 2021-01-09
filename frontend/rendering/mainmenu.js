@@ -44,7 +44,6 @@ class MainMenu extends HTMLElement {
 					margin-bottom: 2em;
 					background-color: #000;
 					border-radius: 4em;
-					padding: 0.2em 0.2em 0.2em 0.65em;
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
@@ -53,6 +52,7 @@ class MainMenu extends HTMLElement {
 					width: 2em;
 					height: 2em;
 					cursor: pointer;
+					margin: 0.2em;
 				}
 				#adventures svg:hover path {
 					fill: #fff;
@@ -118,12 +118,27 @@ class MainMenu extends HTMLElement {
 	addAdventures() {
 		for (let adventure of gameState.unlockedAdventures) {
 			let d = document.createElement("div");
-			d.appendChild(document.createTextNode(adventureData[adventure].title[lang]));
 			let descNode = this.shadow.getElementById("desc");
 			let describe = () => { descNode.textContent = adventureData[adventure].description[lang]; };
 			d.addEventListener("mouseover", describe);
 			d.addEventListener("click", describe);
-
+			{
+				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				svg.setAttribute("viewBox", "-2 -3 28 28");
+				svg.setAttribute("class", "begin");
+				let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+				c.setAttribute("r", "14");
+				c.setAttribute("cx", "12");
+				c.setAttribute("cy", "11");
+				c.setAttribute("fill", "#333");
+				svg.appendChild(c);
+				if (gameState.completedAdventures.includes(adventure)) {
+					Util.makeCup(svg);
+					svg.querySelector("path").style.fill = "#fc0";
+				}
+				d.appendChild(svg);
+			}
+			d.appendChild(document.createTextNode(adventureData[adventure].title[lang]));
 			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			svg.setAttribute("viewBox", "-12 -12 24 24");
 			svg.setAttribute("class", "begin");

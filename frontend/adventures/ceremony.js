@@ -4,10 +4,10 @@
 			"en": "Two undertook the ceremony...",
 		},
 		descriptionDefeat: {
-			"en": "But the ceremony was not what they expected.",
+			"en": "...but the ceremony was not what they expected.",
 		},
 		descriptionVictory: {
-			"en": "And through the ceremony, they were made whole.",
+			"en": "...and through the ceremony, they were made whole.",
 		},
 		characters: 2,
 		id: "CEREMONY",
@@ -19,7 +19,8 @@
 		title: {
 			"en": "The Ceremony",
 		},
-		timeLimit: 4,
+		timeLimit: 5,
+		unlocks: [],
 		victory: [[2, 2]],
 	};
 	adventureData[adventure.id] = adventure;
