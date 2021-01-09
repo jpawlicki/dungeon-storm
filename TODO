@@ -4,6 +4,7 @@ Misc improvements:
  - sfx sounds
  - Additional adventures, abilities, characters, units, etc.
  - PWA-ify for native-like installation.
+ - New characters could randomize skill selection from unlocked skills. (Bad idea?)
 
 Server capabilities:
  - Accept uncaught exception reports.

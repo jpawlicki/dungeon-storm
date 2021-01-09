@@ -1,0 +1,75 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="../gamelib.js"></script>
+		<script src="../tutorial.js"></script>
+		<script src="../abilities/backstab.js"></script>
+		<script src="../abilities/bite.js"></script>
+		<script src="../abilities/challenge.js"></script>
+		<script src="../abilities/charge.js"></script>
+		<script src="../abilities/control.js"></script>
+		<script src="../abilities/desperation.js"></script>
+		<script src="../abilities/distract.js"></script>
+		<script src="../abilities/empathy.js"></script>
+		<script src="../abilities/encourage.js"></script>
+		<script src="../abilities/energize.js"></script>
+		<script src="../abilities/fearmonger.js"></script>
+		<script src="../abilities/fly.js"></script>
+		<script src="../abilities/frighten.js"></script>
+		<script src="../abilities/highground.js"></script>
+		<script src="../abilities/move.js"></script>
+		<script src="../abilities/opportunity.js"></script>
+		<script src="../abilities/panic.js"></script>
+		<script src="../abilities/press.js"></script>
+		<script src="../abilities/push.js"></script>
+		<script src="../abilities/shoot.js"></script>
+		<script src="../abilities/slide.js"></script>
+		<script src="../abilities/slow.js"></script>
+		<script src="../abilities/solarpower.js"></script>
+		<script src="../abilities/startup.js"></script>
+		<script src="../abilities/strike.js"></script>
+		<script src="../abilities/swap.js"></script>
+		<script src="../abilities/sword.js"></script>
+		<script src="../abilities/teleport.js"></script>
+		<script src="../abilities/terrify.js"></script>
+		<script src="../abilities/vault.js"></script>
+		<script src="../ui.js"></script>
+		<script src="../util.js"></script>
+		<style>
+			body {
+				background-color: #024;
+				color: #fff;
+				font-size: 120%;
+				font-family: sans-serif;
+			}
+			#abilities {
+				display: grid;
+				grid-template-columns: min-content 3em 1fr;
+				grid-row-gap: 1em;
+			}
+			p {
+				margin: auto 0 auto 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Abilities</h1>
+		<div id="abilities"></div>
+
+		<script>
+			for (let a in abilityData) {
+				let icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				icon.setAttribute("viewBox", "0 0 24 24");
+				let p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+				p.setAttribute("d", abilityData[a].icon);
+				p.setAttribute("fill", "#fff");
+				icon.appendChild(p);
+				let text = document.createElement("span");
+				text.appendChild(document.createTextNode(a));
+				document.getElementById("abilities").appendChild(text);
+				document.getElementById("abilities").appendChild(icon);
+				document.getElementById("abilities").appendChild(expandAbilityDetails(abilityData[a].details, false));
+			}
+		</script>
+	</body>
+</html>

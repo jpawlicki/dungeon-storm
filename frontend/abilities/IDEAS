@@ -1,119 +1,13 @@
---- BACKSTAB
-Use ♦. Select an adjacent !ENEMY that is !THREATENed by another !FRIEND. It becomes !FRIGHTENED and !RETREATs.
-Cannot select an !ENEMY that !THREATENs this !FRIEND.
+==== Ideas:
 
---- BITE
-Use ♦. Select an adjacent !ENEMY:
-  Roll ⚅. If greater than the !ENEMY's ○, it becomes !FRIGHTENED and !RETREAT.
-  Roll ⚅. If greater than this !FRIEND's ○, this !FRIEND becomes !FRIGHTENED and !RETREATs.
-Cannot be undone.
+- Sword but move-to-occupy (need to check Control, etc to make sure it won't trigger)
+- Sword vs all adjacent (including allies)
 
---- CHALLENGE
-Use ♦. Teleport to an empty space !THREATENED by an !ENEMY, with any facing.
-
---- CHARGE
-Use ♦♦. Select a !ENEMY in a straight line and !MOVE to its space. It becomes !FRIGHTENED and !RETREATs.
-Cannot select a !ENEMY behind a rise of 2 or more steps.
-Cannot select a !ENEMY behind a different !ENEMY or !FRIEND.
-Cannot select an adjacent !ENEMY.
-Cannot select a !ENEMY with greater ○.
-
---- CONTROL
-!REACTION: !ENEMYs !THREATENed by this !FRIEND are !DEFEATed if they !MOVE in any direction other than directly away from this !FRIEND.
-
---- DESPERATION
-Use ♦. Become !FRIGHTENED. !DEFEAT an adjacent !ENEMY.
-Cannot be used if !FRIGHTENED.
-
---- DISTRACT
-Use ♦. Rotate an adjacent !FRIEND or !ENEMY.
-
---- EMPATHY
-Use ♦. Become !FRIGHTENED. Select a !FRIGHTENED !FRIEND. They are no longer !FRIGHTENED.
-Cannot be used if !FRIGHTENED.
-
---- ENCOURAGE
-Give ♦ to an adjacent !FRIEND.
-
---- ENERGIZE
-!REACTION: Gain ♦ at the end of the turn, if not !FRIGHTENED.
-
---- FEARMONGER
-!REACTION: Gain ♦ whenever a !ENEMY becomes !FRIGHTENED.
-
---- FLY
-Use ♦. !MOVE to an adjacent empty space and rotate. If the destination has lower elevation, gain ♦.
-
---- FRIGHTEN
-Use ♦. !FRIGHTEN an adjacent !FRIEND or !ENEMY that is not already !FRIGHTENED.
-
---- HIGHGROUND
-Use ♦. Select an adjacent !ENEMY at a lower elevation. It !RETREATs.
-
---- MOVE
-Use ♦. Either:
-  1. !MOVE to an adjacent empty space and rotate. Cannot rise more than 1 step.
-Or:
-  2. Rotate in the same space.
-
---- OPPORTUNITY
-!REACTION: Gain ♦ whenever a !ENEMY !MOVES such that this !FRIEND !THREATENs it.
-Does not apply to !ENEMYs already !THREATENed by this !FRIEND.
-
---- PANIC
-!REACTION: Gain ♦ at the end of the turn, if !FRIGHTENED.
-
---- PRESS
-!REACTION: Gain ♦ whenever a !ENEMY !THREATENed by this !FRIEND !RETREATs.
-
---- PUSH
-Use ♦. Select an adjacent !ENEMY. !MOVE into an open space away from the !ENEMY. Cannot rise 2 or more steps.
-Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.
-Cannot be undone.
-
---- SHOOT
-Use ♦♦. Select a !ENEMY in a straight line.
-Roll ⚅. If greater than the !ENEMY's ○, it becomes !FRIGHTENED and !RETREATs.
-Cannot select an adjacent !ENEMY.
-Cannot be undone.
-
---- SLIDE
-Use ♦. !MOVE to a nearest diagonal empty space and rotate. Cannot rise more than 1 step.
-
---- SLOW
-Use ♦. Remove ♦ from an adjacent !ENEMY.
-
---- SOLARPOWER
-!REACTION: At the end of the turn:
-  Gain ♦ if 1 step above ground level.
-  Gain ♦♦ if 2 or more steps above ground level.
-
---- STARTUP
-!REACTION: Gain ♦♦♦ on the first turn, or ♦♦ if !FRIGHTENED.
-
---- STRIKE
-Use ♦♦. Select an adjacent !ENEMY with less ○. They become !FRIGHTENED and !RETREAT.
-
---- SWAP
-Use ♦. Swap positions and facing with an adjacent !FRIEND or !ENEMY.
-
---- SWORD
-Use ♦. Select an adjacent !ENEMY. Compare ○ and roll ⚅:
-  The chance that the !ENEMY !RETREATs is equal to the !ENEMY's ○ divided by the sum of its ○ and this !FRIEND's ○.
-  If the !ENEMY does not !RETREAT, this !FRIEND !RETREATs.
-Anyone who !RETREATs first becomes !FRIGHTENED.
-Cannot be undone.
-
---- TELEPORT
-Use ♦. Teleport to an empty space adjacent to a !FRIEND, with any facing.
-
---- TERRIFY
-Use ♦. Select an adjacent !FRIGHTENED !ENEMY. They !RETREAT.
-
---- VAULT
-Use ♦. !MOVE to an empty space on the opposite side of an adjacent !FRIEND or !ENEMY.
-
-
+--- Reactions:
+- When this !FRIEND !RETREATs, all adjacent !ENEMIES lose a diamond. (need to check order that this fires in)
+- Gain diamond when retreating
+- Attack threatened enemies when retreating
+- Gain 4 diamonds when first frightened
 
 
 
