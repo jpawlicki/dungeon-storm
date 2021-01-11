@@ -92,7 +92,7 @@ class MenuCharacter extends HTMLElement {
 			</style>
 			<label>
 				<input type="checkbox" />
-				<img src="assets/portraits/${this.character.portrait}" draggable="false"></img>
+				<img src="${assetPrefix}assets/portraits/${this.character.portrait}" draggable="false"></img>
 				<div id="abilities">
 				</div>
 			</label>
@@ -146,7 +146,7 @@ class MenuCharacter extends HTMLElement {
 		abd.appendChild(makeSvg(this.character.strengthsFrightened, this.character.threatsFrightened, true));
 
 		for (let x of this.character.abilities) abd.appendChild(Util.makeAbilitySvg(x, true, this.descContainer));
-		for (let x of this.character.learnableAbilities) abd.appendChild(Util.makeAbilitySvg(x, false, this.descContainer));
+		if (this.character.learnableAbilities) for (let x of this.character.learnableAbilities) abd.appendChild(Util.makeAbilitySvg(x, false, this.descContainer));
 
 		if (this.retireable) {
 			this.retireOption = document.createElementNS("http://www.w3.org/2000/svg", "svg");

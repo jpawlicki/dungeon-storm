@@ -1,15 +1,55 @@
 ==== Ideas:
+---- ADRENALINE
+!REACTION: When this !FRIEND becomes !FRIGHTENED, gain ♦♦♦♦.
 
-- Sword but move-to-occupy (need to check Control, etc to make sure it won't trigger)
-- Sword vs all adjacent (including allies)
+---- COURAGE
+!REACTION: When another !FRIEND becomes !FRIGHTENED, gain ♦.
 
---- Reactions:
-- When this !FRIEND !RETREATs, all adjacent !ENEMIES lose a diamond. (need to check order that this fires in)
-- Gain diamond when retreating
-- Attack threatened enemies when retreating
-- Gain 4 diamonds when first frightened
+---- OUTMANEUVER
+Use ♦♦. Select an adjacent !ENEMY with fewer ♦. It !RETREATs.
+
+---- REVENGE
+!REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦.
 
 
+=== Commander
+---- FORMATION (exists, needs testing)
+
+---- CLEAVE (exists, needs testing)
+
+---- CONTROL (exists)
+
+---- TAUNT
+Use ♦. Select a !ENEMY two spaces away in a straight line. That !ENEMY !MOVEs toward this !FRIEND.
+The !ENEMY cannot rise more than 1 step.
+The !ENEMY cannot enter an occupied space.
+
+---- RESCUE
+Use ♦. Teleport a !FRIEND to a random open unthreatened space.
+Cannot be undone.
+
+---- DEFENDER
+!REACTION: When another !FRIEND !RETREATs, gain ♦.
+
+=== Skirmisher 
+---- ADVANCE
+Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.
+Cannot be undone.
+
+---- RUN
+Use ♦. Move to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦.
+Cannot be undone.
+
+---- CONTROL (exists)
+
+---- FLEE
+!REACTION: When this !FRIEND !RETREATs, gain ♦. (This ♦ can't be used to do the !RETREAT action.)
+
+---- SCORCHEDEARTH
+!REACTION: When this !FRIEND !RETREATs, all adjacent !ENEMIES lose ♦.
+
+---- HURRY
+!REACTION: At the start of the turn, gain ♦ for each !ENEMY !THREATENing this !FRIEND.
 
 ==== Proposed Enemy Units:
 

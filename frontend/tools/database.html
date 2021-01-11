@@ -3,38 +3,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<script src="../gamelib.js"></script>
 		<script src="../tutorial.js"></script>
-		<script src="../abilities/backstab.js"></script>
-		<script src="../abilities/bite.js"></script>
-		<script src="../abilities/challenge.js"></script>
-		<script src="../abilities/charge.js"></script>
-		<script src="../abilities/control.js"></script>
-		<script src="../abilities/desperation.js"></script>
-		<script src="../abilities/distract.js"></script>
-		<script src="../abilities/empathy.js"></script>
-		<script src="../abilities/encourage.js"></script>
-		<script src="../abilities/energize.js"></script>
-		<script src="../abilities/fearmonger.js"></script>
-		<script src="../abilities/fly.js"></script>
-		<script src="../abilities/frighten.js"></script>
-		<script src="../abilities/highground.js"></script>
-		<script src="../abilities/move.js"></script>
-		<script src="../abilities/opportunity.js"></script>
-		<script src="../abilities/panic.js"></script>
-		<script src="../abilities/press.js"></script>
-		<script src="../abilities/push.js"></script>
-		<script src="../abilities/shoot.js"></script>
-		<script src="../abilities/slide.js"></script>
-		<script src="../abilities/slow.js"></script>
-		<script src="../abilities/solarpower.js"></script>
-		<script src="../abilities/startup.js"></script>
-		<script src="../abilities/strike.js"></script>
-		<script src="../abilities/swap.js"></script>
-		<script src="../abilities/sword.js"></script>
-		<script src="../abilities/teleport.js"></script>
-		<script src="../abilities/terrify.js"></script>
-		<script src="../abilities/vault.js"></script>
+		<script src="../data.js"></script>
 		<script src="../ui.js"></script>
 		<script src="../util.js"></script>
+		<script src="../rendering/character.js"></script>
 		<title>Untitled Roguelite - Database</title>
 		<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"></link>
 		<link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon.png"></link>
@@ -45,33 +17,98 @@
 				font-size: 120%;
 				font-family: sans-serif;
 			}
-			#abilities {
-				display: grid;
-				grid-template-columns: min-content 3em 1fr;
-				grid-row-gap: 1em;
+			table {
+				min-width: 100%;
 			}
-			p {
-				margin: auto 0 auto 1em;
+			table:nth-child(n + 2) {
+				margin-top: 2em;
+			}
+			th {
+				font-size: 150%;
+				background-color: #fee7be;
+				color: #000;
+			}
+			#abilities {
+				border-collapse: collapse;
+			}
+			#abilities > tr:nth-child(even) {
+				background-color: #012;
+			}
+			#abilities td:nth-child(2) {
+				padding-left: 1em;
+				padding-right: 1em;
+			}
+			#abilities svg {
+				width: 3em;
+			}
+			#dangers td:nth-child(2) {
+				white-space: pre-wrap;
 			}
 		</style>
 	</head>
 	<body>
-		<h1>Abilities</h1>
-		<div id="abilities"></div>
+		<table id="abilities">
+			<tr><th colspan="3">Abilities</th></tr>
+		</table>
+		<table id="characters">
+			<tr><th colspan="3">Characters</th></tr>
+		</table>
+		<table id="dangers">
+			<tr><th colspan="3">Dangers</th></tr>
+		</table>
 
 		<script>
 			for (let a in abilityData) {
+				let tr = document.createElement("tr");
 				let icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 				icon.setAttribute("viewBox", "0 0 24 24");
 				let p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 				p.setAttribute("d", abilityData[a].icon);
-				p.setAttribute("fill", "#fff");
+				p.setAttribute("fill", "rgba(255, 255, 255, 0.66)");
 				icon.appendChild(p);
-				let text = document.createElement("span");
+				let text = document.createElement("p");
 				text.appendChild(document.createTextNode(a));
-				document.getElementById("abilities").appendChild(text);
-				document.getElementById("abilities").appendChild(icon);
-				document.getElementById("abilities").appendChild(expandAbilityDetails(abilityData[a].details, false));
+
+				function makeTd(c) {
+					let td = document.createElement("td");
+					td.appendChild(c);
+					tr.appendChild(td);
+				}
+				makeTd(text);
+				makeTd(icon);
+				makeTd(expandAbilityDetails(abilityData[a].details, false));
+				document.getElementById("abilities").appendChild(tr);
+			}
+
+			gameState = {};
+			gameState.characterPool = [];
+			assetPrefix = "../";
+			for (let c in characterData) {
+				let tr = document.createElement("tr");
+				let td1 = document.createElement("td");
+				td1.appendChild(document.createTextNode(c));
+				let td2 = document.createElement("td");
+				td2.appendChild(renderMenuCharacter(new Unit(characterData[c])));
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				document.getElementById("characters").appendChild(tr);
+			}
+
+			for (let d in unitData) {
+				let tr = document.createElement("tr");
+				let td1 = document.createElement("td");
+				td1.appendChild(document.createTextNode(d));
+				let td2 = document.createElement("td");
+				td2.appendChild(document.createTextNode(unitData[d].ai.map(ai => {
+					for (let p in aiData) if (aiData[p] == ai) return p;
+					return "?";
+				}).join("\n")));
+				let td3 = document.createElement("td");
+				td3.appendChild(renderMenuCharacter(new Unit(unitData[d])));
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tr.appendChild(td3);
+				document.getElementById("dangers").appendChild(tr);
 			}
 		</script>
 	</body>

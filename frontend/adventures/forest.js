@@ -1,7 +1,7 @@
 {
 	let adventure = {
 		description: {
-			"en": "Three journey into the wild, dark forest...",
+			"en": "Three journeyed into the wild, dark forest...",
 		},
 		descriptionDefeat: {
 			"en": "...but the darkness of the forest overcame them.",
