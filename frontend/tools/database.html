@@ -28,10 +28,10 @@
 				background-color: #fee7be;
 				color: #000;
 			}
-			#abilities {
+			table {
 				border-collapse: collapse;
 			}
-			#abilities > tr:nth-child(even) {
+			tr:nth-child(even) {
 				background-color: #012;
 			}
 			#abilities td:nth-child(2) {
@@ -43,6 +43,12 @@
 			}
 			#dangers td:nth-child(2) {
 				white-space: pre-wrap;
+			}
+			.explicable {
+				color: #ccf;
+			}
+			#characters td:nth-child(2), #dangers td:nth-child(3) {
+				padding-top: 1em;
 			}
 		</style>
 	</head>
@@ -58,6 +64,8 @@
 		</table>
 
 		<script>
+			let tutorial = undefined;
+
 			for (let a in abilityData) {
 				let tr = document.createElement("tr");
 				let icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");

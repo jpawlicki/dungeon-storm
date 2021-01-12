@@ -12,8 +12,14 @@ Columns: 3
 81 23 48 Forest 4
 0 255 0 Forest 5
 
-253 231 190 Machine 1
-81 23 48 Machine 2
-233 79 55 Machine 3
-92 158 173 Machine 4
-50 98 115 Machine 5
+253 231 190 Ceremony 1
+81 23 48 Ceremony 2
+233 79 55 Ceremony 3
+92 158 173 Ceremony 4
+50 98 115 Ceremony 5
+
+98 70 107 Family 1
+191 154 202 Family 2
+14 64 45 Family 3
+255 131 96 Family 4
+215 253 236 Family 5

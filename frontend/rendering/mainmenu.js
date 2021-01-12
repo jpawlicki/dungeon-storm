@@ -186,7 +186,7 @@ class MainMenu extends HTMLElement {
 			this.applyRetirements();
 			loadAdventure(adventureData[adventure])
 			for (let c of chars) gameState.characters.push(c);
-			loadRoom([0, 0]);
+			loadRoom(adventureData[adventure].entry);
 		}
 	}
 

@@ -10,6 +10,7 @@
 			"en": "...and in the forest, they discovered who they are and who they wish to be.",
 		},
 		characters: 3,
+		entry: [0, 0],
 		id: "FOREST",
 		random: false,
 		rooms: [

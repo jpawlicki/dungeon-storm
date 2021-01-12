@@ -10,6 +10,7 @@
 			"en": "...and the garden paths showed them the way to greater things.",
 		},
 		characters: 2,
+		entry: [0, 0],
 		id: "GARDEN",
 		random: false,
 		rooms: [
