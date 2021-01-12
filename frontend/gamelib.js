@@ -499,6 +499,9 @@ class GameState {
 			effects.push(new Effect(u, "actionPoints", 3));
 			events.push(ActionEvent.endTurn(u));
 		}
+		for (let u of this.units) if (u.player == (this.currentPlayer + 1) % 3) {
+			events.push(ActionEvent.startTurn(u));
+		}
 		this.addAction(new Action(false, effects, events, "END TURN"), () => {
 			this.currentPlayer = (this.currentPlayer + 1) % 3;
 			notifyTurn();
@@ -721,6 +724,32 @@ class Effect {
 	}
 }
 
+// An AddingEffect is like an Effect, but can be combined additively rather than an absolute setting.
+class AddingEffect {
+	// unit
+	// property
+	// value
+	// oldValue
+
+	constructor(unit, property, value) {
+		this.oldValue = unit[property];
+		this.value = value;
+		this.unit = unit;
+		this.property = property;
+	}
+
+	apply() {
+		this.oldValue = this.unit[this.property];
+		this.unit[this.property] = Math.max(0, this.unit[this.property] + this.value);
+		this.unit.updateActors();
+	}
+
+	undo() {
+		this.unit[this.property] = this.oldValue;
+		this.unit.updateActors();
+	}
+}
+
 class ActionEvent {
 	// who: the unit receiving the event
 	// type: a numeric value indicating the type of event
@@ -746,7 +775,12 @@ class ActionEvent {
 		return new ActionEvent(who, ActionEvent.ENDTURN, {});
 	}
 
-	static LOADROOM = 5;
+	static STARTTURN = 5;
+	static startTurn(who) {
+		return new ActionEvent(who, ActionEvent.STARTTURN, {});
+	}
+
+	static LOADROOM = 6;
 	static loadRoom() {
 		return new ActionEvent(null, ActionEvent.LOADROOM, {});
 	}

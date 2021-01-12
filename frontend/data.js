@@ -1,3 +1,69 @@
+abilityData.ADVANCE = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Advance";
+		this.icon = "M12,22A2,2 0 0,1 10,20A2,2 0 0,1 12,18A2,2 0 0,1 14,20A2,2 0 0,1 12,22M13,2V13L17.5,8.5L18.92,9.92L12,16.84L5.08,9.92L6.5,8.5L11,13V2H13Z";
+		this.minActionPoints = 1;
+		this.details = [
+			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.",
+			"Cannot be undone."];
+		this.aiHints = [AiHints.ATTACK];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return;
+
+		let effects = [
+			new Effect(unit, "actionPoints", unit.actionPoints - 1)
+		];
+		let events = [];
+
+		let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
+		let success = Util.roll() > defenderStr;
+		if (success) {
+			// Defender retreats
+			let retreatDir = Tile.directionTo(unit.pos, target.pos);
+			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
+			effects.push(new Effect(unit, "pos", target.pos.slice()));
+			events.push(ActionEvent.retreat(target, retreatDir));
+		}
+
+		let tpos = target.pos;
+		let upos = unit.pos;
+		return new Action(false, effects, events, this.name, () => {
+			SpecialEffect.abilityUse(unit, this);
+			SpecialEffect.attackClash(tpos, upos, success, false);
+		});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return;
+
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, unit.facing));
+		let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
+		let defenderRetreatChance = Math.min(1, Math.max(0, 1 - target.getStrength(Tile.directionTo(target.pos, unit.pos)) / 6.0));
+		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
+		if (target.canRetreat(defenderRetreatDir)) {
+			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));
+		} else {
+			clickContext.actors.push(new DefeatActor(target, defenderRetreatChance));
+		}
+	}
+
+	isActionLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 1) return false;
+		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return false;
+		if (target.player == unit.player) return false;
+		return true;
+	}
+}();
 abilityData.BACKSTAB = new class extends Ability {
 	constructor() {
 		super();
@@ -735,7 +801,42 @@ abilityData.FEARMONGER = new class extends Ability {
 			reactions.push(new Action(
 					true,
 					[
-						new Effect(unit, "actionPoints", unit.actionPoints + newFrightened),
+						new AddingEffect(unit, "actionPoints", newFrightened),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
+		}
+		return reactions;
+	}
+}();
+abilityData.FLEE = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Flee";
+		this.icon = "M19,5V19H16V5M14,5V19L3,12";
+		this.minActionPoints = 0;
+		this.details = [
+			"!REACTION: When this !FRIEND !RETREATs, gain ♦.",
+			"(The ♦ can't be spent in the !RETREAT action.)"];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let retreating = 0;
+		for (let e of action.events) if (e.type == ActionEvent.RETREAT && e.who == unit) retreating++;
+		if (retreating > 0) {
+			reactions.push(new Action(
+					true,
+					[
+						new AddingEffect(unit, "actionPoints", 1),
 					],
 					[],
 					this.name,
@@ -984,6 +1085,45 @@ abilityData.HIGHGROUND = new class extends Ability {
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
 		return true;
+	}
+}();
+abilityData.HURRY = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Hurry";
+		this.icon = "M13 14H11V9H13M13 18H11V16H13M1 21H23L12 2L1 21Z";
+		this.minActionPoints = 0;
+		this.details = ["!REACTION: At the start of the turn, gain ♦ for each !ENEMY !THREATENing this !FRIEND."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let startedTurn = false;
+		for (let ev of action.events) if (ev.type == ActionEvent.STARTTURN && ev.who == unit) startedTurn = true;
+		let threats = 0;
+		for (let i = 0; i < 4; i++) {
+			let u = gameState.getUnitAt(Tile.offset(unit.pos, i));
+			if (u != null && u.threatens(unit, unit.pos)) threats++;
+		}
+
+		if (startedTurn && threats > 0) {
+			reactions.push(new Action(
+					true,
+					[
+						new AddingEffect(unit, "actionPoints", threats),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
+		}
+		return reactions;
 	}
 }();
 abilityData.MOVE = new class extends Ability {
@@ -1290,6 +1430,93 @@ abilityData.RESCUE = new class extends Ability {
 			}
 		}
 		return dests;
+	}
+}();
+abilityData.RUN = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Run";
+		this.icon = "M13.5,5.5C14.59,5.5 15.5,4.58 15.5,3.5C15.5,2.38 14.59,1.5 13.5,1.5C12.39,1.5 11.5,2.38 11.5,3.5C11.5,4.58 12.39,5.5 13.5,5.5M9.89,19.38L10.89,15L13,17V23H15V15.5L12.89,13.5L13.5,10.5C14.79,12 16.79,13 19,13V11C17.09,11 15.5,10 14.69,8.58L13.69,7C13.29,6.38 12.69,6 12,6C11.69,6 11.5,6.08 11.19,6.08L6,8.28V13H8V9.58L9.79,8.88L8.19,17L3.29,16L2.89,18L9.89,19.38Z";
+		this.minActionPoints = 1;
+		this.details = [
+			"Use ♦. !MOVE to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦",
+			"Cannot be undone."];
+		this.aiHints = [AiHints.MOVE];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isMoveLegal(unit, loc, quadrant)) return null;
+
+		let effects = [
+			new Effect(unit, "pos", loc),
+			new Effect(unit, "facing", quadrant),
+		];
+
+		if (Util.roll() <= 3) {
+			effects.push(new Effect(unit, "actionPoints", unit.actionPoints - 1));
+		}
+
+		return new Action(
+				false,
+				effects,
+				[ActionEvent.move(unit, unit.pos, loc)],
+				this.name,
+				() => {
+					SpecialEffect.abilityUse(unit, this);
+				});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isMoveLegal(unit, loc, quadrant)) return;
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, quadrant));
+	}
+
+	isMoveLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 1) return false;
+		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
+		let dstUnit = gameState.getUnitAt(loc);
+		if (dstUnit != null) return false;
+		return true;
+	}
+}();
+abilityData.SCORCHEDEARTH = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "ScorchedEarth";
+		this.icon = "M17.66 11.2C17.43 10.9 17.15 10.64 16.89 10.38C16.22 9.78 15.46 9.35 14.82 8.72C13.33 7.26 13 4.85 13.95 3C13 3.23 12.17 3.75 11.46 4.32C8.87 6.4 7.85 10.07 9.07 13.22C9.11 13.32 9.15 13.42 9.15 13.55C9.15 13.77 9 13.97 8.8 14.05C8.57 14.15 8.33 14.09 8.14 13.93C8.08 13.88 8.04 13.83 8 13.76C6.87 12.33 6.69 10.28 7.45 8.64C5.78 10 4.87 12.3 5 14.47C5.06 14.97 5.12 15.47 5.29 15.97C5.43 16.57 5.7 17.17 6 17.7C7.08 19.43 8.95 20.67 10.96 20.92C13.1 21.19 15.39 20.8 17.03 19.32C18.86 17.66 19.5 15 18.56 12.72L18.43 12.46C18.22 12 17.66 11.2 17.66 11.2M14.5 17.5C14.22 17.74 13.76 18 13.4 18.1C12.28 18.5 11.16 17.94 10.5 17.28C11.69 17 12.4 16.12 12.61 15.23C12.78 14.43 12.46 13.77 12.33 13C12.21 12.26 12.23 11.63 12.5 10.94C12.69 11.32 12.89 11.7 13.13 12C13.9 13 15.11 13.44 15.37 14.8C15.41 14.94 15.43 15.08 15.43 15.23C15.46 16.05 15.1 16.95 14.5 17.5H14.5Z";
+		this.minActionPoints = 0;
+		this.details = ["!REACTION: When this !FRIEND !RETREATs, all adjacent !ENEMYs lose ♦."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let retreating = 0;
+		for (let e of action.events) if (e.type == ActionEvent.RETREAT && e.who == unit) retreating++;
+		if (retreating > 0) {
+			let effects = [];
+			for (let i = 0; i < 4; i++) {
+				let u = gameState.getUnitAt(Tile.offset(unit.pos, i));
+				if (u == null || u.player == unit.player) continue;
+				effects.push(new AddingEffect(u, "actionPoints", -1));
+			}
+			if (effects.length > 0) {
+				reactions.push(new Action(
+						true,
+						effects,
+						[],
+						this.name,
+						() => {
+							SpecialEffect.abilityUse(unit, this);
+						}));
+			}
+		}
+		return reactions;
 	}
 }();
 abilityData.SHOOT = new class extends Ability {
@@ -2290,6 +2517,19 @@ abilityData.VAULT = new class extends Ability {
 }
 {
 	let c = {
+		abilities: [abilityData.RUN, abilityData.ADVANCE, abilityData.CONTROL],
+		id: "Skirmisher",
+		learnableAbilities: [abilityData.FLEE, abilityData.SCORCHEDEARTH, abilityData.HURRY],
+		portraits: 7,
+		strengths: [3, 2, 2, 2],
+		strengthsFrightened: [2, 2, 2, 2],
+		threats: [true, true, true, true],
+		threatsFrightened: [true, true, true, true],
+	};
+	characterData[c.id] = c;
+}
+{
+	let c = {
 		abilities: [abilityData.MOVE, abilityData.BACKSTAB, abilityData.CONTROL],
 		id: "Thief",
 		learnableAbilities: [abilityData.OPPORTUNITY, abilityData.VAULT, abilityData.SLIDE],
@@ -2737,6 +2977,7 @@ abilityData.VAULT = new class extends Ability {
 }; roomData[room.id] = room; }
 { let room = {"difficulty":1,"entry":[2,0],"id":"BUILTIN_DEMO_21","random": "","reward":{"experience":3,"healing":1,"unlock":0,"character":0},"tiles":[[{"t":"portuguese1","h":2},{"t":"portuguese8","h":1},{"t":"portuguese3","h":1},{"t":"portuguese8","h":1},{"t":"portuguese3","h":1}],[{"t":"portuguese5","h":0},{"t":"portuguese3","h":1},{"t":"portuguese5","h":0},{"t":"portuguese1","h":2},{"t":"portuguese8","h":1}],[{"t":"portuguese7","h":0},{"t":"portuguese7","h":0},{"t":"portuguese7","h":0},{"t":"portuguese2","h":0},{"t":"portuguese7","h":0}],[{"t":"portuguese8","h":1},{"t":"portuguese5","h":0},{"t":"portuguese4","h":0},{"t":"portuguese1","h":2},{"t":"portuguese8","h":1}],[{"t":"portuguese1","h":2},{"t":"portuguese2","h":0},{"t":"portuguese4","h":0},{"t":"portuguese8","h":1},{"t":"portuguese3","h":1}]],"units":[{"player":1,"pos":[4,1],"facing":3,"type":"Bull"},{"player":1,"pos":[0,1],"facing":2,"type":"Bull"},{"player":1,"pos":[2,3],"facing":1,"type":"Bull"}]}; roomData[room.id] = room; }
 { let room = {"difficulty":1,"entry":[0,0],"id":"BUILTIN_DEMO_22","random": "","reward":{"experience":0,"healing":0,"unlock":3,"character":0},"tiles":[[{"t":"portuguese1","h":2},{"t":"portuguese5","h":0},{"t":"portuguese5","h":0},{"t":"portuguese5","h":0},{"t":"portuguese2","h":0},{"t":"portuguese3","h":1}],[{"t":"portuguese3","h":1},{"t":"portuguese4","h":0},{"t":"portuguese3","h":1},{"t":"portuguese6","h":1},{"t":"portuguese3","h":1},{"t":"portuguese7","h":0}],[{"t":"portuguese7","h":0},{"t":"portuguese7","h":0},{"t":"portuguese4","h":0},{"t":"portuguese5","h":0},{"t":"portuguese1","h":2},{"t":"portuguese2","h":0}],[{"t":"portuguese7","h":0},{"t":"portuguese7","h":0},{"t":"portuguese3","h":1},{"t":"portuguese5","h":0},{"t":"portuguese1","h":2},{"t":"portuguese2","h":0}],[{"t":"portuguese3","h":1},{"t":"portuguese4","h":0},{"t":"portuguese4","h":0},{"t":"portuguese6","h":1},{"t":"portuguese3","h":1},{"t":"portuguese4","h":0}],[{"t":"portuguese1","h":2},{"t":"portuguese5","h":0},{"t":"portuguese5","h":0},{"t":"portuguese5","h":0},{"t":"portuguese2","h":0},{"t":"portuguese3","h":1}]],"units":[{"player":1,"pos":[5,2],"facing":0,"type":"Rat"},{"player":1,"pos":[5,1],"facing":0,"type":"Rat"},{"player":1,"pos":[3,2],"facing":3,"type":"Vulture"},{"player":1,"pos":[1,2],"facing":3,"type":"Statue"},{"player":1,"pos":[4,5],"facing":3,"type":"Bull"},{"player":1,"pos":[1,5],"facing":3,"type":"Bull"}]}; roomData[room.id] = room; }
+{ let room = {"entry":[3,3],"id":"FAMILY_R1","random":"FAMILY_RR","reward":{"experience":5,"healing":0,"unlock":0,"character":0,"time":0},"tiles":[[{"t":"family_5","h":2},{"t":"family_8","h":1},{"t":"family_3","h":0},{"t":"family_1","h":0},{"t":"family_2","h":0},{"t":"family_6","h":1},{"t":"family_7","h":2},{"t":"family_5","h":2}],[{"t":"family_8","h":1},{"t":"family_4","h":0},{"t":"family_3","h":0},{"t":"family_2","h":0},{"t":"family_1","h":0},{"t":"family_3","h":0},{"t":"family_8","h":1},{"t":"family_7","h":2}],[{"t":"family_3","h":0},{"t":"family_3","h":0},{"t":"family_4","h":0},{"t":"family_6","h":1},{"t":"family_8","h":1},{"t":"family_4","h":0},{"t":"family_3","h":0},{"t":"family_6","h":1}],[{"t":"family_2","h":0},{"t":"family_1","h":0},{"t":"family_6","h":1},{"t":"family_7","h":2},{"t":"family_5","h":2},{"t":"family_8","h":1},{"t":"family_2","h":0},{"t":"family_1","h":0}],[{"t":"family_1","h":0},{"t":"family_2","h":0},{"t":"family_8","h":1},{"t":"family_5","h":2},{"t":"family_7","h":2},{"t":"family_6","h":1},{"t":"family_1","h":0},{"t":"family_2","h":0}],[{"t":"family_6","h":1},{"t":"family_3","h":0},{"t":"family_4","h":0},{"t":"family_8","h":1},{"t":"family_6","h":1},{"t":"family_4","h":0},{"t":"family_3","h":0},{"t":"family_3","h":0}],[{"t":"family_7","h":2},{"t":"family_8","h":1},{"t":"family_3","h":0},{"t":"family_1","h":0},{"t":"family_2","h":0},{"t":"family_3","h":0},{"t":"family_4","h":0},{"t":"family_8","h":1}],[{"t":"family_5","h":2},{"t":"family_7","h":2},{"t":"family_6","h":1},{"t":"family_2","h":0},{"t":"family_1","h":0},{"t":"family_3","h":0},{"t":"family_8","h":1},{"t":"family_5","h":2}]],"units":[{"player":1,"pos":[3,1],"facing":1,"type":"Bull"},{"player":1,"pos":[1,4],"facing":2,"type":"Bull"},{"player":1,"pos":[6,3],"facing":0,"type":"Bull"},{"player":1,"pos":[4,6],"facing":3,"type":"Bull"},{"player":1,"pos":[0,0],"facing":1,"type":"Wolf"},{"player":1,"pos":[7,7],"facing":3,"type":"Wolf"},{"player":1,"pos":[5,2],"facing":0,"type":"Rat"},{"player":1,"pos":[2,5],"facing":2,"type":"Rat"}]}; roomData[room.id] = room; }
 { let room = {"difficulty":1,"entry":[0,0],"id":"FOREST_00","random": "","reward":{"experience":1,"healing":0,"unlock":0,"character":0},"tiles":[[{"t":"forest_5","h":2},{"t":"forest_8","h":1},{"t":"forest_6","h":1},{"t":"forest_7","h":1},{"t":"forest_8","h":1},{"t":"forest_6","h":1},{"t":"forest_6","h":1}],[{"t":"forest_6","h":1},{"t":"forest_7","h":1},{"t":"forest_2","h":0},{"t":"forest_4","h":0},{"t":"forest_2","h":0},{"t":"forest_3","h":0},{"t":"forest_8","h":1}],[{"t":"forest_5","h":2},{"t":"forest_6","h":1},{"t":"forest_1","h":0},{"t":"forest_4","h":0},{"t":"forest_1","h":0},{"t":"forest_5","h":2},{"t":"forest_7","h":1}]],"units":[{"player":1,"pos":[1,2],"facing":3,"type":"Rat"},{"player":1,"pos":[2,5],"facing":3,"type":"Wolf"}]}; roomData[room.id] = room; }
 { let room = {"difficulty":3,"entry":[0,0],"id":"FOREST_01","random": "","reward":{"experience":2,"healing":1,"unlock":0,"character":0},"tiles":[[{"t":"forest_5","h":2},{"t":"forest_5","h":2},{"t":"forest_8","h":1},{"t":"forest_8","h":1},{"t":"forest_8","h":1}],[{"t":"forest_5","h":2},{"t":"forest_4","h":0},{"t":"forest_1","h":0},{"t":"forest_1","h":0},{"t":"forest_4","h":0}],[{"t":"forest_8","h":1},{"t":"forest_1","h":0},{"t":"forest_2","h":0},{"t":"forest_3","h":0},{"t":"forest_1","h":0}],[{"t":"forest_8","h":1},{"t":"forest_1","h":0},{"t":"forest_3","h":0},{"t":"forest_2","h":0},{"t":"forest_1","h":0}],[{"t":"forest_8","h":1},{"t":"forest_4","h":0},{"t":"forest_1","h":0},{"t":"forest_1","h":0},{"t":"forest_4","h":0}]],"units":[{"player":1,"pos":[3,2],"facing":3,"type":"Wolf"},{"player":1,"pos":[1,3],"facing":0,"type":"Wolf"},{"player":1,"pos":[2,3],"facing":3,"type":"Snake"}]}; roomData[room.id] = room; }
 { let room = {"difficulty":1,"entry":[0,0],"id":"FOREST_03","random":"","reward":{"experience":0,"healing":2,"unlock":0,"character":0},"tiles":[[{"t":"forest_8","h":1},{"t":"forest_7","h":1},{"t":"forest_6","h":2},{"t":"forest_7","h":1}],[{"t":"forest_7","h":1},{"t":"forest_2","h":0},{"t":"forest_1","h":0},{"t":"forest_6","h":2}],[{"t":"forest_6","h":2},{"t":"forest_1","h":0},{"t":"forest_4","h":0},{"t":"forest_7","h":1}],[{"t":"forest_4","h":0},{"t":"forest_3","h":0},{"t":"forest_4","h":0},{"t":"forest_3","h":0}]],"units":[{"player":1,"pos":[2,0],"facing":0,"type":"Statue"},{"player":1,"pos":[0,2],"facing":3,"type":"Vulture"}]}; roomData[room.id] = room; }
@@ -2777,6 +3018,7 @@ abilityData.VAULT = new class extends Ability {
 			"en": "...and through the ceremony, they were made whole.",
 		},
 		characters: 2,
+		entry: [0, 0],
 		id: "CEREMONY",
 		rooms: [
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
@@ -2787,8 +3029,40 @@ abilityData.VAULT = new class extends Ability {
 			"en": "The Ceremony",
 		},
 		timeLimit: 5,
-		unlocks: [],
+		unlocks: ["FAMILY"],
 		victory: [[2, 2]],
+	};
+	adventureData[adventure.id] = adventure;
+}
+{
+	let adventure = {
+		description: {
+			"en": "Four were a family...",
+		},
+		descriptionDefeat: {
+			"en": "...but the family was broken.",
+		},
+		descriptionVictory: {
+			"en": "...and the family grew.",
+		},
+		characters: 4,
+		entry: [2, 2],
+		id: "FAMILY",
+		rooms: [
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
+			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"]
+		],
+		title: {
+			"en": "The Family",
+		},
+		timeLimit: 5,
+		unlocks: [],
+		victory: [[0, 0], [0, 6], [6, 0], [6, 6]],
 	};
 	adventureData[adventure.id] = adventure;
 }
@@ -2804,6 +3078,7 @@ abilityData.VAULT = new class extends Ability {
 			"en": "...and in the forest, they discovered who they are and who they wish to be.",
 		},
 		characters: 3,
+		entry: [0, 0],
 		id: "FOREST",
 		random: false,
 		rooms: [
@@ -2834,6 +3109,7 @@ abilityData.VAULT = new class extends Ability {
 			"en": "...and the garden paths showed them the way to greater things.",
 		},
 		characters: 2,
+		entry: [0, 0],
 		id: "GARDEN",
 		random: false,
 		rooms: [

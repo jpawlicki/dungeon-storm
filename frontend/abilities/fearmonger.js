@@ -20,7 +20,7 @@ abilityData.FEARMONGER = new class extends Ability {
 			reactions.push(new Action(
 					true,
 					[
-						new Effect(unit, "actionPoints", unit.actionPoints + newFrightened),
+						new AddingEffect(unit, "actionPoints", newFrightened),
 					],
 					[],
 					this.name,

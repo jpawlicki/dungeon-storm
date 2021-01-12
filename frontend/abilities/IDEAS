@@ -13,24 +13,17 @@ Use ♦♦. Select an adjacent !ENEMY with fewer ♦. It !RETREATs.
 
 
 === Skirmisher 
----- ADVANCE
-Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.
-Cannot be undone.
+---- RUN (needs testing)
 
----- RUN
-Use ♦. Move to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦.
-Cannot be undone.
+---- ADVANCE (needs testing)
 
 ---- CONTROL (exists)
 
----- FLEE
-!REACTION: When this !FRIEND !RETREATs, gain ♦. (This ♦ can't be used to do the !RETREAT action.)
+---- FLEE (needs testing)
 
----- SCORCHEDEARTH
-!REACTION: When this !FRIEND !RETREATs, all adjacent !ENEMIES lose ♦.
+---- SCORCHEDEARTH (needs testing)
 
----- HURRY
-!REACTION: At the start of the turn, gain ♦ for each !ENEMY !THREATENing this !FRIEND.
+---- HURRY (needs testing)
 
 
 ==== Dangers

@@ -77,4 +77,8 @@ class Util {
 			array[j] = temp;
 		}
 	}
+
+	static roll() {
+		return Math.floor(Math.random() * 6 + 1);
+	}
 }
