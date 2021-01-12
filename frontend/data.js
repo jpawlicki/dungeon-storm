@@ -376,7 +376,7 @@ abilityData.CLEAVE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. If ⚅ is greater than any adjacent !FRIEND or !ENEMY's ○, that !FRIEND or !ENEMY !RETREATs.",
-			"Cannot be used if there is no adjacent !FRIEND or !ENEMY.",
+			"Cannot be used if there is no adjacent !FRIENDs or !ENEMYs.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 	}
@@ -400,7 +400,7 @@ abilityData.CLEAVE = new class extends Ability {
 			}
 			let tpos = target.pos;
 			let upos = unit.pos;
-			sfx.push(SpecialEffect.attackClash(tpos, upos, success, false));
+			sfx.push(() => SpecialEffect.attackClash(tpos, upos, success, false));
 		}
 
 		return new Action(false, effects, events, this.name, () => {
@@ -426,7 +426,7 @@ abilityData.CLEAVE = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
-		let targets = gameState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		return true;
 	}
@@ -466,6 +466,39 @@ abilityData.CONTROL = new class extends Ability {
 					}
 				}
 			}
+		}
+		return reactions;
+	}
+}();
+abilityData.DEFENDER = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Defender";
+		this.icon = "M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z";
+		this.minActionPoints = 0;
+		this.details = ["!REACTION: When another !FRIEND !RETREATs, gain ♦."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let retreating = 0;
+		for (let e of action.events) if (e.type == ActionEvent.RETREAT && e.who != unit && e.who.player == unit.player) retreating++;
+		if (retreating > 0) {
+			reactions.push(new Action(
+					true,
+					[
+						new Effect(unit, "actionPoints", unit.actionPoints + retreating),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
 		}
 		return reactions;
 	}
@@ -768,8 +801,8 @@ abilityData.FORMATION = new class extends Ability {
 		this.details = [
 			"Use ♦. !MOVE to an adjacent space and rotate.",
 			"All adjacent !FRIENDs !MOVE in the same direction, if possible.",
-			"No unit may end !MOVEment in an occupied space.",
-			"No unit may rise more than 1 step."];
+			"No !FRIEND may end !MOVEment in an occupied space.",
+			"No !FRIEND may rise more than 1 step."];
 		this.aiHints = [AiHints.MOVE];
 	}
 
@@ -800,7 +833,7 @@ abilityData.FORMATION = new class extends Ability {
 		if (!this.isMoveLegal(unit, loc, quadrant)) return;
 		let dir = Tile.directionTo(unit.pos, loc);
 		for (let u of this.getMovingSet(unit, loc, quadrant)) {
-			clickContext.actors.push(new AbilityMoveActor(u, Tile.offset(unit.pos, dir), u == unit ? quadrant : u.facing));
+			clickContext.actors.push(new AbilityMoveActor(u, Tile.offset(u.pos, dir), u == unit ? quadrant : u.facing, u == unit));
 		}
 	}
 
@@ -817,7 +850,7 @@ abilityData.FORMATION = new class extends Ability {
 		for (let dir = 0; dir < 4; dir++) {
 			let u = gameState.getUnitAt(Tile.offset(unit.pos, dir));
 			if (u == null || u.player != unit.player) continue;
-			movers.push(unit);
+			movers.push(u);
 		}
 		let s = 0;
 		while (s != movers.length) {
@@ -1197,6 +1230,66 @@ abilityData.PUSH = new class extends Ability {
 		if (gameState.getUnitAt(dstPos) != null) return false;
 		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(dstPos).height - 1) return false;
 		return true;
+	}
+}();
+abilityData.RESCUE = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Rescue";
+		this.icon = "M20 14H14V20H10V14H4V10H10V4H14V10H20V14Z"
+		this.minActionPoints = 2;
+		this.details = [
+			"Use ♦♦. Select a !FRIEND. That !FRIEND teleports to a random open space that is not !THREATENED by a !ENEMY.",
+			"Cannot be undone."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		let dests = this.getPossibleDests(target);
+		Util.shuffle(dests);
+
+		let effects = [
+			new Effect(unit, "actionPoints", unit.actionPoints - 2),
+			new Effect(target, "pos", dests[0]),
+		];
+		let events = [];
+
+		return new Action(false, effects, events, this.name, () => {
+			SpecialEffect.abilityUse(unit, this);
+		});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		for (let p of this.getPossibleDests(target)) clickContext.actors.push(new AbilityMoveActor(target, p, target.facing, false));
+	}
+
+	isActionLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 2) return false;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return false;
+		if (target.player != unit.player) return false;
+		if (this.getPossibleDests(target).length == 0) return false;
+		return true;
+	}
+
+	getPossibleDests(unit) {
+		let dests = [];
+		for (let i = 0; i < gameState.room.tiles.length; i++) {
+			for (let j = 0; j < gameState.room.tiles[i].length; j++) {
+				let threatened = false;
+				for (let u of gameState.units) {
+					if (u.state != Unit.State.DEFEATED && u.pos[0] == i && u.pos[1] == j) threatened = true;
+					if (u.threatens(unit, [i, j])) threatened = true;
+				}
+				if (!threatened) dests.push([i, j]);
+			}
+		}
+		return dests;
 	}
 }();
 abilityData.SHOOT = new class extends Ability {
@@ -1584,6 +1677,58 @@ abilityData.SWORD = new class extends Ability {
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
+		return true;
+	}
+}();
+abilityData.TAUNT = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Taunt";
+		this.icon = "M11.92,19.92L4,12L11.92,4.08L13.33,5.5L7.83,11H22V13H7.83L13.34,18.5L11.92,19.92M4,12V2H2V22H4V12Z"
+		this.minActionPoints = 1;
+		this.details = [
+			"Use ♦. Select a !ENEMY in a straight line. That !ENEMY !MOVEs toward this !FRIEND.",
+			"The !ENEMY cannot rise more than 1 step.",
+			"The !ENEMY cannot enter an occupied space."];
+		this.aiHints = [AiHints.ATTACK];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		let dstPos = Tile.offset(target.pos, Tile.directionTo(loc, unit.pos));
+
+		let effects = [
+			new Effect(unit, "actionPoints", unit.actionPoints - 1),
+			new Effect(target, "pos", dstPos),
+		];
+		let events = [
+			ActionEvent.move(target, target.pos, dstPos),
+		];
+
+		return new Action(true, effects, events, this.name, () => {
+			SpecialEffect.abilityUse(unit, this);
+		});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		clickContext.actors.push(new AbilityMoveActor(target, Tile.offset(loc, Tile.directionTo(loc, unit.pos)), target.facing, false));
+	}
+
+	isActionLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 1) return false;
+		let dir = Tile.directionTo(unit.pos, loc);
+		if (dir == -1) return false;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return false;
+		if (target.player == unit.player) return false;
+
+		let dstPos = Tile.offset(target.pos, (dir + 2) % 4);
+		if (gameState.getUnitAt(dstPos) != null) return false;
+		if (gameState.room.getTile(target.pos).height + 1 < gameState.room.getTile(dstPos).height) return false;
 		return true;
 	}
 }();
@@ -2071,8 +2216,8 @@ abilityData.VAULT = new class extends Ability {
 		id: "Archer",
 		learnableAbilities: [abilityData.SOLARPOWER, abilityData.HIGHGROUND, abilityData.EMPATHY],
 		portraits: 7,
-		strengths: [2, 1, 1, 1],
-		strengthsFrightened: [2, 1, 1, 1],
+		strengths: [1, 3, 4, 3],
+		strengthsFrightened: [1, 3, 4, 3],
 		threats: [true, false, false, false],
 		threatsFrightened: [true, false, false, false],
 	};
@@ -2084,10 +2229,23 @@ abilityData.VAULT = new class extends Ability {
 		id: "Berserker",
 		learnableAbilities: [abilityData.CHALLENGE, abilityData.DESPERATION, abilityData.PANIC],
 		portraits: 5,
-		strengths: [3, 3, 2, 3],
-		strengthsFrightened: [5, 5, 1, 5],
+		strengths: [2, 2, 2, 2],
+		strengthsFrightened: [5, 4, 1, 4],
 		threats: [false, false, false, false],
 		threatsFrightened: [true, true, false, true],
+	};
+	characterData[c.id] = c;
+}
+{
+	let c = {
+		abilities: [abilityData.FORMATION, abilityData.CLEAVE, abilityData.CONTROL],
+		id: "Commander",
+		learnableAbilities: [abilityData.TAUNT, abilityData.RESCUE, abilityData.DEFENDER],
+		portraits: 8,
+		strengths: [4, 1, 1, 4],
+		strengthsFrightened: [3, 1, 1, 2],
+		threats: [true, false, false, true],
+		threatsFrightened: [true, false, false, true],
 	};
 	characterData[c.id] = c;
 }
@@ -2097,8 +2255,8 @@ abilityData.VAULT = new class extends Ability {
 		id: "Dancer",
 		learnableAbilities: [abilityData.SWAP, abilityData.PRESS, abilityData.SLOW],
 		portraits: 7,
-		strengths: [3, 2, 2, 2],
-		strengthsFrightened: [2, 1, 1, 1],
+		strengths: [3, 3, 1, 3],
+		strengthsFrightened: [2, 1, 2, 1],
 		threats: [true, true, true, true],
 		threatsFrightened: [true, false, false, false],
 	};

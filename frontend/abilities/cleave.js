@@ -30,7 +30,7 @@ abilityData.CLEAVE = new class extends Ability {
 			}
 			let tpos = target.pos;
 			let upos = unit.pos;
-			sfx.push(SpecialEffect.attackClash(tpos, upos, success, false));
+			sfx.push(() => SpecialEffect.attackClash(tpos, upos, success, false));
 		}
 
 		return new Action(false, effects, events, this.name, () => {
@@ -56,7 +56,7 @@ abilityData.CLEAVE = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
-		let targets = gameState.getUnitAt(loc);
+		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		return true;
 	}

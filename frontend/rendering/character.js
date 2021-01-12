@@ -130,7 +130,7 @@ class MenuCharacter extends HTMLElement {
 				if (frightened) {
 					let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
 					d.setAttribute("d", "M0,8A6,6 0 0,1 -6,2C-6,-2 0,-8.75 0,-8.75C0,-8.25 6,-2 6,2A6,6 0 0,1 0,8Z");
-					d.setAttribute("fill", "#8a0303");
+					d.setAttribute("fill", "#cdf");
 					d.style.transform = "scale(0.5)";
 					svg.appendChild(d);
 				}

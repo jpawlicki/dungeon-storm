@@ -39,7 +39,7 @@ abilityData.FORMATION = new class extends Ability {
 		if (!this.isMoveLegal(unit, loc, quadrant)) return;
 		let dir = Tile.directionTo(unit.pos, loc);
 		for (let u of this.getMovingSet(unit, loc, quadrant)) {
-			clickContext.actors.push(new AbilityMoveActor(u, Tile.offset(unit.pos, dir), u == unit ? quadrant : u.facing));
+			clickContext.actors.push(new AbilityMoveActor(u, Tile.offset(u.pos, dir), u == unit ? quadrant : u.facing, u == unit));
 		}
 	}
 
@@ -56,7 +56,7 @@ abilityData.FORMATION = new class extends Ability {
 		for (let dir = 0; dir < 4; dir++) {
 			let u = gameState.getUnitAt(Tile.offset(unit.pos, dir));
 			if (u == null || u.player != unit.player) continue;
-			movers.push(unit);
+			movers.push(u);
 		}
 		let s = 0;
 		while (s != movers.length) {

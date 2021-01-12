@@ -42,23 +42,21 @@ class Persistence {
 			}
 		} else {
 			gameState = new GameState();
-			gameState.characterPool.push(new Unit(characterData["Wisher"]));
-			gameState.characterPool.push(new Unit(characterData["Dog"]));
 
-			gameState.unlockedAdventures.push("GARDEN");
-			gameState.unlockedCharacters.push("Dog");
-			gameState.unlockedCharacters.push("Wisher");
-
-			// For playtesting
-			/*
-			gameState.unlockedAdventures.push("FOREST");
-			gameState.unlockedAdventures.push("CEREMONY");
-			gameState.characterPool.push(new Unit(characterData["Journeyman"]));
-			gameState.characterPool.push(new Unit(characterData["Dancer"]));
-			gameState.characterPool.push(new Unit(characterData["Berserker"]));
-			gameState.characterPool.push(new Unit(characterData["Thief"]));
-			gameState.characterPool.push(new Unit(characterData["Archer"]));
-			*/
+			if (location.protocol == "file:") {
+				// For playtesting
+				for (let a in adventureData) gameState.unlockedAdventures.push(a);
+				for (let c in characterData) {
+					gameState.unlockedCharacters.push(c);
+					gameState.characterPool.push(new Unit(characterData[c]));
+				}
+			} else {
+				gameState.characterPool.push(new Unit(characterData["Wisher"]));
+				gameState.characterPool.push(new Unit(characterData["Dog"]));
+				gameState.unlockedAdventures.push("GARDEN");
+				gameState.unlockedCharacters.push("Dog");
+				gameState.unlockedCharacters.push("Wisher");
+			}
 
 			setupMainMenu();
 		}

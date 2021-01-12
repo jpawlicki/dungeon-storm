@@ -12,25 +12,6 @@ Use ♦♦. Select an adjacent !ENEMY with fewer ♦. It !RETREATs.
 !REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦.
 
 
-=== Commander
----- FORMATION (exists, needs testing)
-
----- CLEAVE (exists, needs testing)
-
----- CONTROL (exists)
-
----- TAUNT
-Use ♦. Select a !ENEMY two spaces away in a straight line. That !ENEMY !MOVEs toward this !FRIEND.
-The !ENEMY cannot rise more than 1 step.
-The !ENEMY cannot enter an occupied space.
-
----- RESCUE
-Use ♦. Teleport a !FRIEND to a random open unthreatened space.
-Cannot be undone.
-
----- DEFENDER
-!REACTION: When another !FRIEND !RETREATs, gain ♦.
-
 === Skirmisher 
 ---- ADVANCE
 Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.
@@ -51,7 +32,8 @@ Cannot be undone.
 ---- HURRY
 !REACTION: At the start of the turn, gain ♦ for each !ENEMY !THREATENing this !FRIEND.
 
-==== Proposed Enemy Units:
+
+==== Dangers
 
 ---- LION
    !5!       !6!
