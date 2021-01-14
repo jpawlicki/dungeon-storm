@@ -13,6 +13,13 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
     ].join(' - ');
 
     alert(message);
+
+		if (window.location.protocol != "file:") {
+			let req = new XMLHttpRequest();
+			req.open("POST", "https://dungeon-storm.uk.r.appspot.com/crash_report");
+			req.setRequestHeader("API-Key", "DS Telemetry");
+			req.send(message);
+		}
   }
 
   return false;

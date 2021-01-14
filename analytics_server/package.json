@@ -1,0 +1,14 @@
+{
+  "name": "analytics_server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/datastore": "^6.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

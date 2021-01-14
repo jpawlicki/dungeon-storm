@@ -1,14 +1,9 @@
 Misc improvements:
- - favicon
- - page title
  - sfx sounds
  - Additional adventures, abilities, characters, units, etc.
  - PWA-ify for native-like installation.
- - New characters could randomize skill selection from unlocked skills. (Bad idea?)
 
 Server capabilities:
- - Accept uncaught exception reports.
- - Accept balance reports.
  - Accept connections to multiplayer sessions, reply with seed and command history.
  - Accept bug reports?
  - Account management and cloud saves?

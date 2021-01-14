@@ -6,6 +6,7 @@ abilityData.RUN = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. !MOVE to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦",
+			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.MOVE];
 	}
@@ -41,6 +42,7 @@ abilityData.RUN = new class extends Ability {
 	isMoveLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
+		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(loc).height - 1) return false;
 		let dstUnit = gameState.getUnitAt(loc);
 		if (dstUnit != null) return false;
 		return true;

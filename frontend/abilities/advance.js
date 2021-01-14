@@ -6,6 +6,7 @@ abilityData.ADVANCE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.",
+			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK];
 	}
@@ -58,6 +59,7 @@ abilityData.ADVANCE = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
+		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(loc).height - 1) return false;
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;

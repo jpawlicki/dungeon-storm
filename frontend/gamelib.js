@@ -430,9 +430,7 @@ class GameState {
 	// unlockedAdventures[]
 	// completedAdventures[]
 	// unlockedCharacters[]
-
-	static load(data) {
-	}
+	// roomLoads
 
 	serialize() {
 		return JSON.stringify(
@@ -471,6 +469,7 @@ class GameState {
 		this.completedAdventures = [];
 		this.unlockedCharacters = [];
 		this.numUnlocksEarned = 0;
+		this.roomLoads = 0;
 	}
 
 	loadAdventure(adventure) {
@@ -508,6 +507,7 @@ class GameState {
 			showHideUiElements();
 			if (this.currentPlayer == 0) {
 				if (this.resources.time <= 0) {
+					Telemetry.reportRoomOutcome(false);
 					this.roomDefeat();
 				} else {
 					Persistence.save();
@@ -595,11 +595,15 @@ class GameState {
 			if (u.player == 0) numPlayer++;
 			if (u.player == 1) numEnemy++;
 		}
-		if (numPlayer == 0) this.roomDefeat();
-		else if (numEnemy == 0) this.roomVictory();
+		if (numPlayer == 0) {
+			this.roomDefeat();
+		}	else if (numEnemy == 0) {
+			this.roomVictory();
+		}
 	}
 
 	loadRoom(coords) {
+		this.roomLoads++;
 		this.disableActions = false;
 		this.currentPlayer = 0;
 		let room = this.adventure.rooms[coords[0]][coords[1]];
@@ -632,6 +636,7 @@ class GameState {
 
 	roomVictory() {
 		this.disableActions = true;
+		Telemetry.reportRoomOutcome(true);
 		this.adventureProgress[this.currentRoom[0]][this.currentRoom[1]] = true;
 		let room = this.adventure.rooms[this.currentRoom[0]][this.currentRoom[1]];
 		for (let reward in room.reward) {
@@ -643,12 +648,12 @@ class GameState {
 		if (this.getAdventureVictorious()) {
 			this.adventureOver(true);
 		} else {
-			if (!this.completedAdventures.includes(this.adventure.id)) this.completedAdventures.push(this.adventure.id);
 			setupVictorySituation();
 		}
 	}
 
 	roomDefeat() {
+		Telemetry.reportRoomOutcome(false);
 		this.currentRoom = null;
 		this.disableActions = true;
 		this.adventureOver(false);
@@ -660,10 +665,12 @@ class GameState {
 	}
 
 	adventureOver(victorious) {
+		Telemetry.reportAdventureOutcome(victorious);
 		for (let c of this.characters) {
 			c.state = Unit.State.NORMAL;
 		}
 		if (victorious) {
+			if (!this.completedAdventures.includes(this.adventure.id)) this.completedAdventures.push(this.adventure.id);
 			setupAdventureVictorySituation();
 		} else {
 			setupDefeatSituation();
