@@ -6,17 +6,14 @@ async function handle(request, response) {
 	let req = new URL(request.url, "http://" + request.headers.host);
 	let path = req.pathname;
 	if (path == "/metric_report") {
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+		response.setHeader("Access-Control-Allow-Headers", "API-Key");
 		if (request.method == "OPTIONS") {
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-			response.setHeader("Access-Control-Allow-Headers", "API-Key");
 			response.writeHead(204);
 			response.end();
 			return;
 		} else if (request.method == "POST") {
-			response.setHeader("Access-Control-Allow-Origin", "*");
-			response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-			response.setHeader("Access-Control-Allow-Headers", "API-Key");
 			if (request.headers["api-key"] != "DS Telemetry") {
 				response.writeHead(403);
 				response.end();
@@ -42,24 +39,30 @@ async function handle(request, response) {
 			response.end(JSON.stringify(entries.map(e => { return {"time": e.timestamp, "report": e.report}})));
 			return;
 		}
-	} else if (path == "/crash_report" && request.method == "POST") {
+	} else if (path == "/crash_report") {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
 		response.setHeader("Access-Control-Allow-Headers", "API-Key");
-		if (request.headers["api-key"] != "DS Telemetry") {
-			response.writeHead(403);
+		if (request.method == "OPTIONS") {
+			response.writeHead(204);
 			response.end();
 			return;
+		} else if (request.method == "POST") {
+			if (request.headers["api-key"] != "DS Telemetry") {
+				response.writeHead(403);
+				response.end();
+				return;
+			}
+			response.writeHead(204);
+			// Log an error containing the crash report so that appengine logging picks it up.
+			let data = "";
+			request.on("data", c => data += c);
+			request.on("end", () => {
+				console.error(data);
+				response.end();
+			});
+			return;
 		}
-		response.writeHead(204);
-		// Log an error containing the crash report so that appengine logging picks it up.
-		let data = "";
-		request.on("data", c => data += c);
-		request.on("end", () => {
-			console.error(data);
-			response.end();
-		});
-		return;
 	}
 	response.writeHead(404);
 	response.end();

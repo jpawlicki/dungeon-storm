@@ -41,7 +41,7 @@ abilityData.HIGHGROUND = new class extends Ability {
 	isActionLegal(unit, loc, quadrant) {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
-		if (gameState.room.getTile(loc).height >= gameState.room.getTile(unit.pos)) return false;
+		if (gameState.room.getTile(loc).height >= gameState.room.getTile(unit.pos).height) return false;
 		let target = gameState.getUnitAt(loc);
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
