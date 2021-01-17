@@ -9,7 +9,7 @@ abilityData.SHOOT = new class extends Ability {
 			"Roll ⚅. If greater than the !ENEMY's ○, it becomes !FRIGHTENED and !RETREATs.",
 			"Cannot select an adjacent !ENEMY.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

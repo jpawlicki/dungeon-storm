@@ -9,7 +9,7 @@ abilityData.FORMATION = new class extends Ability {
 			"All adjacent !FRIENDs !MOVE in the same direction, if possible.",
 			"No !FRIEND may end !MOVEment in an occupied space.",
 			"No !FRIEND may rise more than 1 step."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

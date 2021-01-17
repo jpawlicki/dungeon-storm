@@ -8,7 +8,7 @@ abilityData.PUSH = new class extends Ability {
 			"Use ♦. Select an adjacent !ENEMY. !MOVE into an open space away from the !ENEMY. Cannot rise 2 or more steps.",
 			"Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -65,6 +65,7 @@ abilityData.PUSH = new class extends Ability {
 		if (target.player == unit.player) return false;
 
 		let dstPos = Tile.offset(unit.pos, Tile.directionTo(loc, unit.pos));
+		if (!Tile.inBounds(dstPos)) return false;
 		if (gameState.getUnitAt(dstPos) != null) return false;
 		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(dstPos).height - 1) return false;
 		return true;

@@ -8,7 +8,7 @@ abilityData.RUN = new class extends Ability {
 			"Use ♦. !MOVE to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦",
 			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

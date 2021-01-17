@@ -1,6 +1,8 @@
 const http = require("http");
 const datastore = require("@google-cloud/datastore");
+const {ErrorReporting} = require("@google-cloud/error-reporting");
 const db = new datastore.Datastore();
+const errors = new ErrorReporting();
 
 async function handle(request, response) {
 	let req = new URL(request.url, "http://" + request.headers.host);
@@ -54,11 +56,10 @@ async function handle(request, response) {
 				return;
 			}
 			response.writeHead(204);
-			// Log an error containing the crash report so that appengine logging picks it up.
 			let data = "";
 			request.on("data", c => data += c);
 			request.on("end", () => {
-				console.error(data);
+				errors.report(data);
 				response.end();
 			});
 			return;

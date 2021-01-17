@@ -119,7 +119,18 @@ class MainMenu extends HTMLElement {
 		for (let adventure of gameState.unlockedAdventures) {
 			let d = document.createElement("div");
 			let descNode = this.shadow.getElementById("desc");
-			let describe = () => { descNode.textContent = adventureData[adventure].description[lang]; };
+			let describe = () => {
+				descNode.textContent = "";
+				descNode.appendChild(document.createTextNode(adventureData[adventure].description[lang]));
+				let rules = document.createElement("div");
+				let h2 = document.createElement("h2");
+				h2.appendChild(document.createTextNode("Rules:"));
+				rules.appendChild(h2);
+				let learns = document.createElement("div");
+				learns.appendChild(document.createTextNode("Characters can learn up to " + adventureData[adventure].maxAbilities + " abilities."));
+				rules.appendChild(learns);
+				descNode.appendChild(rules);
+			};
 			d.addEventListener("mouseover", describe);
 			d.addEventListener("click", describe);
 			{
@@ -149,7 +160,7 @@ class MainMenu extends HTMLElement {
 			let t = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			svg.appendChild(t);
 			t.setAttribute("text-anchor", "middle");
-			t.setAttribute("alignment-baseline", "central");
+			t.setAttribute("dominant-baseline", "central");
 			t.setAttribute("fill", "#fff");
 			t.appendChild(document.createTextNode(Math.min(gameState.characterPool.length, adventureData[adventure].characters)));
 			let p = document.createElementNS("http://www.w3.org/2000/svg", "path");

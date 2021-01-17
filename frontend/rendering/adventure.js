@@ -153,6 +153,7 @@ class AdventureNextRoomElement extends HTMLElement {
 			let span = document.createElement("span");
 			let spanc = document.createElement("span");
 			spanc.setAttribute("data-resource", r);
+			if (gameState.resources[r] == 0) continue;
 			spanc.appendChild(document.createTextNode(gameState.resources[r]));
 			span.appendChild(spanc);
 			if (r == "experience") {
@@ -225,7 +226,7 @@ class AdventureNextRoomElement extends HTMLElement {
 						miniDiv.innerHTML = "";
 						miniDiv.appendChild(icon);
 						if (state) return;
-						if (character.abilities.length == 8) return;
+						if (character.abilities.length >= gameState.adventure.maxAbilities) return;
 						for (let r in cost) {
 							miniDiv.appendChild(addText(-cost[r], Util.makeCap));
 						}
@@ -234,7 +235,7 @@ class AdventureNextRoomElement extends HTMLElement {
 					miniDiv.setAttribute("class", "learnable");
 					miniDiv.addEventListener("click", () => {
 						if (!state) {
-							if (character.abilities.length == 8) return;
+							if (character.abilities.length >= gameState.adventure.maxAbilities) return;
 							for (let r in cost) if (gameState.resources[r] < cost[r]) return;
 							for (let r in cost) gameState.resources[r] -= cost[r];
 							state = true;
@@ -617,11 +618,11 @@ class AdventureCompleteElement extends HTMLElement {
 				if (c.abilities.length > 0) {
 					let mayLoseIndex = parseInt(Math.random() * c.abilities.length);
 					// Never remove the last ATTACK or MOVE ability.
-					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.ATTACK)) {
-						if (c.abilities.filter(a => a.aiHints.includes(AiHints.ATTACK)).length == 1) continue;
+					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.PUSHER)) {
+						if (c.abilities.filter(a => a.aiHints.includes(AiHints.PUSHER)).length == 1) continue;
 					}
-					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.MOVE)) {
-						if (c.abilities.filter(a => a.aiHints.includes(AiHints.MOVE)).length == 1) continue;
+					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.BASIC_MOVE)) {
+						if (c.abilities.filter(a => a.aiHints.includes(AiHints.BASIC_MOVE)).length == 1) continue;
 					}
 					let lost = c.abilities.splice(mayLoseIndex, 1)[0];
 					abilityLosses.push({"c": c, "a": lost});

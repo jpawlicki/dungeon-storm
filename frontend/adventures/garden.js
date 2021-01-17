@@ -12,6 +12,7 @@
 		characters: 2,
 		entry: [0, 0],
 		id: "GARDEN",
+		maxAbilities: 5,
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],

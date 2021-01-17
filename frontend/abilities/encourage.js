@@ -6,7 +6,7 @@ abilityData.ENCOURAGE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Give ♦ to an adjacent !FRIEND."];
-		this.aiHints = [];
+		this.aiHints = [AiHints.BUFF];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

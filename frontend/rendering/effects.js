@@ -1,5 +1,4 @@
 // SFX_FRAMEPERIOD is the period (in milliseconds) between rendering frames.
-// CSS transitions will increase the framerate to the browser's rendering rate in most linear cases, but not for complex effects.
 const SFX_FRAMEPERIOD = 16;
 
 class SpecialEffect {
@@ -27,8 +26,6 @@ class SpecialEffect {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 		let particle = document.createElementNS("http://www.w3.org/2000/svg", "path");
 		let newPoint = getTileCenter(loc);
-		g.style.transition = "transform " + SFX_FRAMEPERIOD + "ms linear";
-		particle.style.transition = "fill " + SFX_FRAMEPERIOD + "ms linear";
 		particle.style.pointerEvents = "none";
 		particle.setAttribute("d", path);
 		g.appendChild(particle);

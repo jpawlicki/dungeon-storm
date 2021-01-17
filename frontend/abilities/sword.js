@@ -7,7 +7,7 @@ abilityData.SWORD = new class extends Ability {
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATS.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

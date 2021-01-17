@@ -10,6 +10,8 @@ const AiHints = {
 	ATTACK: 0,
 	MOVE: 1,
 	BUFF: 2,
+	BASIC_MOVE: 3,
+	PUSHER: 4,
 }
 
 class Tile {
@@ -107,6 +109,7 @@ class Unit {
 	// strengthsFrightened[4]: 0-5
 	// threatsFrightened[4]: bool
 	// learnableAbilities[]
+	// completedAdventure: bool, may be undefined
 
 	static State = {
 		NORMAL: 1,
@@ -165,8 +168,8 @@ class Unit {
 				}
 				for (let a of possibleAbilitiesSet) possibleAbilities.push(a);
 			}
-			let moveAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.MOVE));
-			let attackAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.ATTACK));
+			let moveAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.BASIC_MOVE));
+			let attackAbilities = possibleAbilities.filter(a => abilityData[a].aiHints.includes(AiHints.PUSHER));
 			Util.shuffle(possibleAbilities);
 			Util.shuffle(moveAbilities);
 			Util.shuffle(attackAbilities);
@@ -374,6 +377,7 @@ class Adventure {
 	// descriptionVictory{}: lang strings
 	// characters
 	// id
+	// maxAbilities
 	// rooms[][]: rooms
 	// title{}: lang strings
 	// timeLimit
@@ -386,6 +390,7 @@ class Adventure {
 		this.descriptionVictory = spec.descriptionVictory;
 		this.characters = spec.characters;
 		this.id = spec.id;
+		this.maxAbilities = spec.maxAbilities;
 		this.title = spec.title;
 		this.timeLimit = spec.timeLimit;
 		this.victory = spec.victory;
@@ -671,6 +676,7 @@ class GameState {
 		}
 		if (victorious) {
 			if (!this.completedAdventures.includes(this.adventure.id)) this.completedAdventures.push(this.adventure.id);
+			for (let c of this.characters) c.completedAdventure = true;
 			setupAdventureVictorySituation();
 		} else {
 			setupDefeatSituation();

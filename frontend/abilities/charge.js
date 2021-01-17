@@ -10,7 +10,7 @@ abilityData.CHARGE = new class extends Ability {
 			"Cannot select a !ENEMY behind a different !ENEMY or !FRIEND.",
 			"Cannot select an adjacent !ENEMY.",
 			"Cannot select a !ENEMY with greater ○."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

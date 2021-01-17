@@ -8,7 +8,7 @@ abilityData.ADVANCE = new class extends Ability {
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.",
 			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

@@ -7,9 +7,9 @@ abilityData.BITE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than or equal to the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs.",
-			"Otherwise, this !FRIEND becomes !FRIGHTENED and !RETREATs.",
+			"Otherwise, this !FRIEND becomes !FRIGHTENED and !RETREATs (which may require another ♦).",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

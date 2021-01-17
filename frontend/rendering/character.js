@@ -9,7 +9,7 @@ function renderMenuCharacter(character, selectCallback, retireCallback, descCont
 	e.character = character;
 	e.selectCallback = selectCallback;
 	e.selectable = selectCallback != undefined;
-	e.retireable = retireCallback != undefined;
+	e.retireable = retireCallback != undefined && character.hasOwnProperty("completedAdventure") && character.completedAdventure;
 	e.descContainer = descContainer;
 	e.retireTargetOptions = retireTargetOptions;
 	e.retireCallback = retireCallback;
@@ -199,6 +199,7 @@ class MenuCharacter extends HTMLElement {
 					othis.shadow.getElementById("abilities").style.opacity = 1;
 					othis.shadow.querySelector("label > img").style.filter = "brightness(100%) grayscale(0%)";
 					if (this.selectable) {
+						othis.shadow.querySelector("label > img").style.removeProperty("filter");
 						this.shadow.querySelector("input").disabled = false;
 						this.shadow.querySelector("label").style.cursor = "pointer";
 					}
@@ -207,7 +208,7 @@ class MenuCharacter extends HTMLElement {
 					currentRetireUnit = othis.retireTargetOptions[pos].unit;
 					othis.retireOption.querySelectorAll("image")[pos].style.opacity = 1;
 					othis.shadow.getElementById("abilities").style.opacity = 0.1;
-					othis.shadow.querySelector("label > img").style.filter = "brightness(30%) grayscale(80%)";
+					othis.shadow.querySelector("label > img").style.filter = "brightness(25%) grayscale(80%)";
 					if (this.selectable) {
 						this.shadow.querySelector("input").disabled = true;
 						this.shadow.querySelector("label").style.cursor = "default";
@@ -220,6 +221,7 @@ class MenuCharacter extends HTMLElement {
 	}
 
 	update(retireable, bonusAbilities) {
+		if (!this.retireable) return;
 		this.retireOption.style.visibility = retireable && !this.selected() ? "visible" : "hidden";
 		for (let a of this.shadow.querySelectorAll(".abilityBonus")) a.parentNode.removeChild(a);
 		let addedAbilities = [];

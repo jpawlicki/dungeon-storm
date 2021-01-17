@@ -8,7 +8,7 @@ abilityData.CLEAVE = new class extends Ability {
 			"Use ♦. If ⚅ is greater than any adjacent !FRIEND or !ENEMY's ○, that !FRIEND or !ENEMY !RETREATs.",
 			"Cannot be used if there is no adjacent !FRIENDs or !ENEMYs.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -20,11 +20,13 @@ abilityData.CLEAVE = new class extends Ability {
 		let events = [];
 		let sfx = [() => SpecialEffect.abilityUse(unit, this)];
 
+		let roll = Math.floor(Math.random() * 6 + 1);
+
 		for (let dir = 0; dir < 4; dir++) {
 			let target = gameState.getUnitAt(Tile.offset(unit.pos, dir));
 			if (target == null) continue;
 			let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
-			let success = Math.floor(Math.random() * 6 + 1) > defenderStr;
+			let success = roll > defenderStr;
 			if (success) {
 				events.push(ActionEvent.retreat(target, dir));
 			}

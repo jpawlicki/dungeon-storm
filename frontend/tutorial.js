@@ -20,6 +20,14 @@ class Tutorial {
 		EXPLAIN_FRIGHTENED: 13,
 		EXPLAIN_DANGER: 14,
 		EXPLAIN_CHARACTER: 15,
+		EXPLAIN_EXPERIENCE: 16,
+		EXPLAIN_UNLOCK: 17,
+		EXPLAIN_HEALING: 18,
+		EXPLAIN_VICTORY: 19,
+		EXPLAIN_TIME: 20,
+		EXPLAIN_DICE: 21,
+		EXPLAIN_DIAMOND: 22,
+		EXPLAIN_CIRCLE: 23,
 	}
 
 	static hook(event) {
@@ -103,12 +111,11 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_END && this.eventCounts[event] == 1) {
-			this.addMessage("Caution: if you are !DEFEATED or run out of !TIME in an adventure, your !CHARACTERS may lose abilities. This loss is permanent - try to avoid this.");
-			this.addMessage("This adventure is over! All adventures yield rewards (unless you are defeated at the very start - it happens), but successful adventures yield more. Click on the treasure chest to view your rewards. Accumulate rewards to unlock !CHARACTERs and new adventures.");
+			this.addMessage("This adventure is over! Click on the treasure chest to view the rewards you accumulated. Complete adventures to unlock new !CHARACTERs and adventures. But be careful: if you are !DEFEATED or run out of !TIME, each of your !CHARACTERs may lose an ability.");
 		}
 		
 		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 2) {
-			this.addMessage("In between adventures, you can retire your !CHARACTERs. !CHARACTERs that retire pass on the abilities they know to another !CHARACTER. (The student must still spend !EXPERIENCE to learn them, and can never learn more than eight abilities total.) Build up a mighty team!");
+			this.addMessage("!CHARACTERs who successfully complete adventures can retire and pass their abilities on to another !CHARACTER. Build up a mighty team!");
 		}
 		
 		if (event == Tutorial.Hook.EXPLAIN_REACTION) {
@@ -142,9 +149,42 @@ class Tutorial {
 		if (event == Tutorial.Hook.EXPLAIN_CHARACTER) {
 			this.addMessage("Your !CHARACTERs are the pieces you can control. Use their abilities to defeat !DANGERs.");
 		}
-	}
+
+		if (event == Tutorial.Hook.EXPLAIN_EXPERIENCE) {
+			this.addMessage("!EXPERIENCE is used by !CHARACTERs to acquire new abilities. Gained abilities are permanent.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_UNLOCK) {
+			this.addMessage("!UNLOCK are used to unlock new !CHARACTERs and adventures.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_HEALING) {
+			this.addMessage("!HEALING can be used to recover !FRIGHTENED or !DEFEATED !CHARACTERs.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_VICTORY) {
+			this.addMessage("Acquiring one or more !VICTORY successfully completes the adventure. !VICTORY grows as the adventure continues.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_TIME) {
+			this.addMessage("Every time you end your turn, you lose !TIME. If you have no !TIME left at the start of your turn, the adventure ends in failure.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_DICE) {
+			this.addMessage("⚅ represents a random number between 1 and 6, as you would get by rolling a six-sided die.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_DIAMOND) {
+			this.addMessage("Each !CHARACTER and !DANGER has a number of ♦. Abilities spend ♦ when they are used. (Exception: !REACTIONs rarely spend ♦.) As soon as you end your turn (and before any !DANGERs act), each !CHARACTER is set to ♦♦♦.");
+		}
+
+		if (event == Tutorial.Hook.EXPLAIN_CIRCLE) {
+			this.addMessage("Each !CHARACTER and !DANGER has ○ in each direction representing how difficult that !CHARACTER or !DANGER is to !DEFEAT from that direction. Many abilities compare ○ to other quantities to determine the effects. Additionally, if a ○ is red and pulsing, it indicates that the !CHARACTER (or !DANGER) !THREATENs !DANGERs (or !CHARACTERs) in the adjacent space.");
+		}
+	}  
 
 	addMessage(msg) {
+		if (this.messageStack.length > 0 && this.messageStack[this.messageStack.length - 1] == msg) return;
 		this.messageStack.push(msg);
 		this.tutorialWindow.querySelector("div").innerHTML = "";
 		this.tutorialWindow.querySelector("div").appendChild(expandAbilityDetails([this.messageStack[this.messageStack.length - 1]]));

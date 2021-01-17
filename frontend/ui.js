@@ -70,9 +70,8 @@ function clickOnTile() {
 				unlockUi();
 				showHideUiElements();
 				if (clickContext.lastMouseOver != null) mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
+				Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
 			});
-			showHideUiElements();
-			Tutorial.hook(Tutorial.Hook.ACTION_TAKEN);
 		}
 	}
 }
@@ -197,11 +196,14 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 	}
 
 	let icons = {
-		"!EXPERIENCE": Util.makeCap,
-		"!UNLOCK": Util.makeUnlock,
-		"!HEALING": Util.makePlus,
-		"!VICTORY": Util.makeCup,
-		"!TIME": Util.makeTime,
+		"!EXPERIENCE": {f: Util.makeCap, tutorial: Tutorial.Hook.EXPLAIN_EXPERIENCE },
+		"!UNLOCK": {f: Util.makeUnlock, tutorial: Tutorial.Hook.EXPLAIN_UNLOCK },
+		"!HEALING": {f: Util.makePlus, tutorial: Tutorial.Hook.EXPLAIN_HEALING },
+		"!VICTORY": {f: Util.makeCup, tutorial: Tutorial.Hook.EXPLAIN_VICTORY },
+		"!TIME": {f: Util.makeTime, tutorial: Tutorial.Hook.EXPLAIN_TIME },
+		"⚅": {f: Util.makeDice, tutorial: Tutorial.Hook.EXPLAIN_DICE },
+		"♦": {f: Util.makeDiamond, tutorial: Tutorial.Hook.EXPLAIN_DIAMOND },
+		"○": {f: Util.makeCircle, tutorial: Tutorial.Hook.EXPLAIN_CIRCLE },
 	};
 
 	for (let ex in icons) {
@@ -210,8 +212,8 @@ function expandAbilityDetails(descAr, enemyContext = false) {
 			svg.setAttribute("viewBox", "0 0 24 24");
 			svg.style.height = "1em";
 			svg.style.verticalAlign = "bottom";
-			icons[ex](svg);
-			return svg.outerHTML;
+			icons[ex].f(svg);
+			return "<span class=\"explicable\" onclick=\"Tutorial.hook(" + icons[ex].tutorial + ");\">" + svg.outerHTML + "</span>";
 		});
 	}
 

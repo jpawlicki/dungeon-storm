@@ -9,7 +9,7 @@ abilityData.MOVE = new class extends Ability {
 			"  1. !MOVE to an adjacent empty space and rotate. Cannot rise more than 1 step.",
 			"Or:",
 			"  2. Rotate in the same space."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

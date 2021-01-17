@@ -7,7 +7,7 @@ abilityData.BACKSTAB = new class extends Ability {
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY that is !THREATENed by another !FRIEND. It becomes !FRIGHTENED and !RETREATs.",
 			"Cannot select a !ENEMY that !THREATENs this !FRIEND."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {

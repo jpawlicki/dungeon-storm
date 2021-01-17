@@ -8,7 +8,7 @@ abilityData.ADVANCE = new class extends Ability {
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs, and this !FRIEND teleports into their space.",
 			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -75,7 +75,7 @@ abilityData.BACKSTAB = new class extends Ability {
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY that is !THREATENed by another !FRIEND. It becomes !FRIGHTENED and !RETREATs.",
 			"Cannot select a !ENEMY that !THREATENs this !FRIEND."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -133,9 +133,9 @@ abilityData.BITE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than or equal to the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATs.",
-			"Otherwise, this !FRIEND becomes !FRIGHTENED and !RETREATs.",
+			"Otherwise, this !FRIEND becomes !FRIGHTENED and !RETREATs (which may require another ♦).",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -369,7 +369,7 @@ abilityData.CHARGE = new class extends Ability {
 			"Cannot select a !ENEMY behind a different !ENEMY or !FRIEND.",
 			"Cannot select an adjacent !ENEMY.",
 			"Cannot select a !ENEMY with greater ○."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -446,7 +446,7 @@ abilityData.CLEAVE = new class extends Ability {
 			"Use ♦. If ⚅ is greater than any adjacent !FRIEND or !ENEMY's ○, that !FRIEND or !ENEMY !RETREATs.",
 			"Cannot be used if there is no adjacent !FRIENDs or !ENEMYs.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -458,11 +458,13 @@ abilityData.CLEAVE = new class extends Ability {
 		let events = [];
 		let sfx = [() => SpecialEffect.abilityUse(unit, this)];
 
+		let roll = Math.floor(Math.random() * 6 + 1);
+
 		for (let dir = 0; dir < 4; dir++) {
 			let target = gameState.getUnitAt(Tile.offset(unit.pos, dir));
 			if (target == null) continue;
 			let defenderStr = target.getStrength(Tile.directionTo(target.pos, unit.pos));
-			let success = Math.floor(Math.random() * 6 + 1) > defenderStr;
+			let success = roll > defenderStr;
 			if (success) {
 				events.push(ActionEvent.retreat(target, dir));
 			}
@@ -714,7 +716,7 @@ abilityData.ENCOURAGE = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Give ♦ to an adjacent !FRIEND."];
-		this.aiHints = [];
+		this.aiHints = [AiHints.BUFF];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -856,7 +858,7 @@ abilityData.FLY = new class extends Ability {
 		this.icon = "M22,2C22,2 14.36,1.63 8.34,9.88C3.72,16.21 2,22 2,22L3.94,21C5.38,18.5 6.13,17.47 7.54,16C10.07,16.74 12.71,16.65 15,14C13,13.44 11.4,13.57 9.04,13.81C11.69,12 13.5,11.6 16,12L17,10C15.2,9.66 14,9.63 12.22,10.04C14.19,8.65 15.56,7.87 18,8L19.21,6.07C17.65,5.96 16.71,6.13 14.92,6.57C16.53,5.11 18,4.45 20.14,4.32C20.14,4.32 21.19,2.43 22,2Z";
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. !MOVE to an adjacent empty space and rotate. If the destination has lower elevation, gain ♦."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -906,7 +908,7 @@ abilityData.FORMATION = new class extends Ability {
 			"All adjacent !FRIENDs !MOVE in the same direction, if possible.",
 			"No !FRIEND may end !MOVEment in an occupied space.",
 			"No !FRIEND may rise more than 1 step."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1046,7 +1048,7 @@ abilityData.HIGHGROUND = new class extends Ability {
 		this.icon = "M22,19V22H2V13L22,19M19.09,7.5L18.25,10.26L8.13,7.26C8.06,5.66 6.7,4.42 5.1,4.5C3.5,4.57 2.26,5.93 2.34,7.53C2.41,9.13 3.77,10.36 5.37,10.29C6.24,10.25 7.05,9.82 7.57,9.11L17.69,12.11L16.85,14.89L21.67,12.29L19.09,7.5Z";
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Select an adjacent !ENEMY at a lower elevation. It !RETREATs."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1139,7 +1141,7 @@ abilityData.MOVE = new class extends Ability {
 			"  1. !MOVE to an adjacent empty space and rotate. Cannot rise more than 1 step.",
 			"Or:",
 			"  2. Rotate in the same space."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1312,7 +1314,7 @@ abilityData.PUSH = new class extends Ability {
 			"Use ♦. Select an adjacent !ENEMY. !MOVE into an open space away from the !ENEMY. Cannot rise 2 or more steps.",
 			"Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1369,6 +1371,7 @@ abilityData.PUSH = new class extends Ability {
 		if (target.player == unit.player) return false;
 
 		let dstPos = Tile.offset(unit.pos, Tile.directionTo(loc, unit.pos));
+		if (!Tile.inBounds(dstPos)) return false;
 		if (gameState.getUnitAt(dstPos) != null) return false;
 		if (gameState.room.getTile(unit.pos).height < gameState.room.getTile(dstPos).height - 1) return false;
 		return true;
@@ -1444,7 +1447,7 @@ abilityData.RUN = new class extends Ability {
 			"Use ♦. !MOVE to an adjacent empty space and rotate. If ⚅ is greater than 3, gain ♦",
 			"Cannot rise more than 1 step.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1534,7 +1537,7 @@ abilityData.SHOOT = new class extends Ability {
 			"Roll ⚅. If greater than the !ENEMY's ○, it becomes !FRIGHTENED and !RETREATs.",
 			"Cannot select an adjacent !ENEMY.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1595,7 +1598,7 @@ abilityData.SLIDE = new class extends Ability {
 		this.icon = "M17.45,17.55L12,23L6.55,17.55L7.96,16.14L11,19.17V4.83L7.96,7.86L6.55,6.45L12,1L17.45,6.45L16.04,7.86L13,4.83V19.17L16.04,16.14L17.45,17.55ZM6.45,17.45L1,12L6.45,6.55L7.86,7.96L4.83,11H19.17L16.14,7.96L17.55,6.55L23,12L17.55,17.45L16.14,16.04L19.17,13H4.83L7.86,16.04L6.45,17.45Z";
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. !MOVE to a nearest diagonal empty space and rotate. Cannot rise more than 1 step."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1751,7 +1754,7 @@ abilityData.STRIKE = new class extends Ability {
 		this.icon = "M14.79,10.62L3.5,21.9L2.1,20.5L13.38,9.21L14.79,10.62M19.27,7.73L19.86,7.14L19.07,6.35L19.71,5.71L18.29,4.29L17.65,4.93L16.86,4.14L16.27,4.73C14.53,3.31 12.57,2.17 10.47,1.37L9.64,3.16C11.39,4.08 13,5.19 14.5,6.5L14,7L17,10L17.5,9.5C18.81,11 19.92,12.61 20.84,14.36L22.63,13.53C21.83,11.43 20.69,9.47 19.27,7.73Z";
 		this.minActionPoints = 2;
 		this.details = ["Use ♦♦. Select an adjacent !ENEMY with less ○. They become !FRIGHTENED and !RETREAT."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1852,7 +1855,7 @@ abilityData.SWORD = new class extends Ability {
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. If ⚅ is greater than the !ENEMY's ○, the !ENEMY becomes !FRIGHTENED and !RETREATS.",
 			"Cannot be undone."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -1970,7 +1973,7 @@ abilityData.TELEPORT = new class extends Ability {
 		this.icon = "M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z";
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Teleport to an empty space adjacent to a !FRIEND, with any facing."];
-		this.aiHints = [AiHints.MOVE];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -2014,7 +2017,7 @@ abilityData.TERRIFY = new class extends Ability {
 		this.icon = "M10 3.25C10 3.25 16 10 16 14C16 17.31 13.31 20 10 20S4 17.31 4 14C4 10 10 3.25 10 3.25M20 7V13H18V7H20M18 17H20V15H18V17Z";
 		this.minActionPoints = 1;
 		this.details = ["Use ♦. Select an adjacent !FRIGHTENED !ENEMY. They !RETREAT."];
-		this.aiHints = [AiHints.ATTACK];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
 
 	clickOnTile(unit, loc, quadrant) {
@@ -2294,6 +2297,36 @@ abilityData.VAULT = new class extends Ability {
 					if (options.length > 0) {
 						options.sort((a, b) => compare(a, b));
 						return options[0];
+					}
+				}
+			}
+		}
+	}();
+}
+{
+	// This behavior moves to the lowest elevation possible. It will not move to another space of the same elevation.
+	// If there are multiple lowest elevation spaces, it will choose one randomly.
+	aiData.MOVE_DOWNHILL = new class {
+		getNextMove(units, currentState) {
+			for (let u of units) {
+				let moveAbilities = u.abilities.filter(a => a.aiHints.includes(AiHints.MOVE));
+				let currentHeight = currentState.room.getTile(u.pos).height;
+				let coords = [];
+				for (let i = 0; i < currentState.room.tiles.length; i++) {
+					for (let j = 0; j < currentState.room.tiles[i].length; j++) {
+						if (currentState.room.getTile([i, j]).height >= currentHeight) continue;
+						for (let q = 0; q < 4; q++) {
+							coords.push([i, j, q]);
+						}
+					}
+				}
+				Util.shuffle(coords);
+
+				coords.sort((a, b) => currentState.room.getTile(a).height - currentState.room.getTile(b).height);
+				for (let ab of moveAbilities) {
+					for (let c of coords) {
+						let action = ab.clickOnTile(u, [c[0], c[1]], c[2]);
+						if (action != undefined) return action;
 					}
 				}
 			}
@@ -2604,7 +2637,7 @@ abilityData.VAULT = new class extends Ability {
 		id: "Jaguar",
 		portrait: "jaguar.png",
 		strengths: [4, 3, 2, 3],
-		strengthsFrightened: [3, 1, 1, 1],
+		strengthsFrightened: [3, 2, 2, 2],
 		threats: [true, false, false, false],
 		threatsFrightened: [false, false, false, false],
 	};
@@ -2638,13 +2671,13 @@ abilityData.VAULT = new class extends Ability {
 }
 {
 	let unit = {
-		ai: [aiData.MOVE_FLEE, aiData.ATTACK_NEAREST],
-		abilities: [abilityData.MOVE, abilityData.FRIGHTEN],
+		ai: [aiData.MOVE_DOWNHILL, aiData.ATTACK_NEAREST],
+		abilities: [abilityData.MOVE, abilityData.FRIGHTEN, abilityData.CONTROL],
 		id: "Snake",
 		portrait: "snake.png",
 		strengths: [3, 3, 3, 3],
 		strengthsFrightened: [2, 1, 1, 1],
-		threats: [false, false, false, false],
+		threats: [true, false, true, false],
 		threatsFrightened: [false, false, false, false],
 	};
 	unitData[unit.id] = unit;
@@ -3042,6 +3075,7 @@ abilityData.VAULT = new class extends Ability {
 		characters: 2,
 		entry: [0, 0],
 		id: "CEREMONY",
+		maxAbilities: 7,
 		rooms: [
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
@@ -3068,8 +3102,9 @@ abilityData.VAULT = new class extends Ability {
 			"en": "...and the family grew.",
 		},
 		characters: 4,
-		entry: [2, 2],
+		entry: [3, 3],
 		id: "FAMILY",
+		maxAbilities: 8,
 		rooms: [
 			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
 			["FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR", "FAMILY_RR"],
@@ -3082,7 +3117,7 @@ abilityData.VAULT = new class extends Ability {
 		title: {
 			"en": "The Family",
 		},
-		timeLimit: 5,
+		timeLimit: 10,
 		unlocks: [],
 		victory: [[0, 0], [0, 6], [6, 0], [6, 6]],
 	};
@@ -3102,6 +3137,7 @@ abilityData.VAULT = new class extends Ability {
 		characters: 3,
 		entry: [0, 0],
 		id: "FOREST",
+		maxAbilities: 6,
 		random: false,
 		rooms: [
 			[roomData.FOREST_00, roomData.FOREST_01, "FOREST_RR"       , roomData.FOREST_03, "FOREST_RR"       ],
@@ -3133,6 +3169,7 @@ abilityData.VAULT = new class extends Ability {
 		characters: 2,
 		entry: [0, 0],
 		id: "GARDEN",
+		maxAbilities: 5,
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],

@@ -68,6 +68,27 @@ class Util {
 		container.appendChild(d);
 	}
 
+	static makeDice(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M7,5A2,2 0 0,0 5,7A2,2 0 0,0 7,9A2,2 0 0,0 9,7A2,2 0 0,0 7,5M17,15A2,2 0 0,0 15,17A2,2 0 0,0 17,19A2,2 0 0,0 19,17A2,2 0 0,0 17,15M17,10A2,2 0 0,0 15,12A2,2 0 0,0 17,14A2,2 0 0,0 19,12A2,2 0 0,0 17,10M17,5A2,2 0 0,0 15,7A2,2 0 0,0 17,9A2,2 0 0,0 19,7A2,2 0 0,0 17,5M7,10A2,2 0 0,0 5,12A2,2 0 0,0 7,14A2,2 0 0,0 9,12A2,2 0 0,0 7,10M7,15A2,2 0 0,0 5,17A2,2 0 0,0 7,19A2,2 0 0,0 9,17A2,2 0 0,0 7,15Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makeDiamond(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M12,0L18,12L12,24L6,12Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
+	static makeCircle(container) {
+		let d = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		d.setAttribute("d", "M12,4A8,8 0 0,0 12,20A8,8 0 0,0 12,4Z");
+		d.setAttribute("fill", "currentColor");
+		container.appendChild(d);
+	}
+
 	// Shuffles array in-place.
 	static shuffle(array) {
 		for (var i = array.length - 1; i > 0; i--) {
