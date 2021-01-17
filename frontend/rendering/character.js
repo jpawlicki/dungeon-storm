@@ -221,8 +221,6 @@ class MenuCharacter extends HTMLElement {
 	}
 
 	update(retireable, bonusAbilities) {
-		if (!this.retireable) return;
-		this.retireOption.style.visibility = retireable && !this.selected() ? "visible" : "hidden";
 		for (let a of this.shadow.querySelectorAll(".abilityBonus")) a.parentNode.removeChild(a);
 		let addedAbilities = [];
 		for (let bonus of bonusAbilities) {
@@ -232,6 +230,8 @@ class MenuCharacter extends HTMLElement {
 			svg.setAttribute("class", "abilityBonus");
 			this.shadow.getElementById("abilities").appendChild(svg);
 		}
+		if (!this.retireable) return;
+		this.retireOption.style.visibility = retireable && !this.selected() ? "visible" : "hidden";
 	}
 
 	selected() {

@@ -5,7 +5,7 @@
 		entry: [1, 0],
 		exit: [3, 3],
 		id: "BUILTIN_DEMO_00",
-		random: "",
+		random: "GARDEN_RR",
 		reward: {
 			experience: 1,
 			healing: 2,

@@ -5,7 +5,7 @@
     0
   ],
   "id": "BUILTIN_DEMO_20",
-  "random": "",
+  random: "GARDEN_RR",
   "reward": {
     "experience": 3,
     "healing": 0,
