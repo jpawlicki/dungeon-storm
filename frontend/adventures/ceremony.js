@@ -12,7 +12,7 @@
 		characters: 2,
 		entry: [0, 0],
 		id: "CEREMONY",
-		maxAbilities: 7,
+		maxAbilities: 6,
 		rooms: [
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],

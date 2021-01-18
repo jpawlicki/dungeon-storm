@@ -12,7 +12,7 @@
 		characters: 4,
 		entry: [3, 3],
 		id: "FAMILY",
-		maxAbilities: 8,
+		maxAbilities: 7,
 		rooms: [
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", null,        "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],
