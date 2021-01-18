@@ -16,7 +16,7 @@
 				display: grid;
 				font-family: sans-serif;
 				grid-template-rows: auto;
-				grid-template-columns: 20em 1fr;
+				grid-template-columns: 22em 1fr;
 				height: 100vh;
 				margin: 0;
 				padding: 0;
@@ -34,7 +34,7 @@
 				align-items: center;
 			}
 			#swatches {
-				width: 12em;
+				width: calc((2.5em + 4px) * 8);
 			}
 			#swatches > img {
 				width: 2.5em;
@@ -378,6 +378,8 @@
 				<svg onclick="setRaise();" id="raise_icon" style="width:24px;height:24px" viewBox="0 0 24 24">
 			    <path fill="#fff" d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />
 				</svg>
+			</div>
+			<div>
 				<div id="swatches"></div>
 				<script>
 					let swatches = [
@@ -409,10 +411,18 @@
 						"family_2",
 						"family_3",
 						"family_4",
+						"family_9",
+						"family_10",
+						"family_11",
+						"family_12",
+						"family_13",
 						"family_5",
 						"family_6",
 						"family_7",
 						"family_8",
+						"family_14",
+						"family_15",
+						"family_16",
 						"departure_1",
 						"departure_2",
 						"departure_3",
