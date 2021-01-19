@@ -26,7 +26,7 @@
 			"en": "The Family",
 		},
 		timeLimit: 12,
-		unlocks: [],
+		unlocks: ["DEPARTURE"],
 		victory: [[0, 0], [0, 6], [6, 0], [6, 6]],
 	};
 	adventureData[adventure.id] = adventure;

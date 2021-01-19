@@ -38,6 +38,8 @@ abilityData.SWAP = new class extends Ability {
 		if (unit.actionPoints < 1) return false;
 		if (Tile.distanceBetween(unit.pos, loc) != 1) return false;
 		if (gameState.getUnitAt(loc) == null) return false;
+		// If unit is retreating, another unit may already be occupying its space. In this case, swap is not legal.
+		for (let u of gameState.units) if (u != unit && u.state != Unit.State.DEFEATED && u.pos[0] == unit.pos[0] && u.pos[1] == unit.pos[1]) return false;
 		return true;
 	}
 }();

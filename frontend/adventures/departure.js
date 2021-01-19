@@ -14,14 +14,14 @@
 		id: "DEPARTURE",
 		maxAbilities: 8,
 		rooms: [
-			["DEPARTURE_1", null, "DEPARTURE_7", "DEPARTURE_8", "DEPARTURE_9"],
-			["DEPARTURE_2", null, "DEPARTURE_6", null, "DEPARTURE_10"],
-			["DEPARTURE_3", "DEPARTURE_4", "DEPARTURE_5", null, "DEPARTURE_11"],
+			[roomData.DEPARTURE_1, null, roomData.DEPARTURE_7, roomData.DEPARTURE_8, roomData.DEPARTURE_9],
+			[roomData.DEPARTURE_2, null, roomData.DEPARTURE_6, null, roomData.DEPARTURE_10],
+			[roomData.DEPARTURE_3, roomData.DEPARTURE_4, roomData.DEPARTURE_5, null, roomData.DEPARTURE_11],
 		],
 		title: {
-			"en": "The Family",
+			"en": "The Departure",
 		},
-		timeLimit: 12,
+		timeLimit: 1,
 		unlocks: [],
 		victory: [[2, 4]],
 	};

@@ -1,55 +1,14 @@
-==== Ideas:
----- ADRENALINE
-!REACTION: When this !FRIEND becomes !FRIGHTENED, gain ♦♦♦♦.
-
----- COURAGE
-!REACTION: When another !FRIEND becomes !FRIGHTENED, gain ♦.
-
 ---- OUTMANEUVER
-Use ♦♦. Select an adjacent !ENEMY with fewer ♦. It !RETREATs.
+Select an adjacent !ENEMY with fewer ♦. It !RETREATs. Use ♦♦♦. 
 
 ---- REVENGE
 !REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦.
 
-
-=== Skirmisher 
----- RUN (needs testing)
-
----- ADVANCE (needs testing)
-
----- CONTROL (exists)
-
----- FLEE (needs testing)
-
----- SCORCHEDEARTH (needs testing)
-
----- HURRY (needs testing)
-
-
-==== Dangers
-
----- LION
-   !5!       !6!
-!4!   !4! !4! 🌢 !4!
-    3         3
-Abilities: VAULT CONTROL ?? ?? 
-Behavior: Attack nearest. Move safely until 2 diamonds left. ??
-Intent: 
+---- ???
+Use ♦. !MOVE to a space with higher elevation.
 
 ---- ???
-   !6!       !5!
- 2    !6!  0  🌢 !5!
-    2         0
-Abilities: CONTROL
-Intent: Limit mobility options using high threat.
+Use ♦. !MOVE to a space with lower elevation.
 
----- ???
-Intent: Disrupt player positioning.
-
-
----- ???
-HIGHGROUND, behavior is to climb.
-Intent: Variety?
-
----- ???
-ENCOURAGE, EMPATHY
+---- TUNNEL
+Use ♦. !MOVE to a space of the same elevation that is connected to this !FRIEND's space by spaces of higher elevation.

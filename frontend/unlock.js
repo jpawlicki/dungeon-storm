@@ -8,6 +8,7 @@ class Unlock {
 		{type: Unlock.CHARACTER, value: "Journeyman", at: 11},
 		{type: Unlock.CHARACTER, value: "Dancer", at: 31},
 		{type: Unlock.CHARACTER, value: "Archer", at: 61},
+		{type: Unlock.ADVENTURE, value: "COMMUNITY", at: 75},
 		{type: Unlock.CHARACTER, value: "Berserker", at: 101},
 		{type: Unlock.CHARACTER, value: "Thief", at: 151},
 		{type: Unlock.CHARACTER, value: "Commander", at: 211},
