@@ -111,12 +111,6 @@ class Unit {
 	// learnableAbilities[]
 	// completedAdventure: bool, may be undefined
 
-	static State = {
-		NORMAL: 1,
-		FRIGHTENED: 2,
-		DEFEATED: 3
-	}
-
 	// characterOrUnitClass: the template for this unit
 	// randomizeAbilities: whether to randomize the unit's abilities from all known abilities.
 	constructor(characterOrUnitClass, randomizeAbilities=false) {
@@ -324,6 +318,11 @@ class Unit {
 		for (let a of this.abilities) for (let r of a.actionEvent(this, action)) reactions.push(r);
 		return reactions;
 	}
+}
+Unit.State = {
+	NORMAL: 1,
+	FRIGHTENED: 2,
+	DEFEATED: 3
 }
 
 class Ability {
@@ -768,32 +767,26 @@ class ActionEvent {
 	// type: a numeric value indicating the type of event
 	// data: an object, depending on the eventType
 
-	static RETREAT = 1;
 	static retreat(who, direction) {
 		return new ActionEvent(who, ActionEvent.RETREAT, {"direction": direction});
 	}
 
-	static MOVE = 2;
 	static move(who, fromLoc, toLoc) {
 		return new ActionEvent(who, ActionEvent.MOVE, {"from": fromLoc, "to": toLoc});
 	}
 
-	static DEFEAT = 3;
 	static defeat(who) {
 		return new ActionEvent(who, ActionEvent.DEFEAT, {});
 	}
 
-	static ENDTURN = 4;
 	static endTurn(who) {
 		return new ActionEvent(who, ActionEvent.ENDTURN, {});
 	}
 
-	static STARTTURN = 5;
 	static startTurn(who) {
 		return new ActionEvent(who, ActionEvent.STARTTURN, {});
 	}
 
-	static LOADROOM = 6;
 	static loadRoom() {
 		return new ActionEvent(null, ActionEvent.LOADROOM, {});
 	}
@@ -804,6 +797,12 @@ class ActionEvent {
 		this.data = data;
 	}
 }
+ActionEvent.RETREAT = 1;
+ActionEvent.MOVE = 2;
+ActionEvent.DEFEAT = 3;
+ActionEvent.ENDTURN = 4;
+ActionEvent.STARTTURN = 5;
+ActionEvent.LOADROOM = 6;
 
 // A Fortress is a collection of rooms. Fortresses are square. The player starts in the upper-left and is trying to reach the lower-right.
 class Fortress {
