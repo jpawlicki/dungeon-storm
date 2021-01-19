@@ -40,6 +40,9 @@ class SettingsMenu extends HTMLElement {
 		    <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
 			</svg>
 			<div id="expand">
+				<svg id="roomEditor" viewBox="0 0 24 24">
+					<path d="M9,3L3.36,4.9C3.16,4.97 3,5.15 3,5.38V20.5A0.5,0.5 0 0,0 3.5,21C3.55,21 3.6,21 3.66,20.97L9,18.9L13.16,20.36C13.06,19.92 13,19.46 13,19C13,18.77 13,18.54 13.04,18.3L9,16.9V5L15,7.1V14.56C16.07,13.6 17.47,13 19,13C19.7,13 20.37,13.13 21,13.36V3.5A0.5,0.5 0 0,0 20.5,3H20.34L15,5.1L9,3M18,15V18H15V20H18V23H20V20H23V18H20V15H18Z" />
+				</svg>
 				<svg id="fullscreen" viewBox="0 0 24 24">
 					<path id="fullscreenOn" d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" />
 					<path id="fullscreenOff" d="M14,14H19V16H16V19H14V14M5,14H10V19H8V16H5V14M8,5H10V10H5V8H8V5M19,8V10H14V5H16V8H19Z" />
@@ -68,6 +71,10 @@ class SettingsMenu extends HTMLElement {
 			soundEnabled = !soundEnabled; // Declared in ui.js.
 			shadow.getElementById("soundOn").style.visibility = !soundEnabled ? "hidden" : "visible";
 			shadow.getElementById("soundOff").style.visibility = soundEnabled ? "hidden" : "visible";
+		});
+
+		shadow.getElementById("roomEditor").addEventListener("click", () => {
+			window.open("tools/roomeditor.html", "_blank");
 		});
 
 		shadow.getElementById("fullscreen").addEventListener("click", () => {
