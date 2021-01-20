@@ -13,6 +13,8 @@
 		entry: [0, 0],
 		id: "COMMUNITY",
 		maxAbilities: 7,
+		onVictory: [Adventure.Consequence.ABILITY],
+		onDefeat: [],
 		random: false,
 		rooms: [
 			["COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY"],
@@ -21,7 +23,7 @@
 			["COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY"],
 		],
 		title: {
-			"en": "The Community",
+			"en": "The Community (Bonus)",
 		},
 		timeLimit: 12,
 		unlocks: [],

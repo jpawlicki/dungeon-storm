@@ -71,6 +71,9 @@ class MainMenu extends HTMLElement {
 				.begin:hover path {
 					fill: #fff;
 				}
+				h2, h3 {
+					margin-bottom: 0;
+				}
 			</style>
 			<div id="cast"></div>
 			<div id="adventures"></div>
@@ -130,6 +133,44 @@ class MainMenu extends HTMLElement {
 				learns.appendChild(document.createTextNode("Characters can learn up to " + adventureData[adventure].maxAbilities + " abilities."));
 				rules.appendChild(learns);
 				descNode.appendChild(rules);
+				function describeConsequences(c) {
+					if (c == Adventure.Consequence.ABILITY) return "Gain a random ability.";
+					if (c == Adventure.Consequence.CHARACTER) return "Gain a random character.";
+					if (c == Adventure.Consequence.CHARACTER_NOABILITY) return "Gain a random character that has no abilities.";
+					if (c == Adventure.Consequence.ABILITY_LOSS) return "Lose a random ability.";
+					if (c == Adventure.Consequence.VICTORY) return "Win the game.";
+				}
+				{
+					let d = document.createElement("div");
+					let t = document.createElement("h3");
+					t.appendChild(document.createTextNode("When passed:"));
+					d.appendChild(t);
+					let consequences = [];
+					for (let u of adventureData[adventure].unlocks) if (!gameState.unlockedAdventures.includes(u)) consequences.push("Unlock " + adventureData[u].title[lang] + ".");
+					for (let c of adventureData[adventure].onVictory) consequences.push(describeConsequences(c));
+					if (consequences.length == 0) d.appendChild(document.createTextNode("No consequence."));
+					else for (let c of consequences) {
+						let dd = document.createElement("div");
+						dd.appendChild(document.createTextNode(c));
+						d.appendChild(dd);
+					}
+					descNode.appendChild(d);
+				}
+				{
+					let d = document.createElement("div");
+					let t = document.createElement("h3");
+					t.appendChild(document.createTextNode("If defeated:"));
+					d.appendChild(t);
+					let consequences = [];
+					for (let c of adventureData[adventure].onDefeat) consequences.push(describeConsequences(c));
+					if (consequences.length == 0) d.appendChild(document.createTextNode("No consequence."));
+					else for (let c of consequences) {
+						let dd = document.createElement("div");
+						dd.appendChild(document.createTextNode(c));
+						d.appendChild(dd);
+					}
+					descNode.appendChild(d);
+				}
 			};
 			d.addEventListener("mouseover", describe);
 			d.addEventListener("click", describe);

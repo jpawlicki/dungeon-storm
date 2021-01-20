@@ -394,6 +394,8 @@ class Adventure {
 		this.timeLimit = spec.timeLimit;
 		this.victory = spec.victory;
 		this.unlocks = spec.unlocks;
+		this.onVictory = spec.onVictory;
+		this.onDefeat = spec.onDefeat;
 		this.rooms = [];
 
 		let randomRooms = new RandomRoomProvider();
@@ -413,9 +415,19 @@ class Adventure {
 	}
 
 	static deserialize(val) {
-		return new Adventure(JSON.parse(val));
+		let d = JSON.parse(val);
+		if (!d.hasOwnProperty("onVictory")) d.onVictory = [];
+		if (!d.hasOwnProperty("onDefeat")) d.onDefeat = [];
+		return new Adventure(d);
 	}
 }
+Adventure.Consequence = {
+	ABILITY: 1,
+  CHARACTER: 2,
+	CHARACTER_NOABILITY: 3,
+	ABILITY_LOSS: 4,
+	VICTORY: 5,
+};
 
 class GameState {
 	// room

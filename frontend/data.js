@@ -3119,6 +3119,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [0, 0],
 		id: "CEREMONY",
 		maxAbilities: 6,
+		onVictory: [Adventure.Consequence.CHARACTER_NOABILITY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		rooms: [
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
@@ -3148,6 +3150,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [0, 0],
 		id: "COMMUNITY",
 		maxAbilities: 7,
+		onVictory: [Adventure.Consequence.ABILITY],
+		onDefeat: [],
 		random: false,
 		rooms: [
 			["COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY"],
@@ -3156,7 +3160,7 @@ abilityData.VAULT = new class extends Ability {
 			["COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY", "COMMUNITY_ANY"],
 		],
 		title: {
-			"en": "The Community",
+			"en": "The Community (Bonus)",
 		},
 		timeLimit: 12,
 		unlocks: [],
@@ -3179,6 +3183,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [0, 0],
 		id: "DEPARTURE",
 		maxAbilities: 8,
+		onVictory: [Adventure.Consequence.VICTORY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		rooms: [
 			[roomData.DEPARTURE_1, null, roomData.DEPARTURE_7, roomData.DEPARTURE_8, roomData.DEPARTURE_9],
 			[roomData.DEPARTURE_2, null, roomData.DEPARTURE_6, null, roomData.DEPARTURE_10],
@@ -3208,6 +3214,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [3, 3],
 		id: "FAMILY",
 		maxAbilities: 7,
+		onVictory: [Adventure.Consequence.CHARACTER],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		rooms: [
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", null,        "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],
@@ -3241,6 +3249,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [0, 0],
 		id: "FOREST",
 		maxAbilities: 6,
+		onVictory: [Adventure.Consequence.ABILITY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		random: false,
 		rooms: [
 			[roomData.FOREST_00, roomData.FOREST_01, "FOREST_RR"       , roomData.FOREST_03, "FOREST_RR"       ],
@@ -3273,6 +3283,8 @@ abilityData.VAULT = new class extends Ability {
 		entry: [0, 0],
 		id: "GARDEN",
 		maxAbilities: 5,
+		onVictory: [],
+		onDefeat: [],
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],

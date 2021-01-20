@@ -23,7 +23,7 @@ class Tutorial {
 		this.tutorialWindow.style.right = "20%";
 		this.tutorialWindow.style.borderRadius = "2em";
 		this.tutorialWindow.style.border = "2px solid #fff";
-		this.tutorialWindow.style.backgroundColor = "#000";
+		this.tutorialWindow.style.backgroundColor = "rgba(0, 0, 0, 0.95)";
 		this.tutorialWindow.style.color = "#fff";
 		this.tutorialWindow.style.padding = "0.5em";
 		this.tutorialWindow.style.fontSize = "150%";
@@ -90,6 +90,10 @@ class Tutorial {
 		
 		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 2) {
 			this.addMessage("!CHARACTERs who successfully complete adventures can retire and pass their abilities on to another !CHARACTER. Build up a mighty team!");
+		}
+		
+		if (event == Tutorial.Hook.MAINMENU_START && this.eventCounts[event] == 5) {
+			this.addMessage("You can create challenges of your own and contribute them to the game using the map icon in the menu in the upper-right.");
 		}
 		
 		if (event == Tutorial.Hook.EXPLAIN_REACTION) {

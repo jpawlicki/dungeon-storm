@@ -13,6 +13,8 @@
 		entry: [0, 0],
 		id: "CEREMONY",
 		maxAbilities: 6,
+		onVictory: [Adventure.Consequence.CHARACTER_NOABILITY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		rooms: [
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],
 			["CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR"],

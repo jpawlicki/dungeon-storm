@@ -13,6 +13,8 @@
 		entry: [0, 0],
 		id: "GARDEN",
 		maxAbilities: 5,
+		onVictory: [],
+		onDefeat: [],
 		random: false,
 		rooms: [
 			[roomData.BUILTIN_DEMO_00, roomData.BUILTIN_DEMO_01, roomData.BUILTIN_DEMO_02],

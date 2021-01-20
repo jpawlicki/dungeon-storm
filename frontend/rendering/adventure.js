@@ -242,7 +242,7 @@ class AdventureNextRoomElement extends HTMLElement {
 							effect();
 							miniDiv.setAttribute("class", "learnable activated");
 						} else {
-							for (let r in cost) gameState.resources[r] += cost[r];
+							for (let r in cost) gameState.resources[r] += Math.max(0, cost[r] - 1);
 							state = false;
 							undoEffect();
 							miniDiv.setAttribute("class", "learnable");
@@ -294,7 +294,7 @@ class AdventureNextRoomElement extends HTMLElement {
 				}
 				updateCosts();
 				for (let a of character.learnableAbilities) {
-					updaters.push(makeLearnableSpot(Util.makeAbilitySvg(a, false, shadow.getElementById("abilityDescText2")), learnAbilityCosts, () => {character.learn(a); updateCosts();}, () => {character.unlearn(a); gameState.resources.experience--; updateCosts();}));
+					updaters.push(makeLearnableSpot(Util.makeAbilitySvg(a, false, shadow.getElementById("abilityDescText2")), learnAbilityCosts, () => {character.learn(a); updateCosts();}, () => {character.unlearn(a); updateCosts();}));
 				}
 				if (character.state == Unit.State.DEFEATED) {
 					let img = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -547,7 +547,7 @@ class AdventureCompleteElement extends HTMLElement {
 			</style>
 			<h1>${gameState.adventure.title[lang]}</h1>
 			<div id="text">${(gameState.getAdventureVictorious() ? gameState.adventure.descriptionVictory[lang] : gameState.adventure.descriptionDefeat[lang]).replaceAll("\n", "<br/>")}</div>
-			<div id="losses"></div>
+			<div id="consequences"></div>
 			<div id="track"></div>
 			<div id="rewards">
 				<svg id="treasureBox" viewBox="0 0 24 24">
@@ -613,20 +613,48 @@ class AdventureCompleteElement extends HTMLElement {
 			addedCharacters.push(c);
 		}
 		let abilityLosses = [];
-		if (!victory) {
-			for (let c of gameState.characters) {
-				if (c.abilities.length > 0) {
-					let mayLoseIndex = parseInt(Math.random() * c.abilities.length);
-					// Never remove the last ATTACK or MOVE ability.
-					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.PUSHER)) {
-						if (c.abilities.filter(a => a.aiHints.includes(AiHints.PUSHER)).length == 1) continue;
+		let abilityGains = [];
+		let consequenceCharacterGains = [];
+		let consequenceVictory = [];
+		let consequences = victory ? gameState.adventure.onVictory : gameState.adventure.onDefeat;
+		for (let c of consequences) {
+			if (c == Adventure.Consequence.ABILITY_LOSS) {
+				for (let c of gameState.characters) {
+					if (c.abilities.length > 0) {
+						let mayLoseIndex = parseInt(Math.random() * c.abilities.length);
+						// Never remove the last PUSHER or BASIC_MOVE ability.
+						if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.PUSHER)) {
+							if (c.abilities.filter(a => a.aiHints.includes(AiHints.PUSHER)).length == 1) continue;
+						}
+						if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.BASIC_MOVE)) {
+							if (c.abilities.filter(a => a.aiHints.includes(AiHints.BASIC_MOVE)).length == 1) continue;
+						}
+						let lost = c.abilities.splice(mayLoseIndex, 1)[0];
+						abilityLosses.push({"c": c, "a": lost});
 					}
-					if (c.abilities[mayLoseIndex].aiHints.includes(AiHints.BASIC_MOVE)) {
-						if (c.abilities.filter(a => a.aiHints.includes(AiHints.BASIC_MOVE)).length == 1) continue;
-					}
-					let lost = c.abilities.splice(mayLoseIndex, 1)[0];
-					abilityLosses.push({"c": c, "a": lost});
 				}
+			} else if (c == Adventure.Consequence.ABILITY) {
+				let abilities = [];
+				for (let c in abilityData) abilities.push(c);
+				Util.shuffle(abilities);
+				let index = 0;
+				for (let c of gameState.characters) {
+					let a = abilityData[abilities[index++]];
+					c.learnableAbilities.push(a);
+					abilityGains.push({"c": c, "a": a});
+				}
+			} else if (c == Adventure.Consequence.CHARACTER) {
+				let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]], true);
+				gameState.characterPool.push(c);
+				consequenceCharacterGains.push({"c": c});	
+			} else if (c == Adventure.Consequence.CHARACTER_NOABILITY) {
+				let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]], true);
+				c.abilities = [];
+				c.learnableAbilities = [];
+				gameState.characterPool.push(c);
+				consequenceCharacterGains.push({"c": c});	
+			} else if (c == Adventure.Consequence.VICTORY) {
+				consequenceVictory.push(true);	
 			}
 		}
 		delete gameState.adventure;
@@ -651,7 +679,46 @@ class AdventureCompleteElement extends HTMLElement {
 			path2.setAttribute("class", "abilityLossX");
 			svg.appendChild(path2);
 			div.appendChild(svg);
-			shadow.querySelector("#losses").appendChild(div);
+			shadow.querySelector("#consequences").appendChild(div);
+		}
+		for (let a of abilityGains) {
+			let div = document.createElement("div");
+			div.setAttribute("class", "abilityLoss");
+			let img = document.createElement("img");
+			img.setAttribute("src", "assets/portraits/" + a.c.portrait);
+			div.appendChild(img);
+			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			svg.setAttribute("viewBox", "0 0 24 24");
+			let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path.setAttribute("d", a.a.icon);
+			path.setAttribute("fill", "#888");
+			svg.appendChild(path);
+			div.appendChild(svg);
+			shadow.querySelector("#consequences").appendChild(div);
+		}
+		for (let a of consequenceCharacterGains) {
+			let div = document.createElement("div");
+			div.setAttribute("class", "abilityLoss");
+			let img = document.createElement("img");
+			img.setAttribute("src", "assets/portraits/" + a.c.portrait);
+			div.appendChild(img);
+			shadow.querySelector("#consequences").appendChild(div);
+		}
+		for (let a of consequenceVictory) {
+			let div = document.createElement("div");
+			div.setAttribute("class", "abilityLoss");
+			let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			svg.setAttribute("viewBox", "0 0 24 24");
+			let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path.setAttribute("d", "M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z");
+			path.setAttribute("fill", "#f00");
+			svg.appendChild(path);
+			div.appendChild(svg);
+			svg.style.verticalAlign = "middle";
+			div.style.padding = "0.5em";
+			div.style.fontSize = "150%";
+			div.appendChild(document.createTextNode("Thank you for playing!"));
+			shadow.querySelector("#consequences").appendChild(div);
 		}
 
 

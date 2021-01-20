@@ -90,8 +90,8 @@ class SettingsMenu extends HTMLElement {
 		});
 
 		document.addEventListener("fullscreenchange", () => {
-			shadow.getElementById("fullscreenOn").style.visibility = document.fullscreenElement ? "none" : "visible";
-			shadow.getElementById("fullscreenOff").style.visibility = document.fullscreenElement ? "visible" : "none";
+			shadow.getElementById("fullscreenOn").style.visibility = document.fullscreenElement ? "hidden" : "visible";
+			shadow.getElementById("fullscreenOff").style.visibility = document.fullscreenElement ? "visible" : "hidden";
 		});
 	}
 }

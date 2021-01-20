@@ -13,6 +13,8 @@
 		entry: [0, 0],
 		id: "FOREST",
 		maxAbilities: 6,
+		onVictory: [Adventure.Consequence.ABILITY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		random: false,
 		rooms: [
 			[roomData.FOREST_00, roomData.FOREST_01, "FOREST_RR"       , roomData.FOREST_03, "FOREST_RR"       ],

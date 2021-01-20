@@ -13,6 +13,8 @@
 		entry: [0, 0],
 		id: "DEPARTURE",
 		maxAbilities: 8,
+		onVictory: [Adventure.Consequence.VICTORY],
+		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
 		rooms: [
 			[roomData.DEPARTURE_1, null, roomData.DEPARTURE_7, roomData.DEPARTURE_8, roomData.DEPARTURE_9],
 			[roomData.DEPARTURE_2, null, roomData.DEPARTURE_6, null, roomData.DEPARTURE_10],
