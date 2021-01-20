@@ -1,7 +1,7 @@
 {
 	let unit = {
 		ai: [aiData.ATTACK_NEAREST],
-		abilities: [abilityData.SHOOT, abilityData.ENERGIZE],
+		abilities: [abilityData.SHOOT],
 		id: "Archer Statue",
 		portrait: "archer_statue.png",
 		strengths: [5, 5, 3, 5],
