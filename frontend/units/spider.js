@@ -4,6 +4,7 @@
 		abilities: [abilityData.CHALLENGE, abilityData.BACKSTAB, abilityData.SLOW, abilityData.CONTROL],
 		id: "Spider",
 		portrait: "spider.png",
+		recommendedRewards: {unlock: 1},
 		strengths: [3, 3, 3, 3],
 		strengthsFrightened: [1, 1, 1, 1],
 		threats: [true, true, true, true],

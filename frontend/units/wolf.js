@@ -4,6 +4,7 @@
 		abilities: [abilityData.MOVE, abilityData.TERRIFY, abilityData.BITE, abilityData.CONTROL],
 		id: "Wolf",
 		portrait: "wolf.png",
+		recommendedRewards: {experience: 1.4},
 		strengths: [4, 3, 2, 3],
 		strengthsFrightened: [3, 1, 0, 1],
 		threats: [true, true, false, true],

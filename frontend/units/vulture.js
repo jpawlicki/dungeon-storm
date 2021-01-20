@@ -4,6 +4,7 @@
 		abilities: [abilityData.FLY, abilityData.BITE],
 		id: "Vulture",
 		portrait: "vulture.png",
+		recommendedRewards: {unlock: 1},
 		strengths: [4, 2, 1, 2],
 		strengthsFrightened: [2, 1, 1, 1],
 		threats: [false, false, false, false],

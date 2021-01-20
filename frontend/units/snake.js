@@ -4,6 +4,7 @@
 		abilities: [abilityData.MOVE, abilityData.FRIGHTEN, abilityData.CONTROL],
 		id: "Snake",
 		portrait: "snake.png",
+		recommendedRewards: {heal: 1},
 		strengths: [3, 3, 3, 3],
 		strengthsFrightened: [2, 1, 1, 1],
 		threats: [true, false, true, false],

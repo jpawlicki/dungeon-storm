@@ -4,6 +4,7 @@
 		abilities: [abilityData.TELEPORT, abilityData.DESPERATION, abilityData.FRIGHTEN, abilityData.TERRIFY, abilityData.PRESS, abilityData.OPPORTUNITY],
 		id: "Darkness",
 		portrait: "moon.png",
+		recommendedRewards: {experience: 5},
 		strengths: [6, 6, 5, 6],
 		strengthsFrightened: [5, 5, 4, 5],
 		threats: [true, true, true, true],

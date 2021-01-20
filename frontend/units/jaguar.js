@@ -4,6 +4,7 @@
 		abilities: [abilityData.TELEPORT, abilityData.HIGHGROUND, abilityData.CONTROL, abilityData.FLEE, abilityData.SCORCHEDEARTH],
 		id: "Jaguar",
 		portrait: "jaguar.png",
+		recommendedRewards: {experience: 1, time: 1},
 		strengths: [4, 3, 2, 3],
 		strengthsFrightened: [3, 2, 2, 2],
 		threats: [true, false, false, false],

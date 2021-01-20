@@ -4,6 +4,7 @@
 		abilities: [abilityData.MOVE, abilityData.CHARGE, abilityData.CONTROL],
 		id: "Bull",
 		portrait: "bull.png",
+		recommendedRewards: {experience: 1.3},
 		strengths: [5, 3, 2, 3],
 		strengthsFrightened: [6, 1, 1, 1],
 		threats: [true, false, false, false],

@@ -122,13 +122,28 @@
 				}
 			}
 
+			function updateRewards() {
+				let rewards = {
+					experience: 0,
+					heal: 0,
+					unlock: 0,
+					time: 0,
+					character: 0,
+				};
+				for (let danger of room.units) {
+					for (let e in unitData[danger.type].recommendedRewards) {
+						rewards[e] += Math.pow(unitData[danger.type].recommendedRewards[e], 2.3);
+					}
+				}
+				document.getElementById("rewardExperience").value = Math.round(Math.pow(rewards.experience, 1 / 2.3));
+				document.getElementById("rewardHealing").value = Math.round(Math.pow(rewards.heal, 1 / 2.3));
+				document.getElementById("rewardUnlocks").value = Math.round(Math.pow(rewards.unlock, 1 / 2.3));
+				document.getElementById("rewardTime").value = Math.round(Math.pow(rewards.time, 1 / 2.3));
+				document.getElementById("rewardCharacters").value = 0;
+			}
+
 			function update() {
 				room.id = document.getElementById("id").value;
-				room.reward.experience = parseInt(document.getElementById("rewardExperience").value);
-				room.reward.healing = parseInt(document.getElementById("rewardHealing").value);
-				room.reward.unlock = parseInt(document.getElementById("rewardUnlocks").value);
-				room.reward.character = parseInt(document.getElementById("rewardCharacters").value);
-				room.reward.time = parseInt(document.getElementById("rewardTime").value);
 				room.entry[0] = parseInt(document.getElementById("entry_x").value);
 				room.entry[1] = parseInt(document.getElementById("entry_y").value);
 				room.random = document.getElementById("random").value;
@@ -151,6 +166,12 @@
 					un.type = u.querySelector("select").value;
 					room.units.push(un);
 				}
+				room.reward.experience = parseInt(document.getElementById("rewardExperience").value);
+				room.reward.healing = parseInt(document.getElementById("rewardHealing").value);
+				room.reward.unlock = parseInt(document.getElementById("rewardUnlocks").value);
+				room.reward.character = parseInt(document.getElementById("rewardCharacters").value);
+				room.reward.time = parseInt(document.getElementById("rewardTime").value);
+				if (window.location.protocol != "file:") updateRewards();
 				repaint();
 				
 				document.getElementById("json").textContent = "";
@@ -561,6 +582,7 @@
 				}
 				document.getElementById("random").value = "COMMUNITY_ANY";
 				document.getElementById("random").parentNode.style.display = "none";  // Once multiple community campaigns exist, remove this line.
+				document.getElementById("rewards").style.display = "none";
 			} else {
 				document.getElementById("submit_community").style.display = "none";
 			}
