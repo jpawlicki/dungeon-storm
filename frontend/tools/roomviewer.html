@@ -1,0 +1,96 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="../gamelib.js"></script>
+		<script src="../rendering/room.js"></script>
+		<script src="../rendering/unit.js"></script>
+		<script src="../data.js"></script>
+		<script src="../rendering/character.js"></script>
+		<script src="toolbar.js"></script>
+		<title>Untitled Roguelite - Room Viewer</title>
+		<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"></link>
+		<link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon.png"></link>
+		<link rel="stylesheet" type="text/css" href="../rendering/room.css"/>
+		<link rel="stylesheet" type="text/css" href="../rendering/unit.css"/>
+		<style>
+			body {
+				background-color: #024;
+				color: #fff;
+				font-size: 120%;
+				font-family: sans-serif;
+			}
+			body > a {
+				display: block;
+				text-decoration: none;
+				color: #aaf;
+			}
+			body > a:hover {
+				text-decoration: underline;
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<tools-toolbar></tools-toolbar>
+		<div id="mapDiv"></div>
+		<script>
+			assetPrefix = "../";
+
+			function paint(room) {
+				document.getElementById("mapDiv").innerHTML = "";
+				let currentState = {};
+				currentState.room = new Room(room);
+				currentState.units = [];
+				for (let u of room.units) {
+					let unit = new Unit(unitData[u.type]);
+					unit.player = u.player;
+					unit.pos[0] = u.pos[0];
+					unit.pos[1] = u.pos[1];
+					unit.facing = u.facing;
+					currentState.units.push(unit);
+				}
+				document.getElementById("mapDiv").innerHTML = "";
+				document.getElementById("mapDiv").appendChild(setupRoomSvg(currentState));
+				for (let i = 0; i < 4; i++) {
+					let pos = [room.entry[0] + i % 2, room.entry[1] + parseInt(i / 2)];
+					if (pos[0] >= room.tiles.length) continue;
+					if (pos[1] >= room.tiles[0].length) continue;
+					let t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+					t.appendChild(document.createTextNode(i + 1));
+					pos = [
+							getTilePoint(pos[0], pos[1], currentState.room.tiles[pos[0]][pos[1]].height, 0)[0],
+							getTilePoint(pos[0], pos[1], currentState.room.tiles[pos[0]][pos[1]].height, 1)[1]];
+					t.setAttribute("x", pos[0]);
+					t.setAttribute("y", pos[1]);
+					t.setAttribute("text-anchor", "middle");
+					t.setAttribute("dominant-baseline", "central");
+					t.style.pointerEvents = "none";
+					t.style.fill = "#fff";
+					document.querySelector("#mapDiv svg").appendChild(t);
+				}
+			}
+
+			let roomId = window.location.hash;
+			if (roomId.length > 0) roomId = roomId.substring(1);
+			if (roomData.hasOwnProperty(roomId)) {
+				paint(roomData[roomId]);
+			} else {
+				let rooms = [];
+				for (let i in roomData) rooms.push(i);
+				rooms.sort();
+				for (let r of rooms) {
+					let a = document.createElement("a");
+					a.setAttribute("href", "roomviewer.html#" + r);
+					a.appendChild(document.createTextNode(r));
+					a.addEventListener("click", () => { window.location.hash = "#" + r; window.location.reload(); });
+					document.querySelector("body").appendChild(a);
+				}
+			}
+
+			function mouseOverTile(loc, quad) {}
+			function mouseOutTile() {}
+			function mouseMoveTile(tile, loc, event) {}
+			function clickOnTile() {}
+		</script>
+	</body>
+</html>

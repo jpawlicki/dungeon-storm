@@ -4,6 +4,9 @@
 		<title>Untitled Roguelite - Metrics</title>
 		<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png"></link>
 		<link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon.png"></link>
+		<script src="../gamelib.js"></script>
+		<script src="../data.js"></script>
+		<script src="toolbar.js"></script>
 		<style>
 			body {
 				background-color: #024;
@@ -28,24 +31,21 @@
 			tr:nth-child(even) {
 				background-color: #012;
 			}
-			td:nth-child(n + 2) {
+			th:nth-child(n + 2), td:nth-child(n + 2) {
 				text-align: right;
+			}
+			a {
+				color: #aaf;
+				text-decoration: none;
+			}
+			a:hover {
+				color: #fff;
+				text-decoration: underline;
 			}
 		</style>
 	</head>
 	<body>
-		<table id="roomPassRates">
-			<tr><th>Room</th><th>Fail Rate</th><th>Passes</th><th>Fails</th></tr>
-		</table>
-		<table id="roomAbilityPassRates">
-			<tr><th>Ability</th><th>Fail Rate</th><th>Passes</th><th>Fails</th></tr>
-		</table>
-		<table id="roomCharacterPassRates">
-			<tr><th>Character Type</th><th>Fail Rate</th><th>Passes</th><th>Fails</th></tr>
-		</table>
-		<table id="adventurePassRates">
-			<tr><th>Adventure</th><th>Fail Rate</th><th>Passes</th><th>Fails</th></tr>
-		</table>
+		<tools-toolbar></tools-toolbar>
 		<script>
 			let req = new XMLHttpRequest();
 			// If you clone this, please change the below URL to point to your server.
@@ -62,42 +62,57 @@
 				let byRoomAbility = {};
 				let byRoomCharacter = {};
 				let byAdventure = {};
+				function init() {
+					return {
+						"0_10": {
+							"pass": 0,
+							"fail": 0,
+						},
+						"11_50": {
+							"pass": 0,
+							"fail": 0,
+						},
+						"51_150": {
+							"pass": 0,
+							"fail": 0,
+						},
+						"151+": {
+							"pass": 0,
+							"fail": 0,
+						},
+					};
+				}
+				function count(data, pass, unlocks) {
+					let o =	data[
+							unlocks < 11 ? "0_10" :
+							unlocks < 51 ? "11_50" :
+							unlocks < 151 ? "51_150" :
+							"151+"];
+					if (pass) o.pass++;
+					else o.fail++;
+				}
 				for (let e of data) {
 					let r = JSON.parse(e.report);
 					if (!r.room) continue;
-					if (!byRoom[r.room]) {
-						byRoom[r.room] = {
-							"pass": 0,
-							"fail": 0,
-						}
-					}
-					if (r.roomOutcome) byRoom[r.room].pass++;
-					else byRoom[r.room].fail++;
+					if (!byRoom[r.room]) byRoom[r.room] = init();
+					count(byRoom[r.room], r.roomOutcome, r.numUnlocksEarned);
 
 					for (let c of r.characters) for (let a of c.abilities) {
-						if (!byRoomAbility[a]) byRoomAbility[a] = { "pass": 0, "fail": 0 };
-						if (r.roomOutcome) byRoomAbility[a].pass++;
-						else byRoomAbility[a].fail++;
+						if (!byRoomAbility[a]) byRoomAbility[a] = init();
+						count(byRoomAbility[a], r.roomOutcome, r.numUnlocksEarned);
 					}
 
 					for (let c of r.characters) {
 						let cid = c.id;
-						if (!byRoomCharacter[cid]) byRoomCharacter[cid] = { "pass": 0, "fail": 0 };
-						if (r.roomOutcome) byRoomCharacter[cid].pass++;
-						else byRoomCharacter[cid].fail++;
+						if (!byRoomCharacter[cid]) byRoomCharacter[cid] = init();
+						count(byRoomCharacter[cid], r.roomOutcome, r.numUnlocksEarned);
 					}
 				}
 				for (let e of data) {
 					let r = JSON.parse(e.report);
 					if (r.adventureOutcome == undefined) continue;
-					if (!byAdventure[r.adventure]) {
-						byAdventure[r.adventure] = {
-							"pass": 0,
-							"fail": 0,
-						}
-					}
-					if (r.adventureOutcome) byAdventure[r.adventure].pass++;
-					else byAdventure[r.adventure].fail++;
+					if (!byAdventure[r.adventure]) byAdventure[r.adventure] = init();
+					count(byAdventure[r.adventure], r.adventureOutcome, r.numUnlocksEarned);
 				}
 
 				function createRow(...args) {
@@ -114,37 +129,54 @@
 					return tr;
 				}
 
-				function fraction(hit, nothit) {
+				function fraction(e) {
 					let span = document.createElement("span");
-					let f = Math.round(hit / (hit + nothit) * 100);
-					span.appendChild(document.createTextNode(f + "%"));
+					if (e.pass + e.fail != 0) {
+						let f = Math.round(e.fail / (e.pass + e.fail) * 100);
+						span.appendChild(document.createTextNode(f + "%"));
+						span.style.color = "rgba(255," + (255 - f * 2.55) + "," + (255 - f * 2.55) + "," + Math.min(1, 0.2 + f / 20)+ ")";
+					}
 					return span;
 				}
 
+				function cols(label, rowData) {
+					let r = [label];
+					for (let i in rowData) {
+						r.push(fraction(rowData[i]));
+						r.push(rowData[i].pass + rowData[i].fail != 0 ? rowData[i].pass + rowData[i].fail : "");
+					};
+					return r;
+				}
+
 				// Render
-				{
+				for (let t of [byRoom, byRoomAbility, byRoomCharacter, byAdventure]) {
+					let table = document.createElement("table");
+					let thr = document.createElement("tr");
+					let th = document.createElement("th");
+					th.appendChild(document.createTextNode("Key"));
+					thr.appendChild(th);
+					for (let k in init()) {
+						let th = document.createElement("th");
+						th.setAttribute("colspan", 2);
+						th.appendChild(document.createTextNode("Fail Rate (" + k + ")"));
+						thr.appendChild(th);
+					}
+					table.appendChild(thr);
 					let rows = [];
-					for (let r in byRoom) rows.push([r, fraction(byRoom[r].fail, byRoom[r].pass), byRoom[r].pass, byRoom[r].fail]);
-					rows.sort((a, b) => a[0].localeCompare(b[0]));
-					for (let r of rows) document.getElementById("roomPassRates").appendChild(createRow(...r));
-				}
-				{
-					let rows = [];
-					for (let r in byRoomAbility) rows.push([r, fraction(byRoomAbility[r].fail, byRoomAbility[r].pass), byRoomAbility[r].pass, byRoomAbility[r].fail]);
-					rows.sort((a, b) => a[0].localeCompare(b[0]));
-					for (let r of rows) document.getElementById("roomAbilityPassRates").appendChild(createRow(...r));
-				}
-				{
-					let rows = [];
-					for (let r in byRoomCharacter) rows.push([r, fraction(byRoomCharacter[r].fail, byRoomCharacter[r].pass), byRoomCharacter[r].pass, byRoomCharacter[r].fail]);
-					rows.sort((a, b) => a[0].localeCompare(b[0]));
-					for (let r of rows) document.getElementById("roomCharacterPassRates").appendChild(createRow(...r));
-				}
-				{
-					let rows = [];
-					for (let r in byAdventure) rows.push([r, fraction(byAdventure[r].fail, byAdventure[r].pass), byAdventure[r].pass, byAdventure[r].fail]);
-					rows.sort((a, b) => a[0].localeCompare(b[0]));
-					for (let r of rows) document.getElementById("adventurePassRates").appendChild(createRow(...r));
+					let props = [];
+					for (let r in t) props.push(r);
+					props.sort();
+					for (let r of props) {
+						let key = r;
+						if (roomData.hasOwnProperty(key)) {
+							key = document.createElement("a");
+							key.setAttribute("href", "roomviewer.html#" + r);
+							key.appendChild(document.createTextNode(r));
+						}
+						rows.push(cols(key, t[r]));
+					}
+					for (let r of rows) table.appendChild(createRow(...r));
+					document.querySelector("body").appendChild(table);
 				}
 			}
 		</script>
