@@ -355,6 +355,8 @@ class AdventureNextRoomElement extends HTMLElement {
 			let rewardDimension = 1;
 			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
 				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
+					let room = gameState.adventure.rooms[i][j];
+					if (room == null) continue;
 					if (!gameState.adventureProgress[i][j]) {
 						let rewards = 0;
 						let victoryRoom = false;
