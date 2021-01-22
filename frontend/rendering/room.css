@@ -24,12 +24,12 @@
 #abilityDesc {
 	background: #000;
 	color: #fff;
-	padding-left: 0.5em;
-	padding-right: 0.5em;
 	overflow: auto;
 }
 #abilityDescText {
 	white-space: pre-wrap;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 }
 #abilityDesc h1 {
 	margin: 0;

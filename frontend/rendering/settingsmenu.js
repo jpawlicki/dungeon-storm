@@ -8,8 +8,7 @@ class SettingsMenu extends HTMLElement {
 			<style>
 				:host {
 					display: flex;
-					flex-direction: column;
-					align-items: flex-end;
+					flex-direction: row;
 					border-radius: 0 0 0 1em;
 					background: #000;
 					padding: 0.1em;
@@ -17,7 +16,7 @@ class SettingsMenu extends HTMLElement {
 				svg {
 					cursor: pointer;
 					width: 2.5em;
-					height; 2.5em;
+					height: 2.5em;
 				}
 				svg path {
 					fill: #bbb;
@@ -36,9 +35,6 @@ class SettingsMenu extends HTMLElement {
 					visibility: hidden;
 				}
 			</style>
-			<svg id="toggle" viewBox="0 0 24 24">
-		    <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-			</svg>
 			<div id="expand">
 				<svg id="roomEditor" viewBox="0 0 24 24">
 					<path d="M9,3L3.36,4.9C3.16,4.97 3,5.15 3,5.38V20.5A0.5,0.5 0 0,0 3.5,21C3.55,21 3.6,21 3.66,20.97L9,18.9L13.16,20.36C13.06,19.92 13,19.46 13,19C13,18.77 13,18.54 13.04,18.3L9,16.9V5L15,7.1V14.56C16.07,13.6 17.47,13 19,13C19.7,13 20.37,13.13 21,13.36V3.5A0.5,0.5 0 0,0 20.5,3H20.34L15,5.1L9,3M18,15V18H15V20H18V23H20V20H23V18H20V15H18Z" />
@@ -55,6 +51,9 @@ class SettingsMenu extends HTMLElement {
 			    <path d="M8.2 5L6.2 3H17L21 7V17.8L12.2 9H15V5H8.2M22.11 21.46L20.84 22.73L19.1 21C19.07 21 19.03 21 19 21H5C3.9 21 3 20.11 3 19V5C3 4.97 3 4.93 3 4.9L1.11 3L2.39 1.73L22.11 21.46M7.11 9L5 6.89V9H7.11M14.89 16.78L11.22 13.11C9.95 13.46 9 14.61 9 16C9 17.66 10.34 19 12 19C13.39 19 14.54 18.05 14.89 16.78Z" />
 				</svg>
 			</div>
+			<svg id="toggle" viewBox="0 0 24 24">
+				<path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+			</svg>
 		`;
 		shadow.getElementById("toggle").addEventListener("click", () => {
 			shadow.getElementById("expand").style.display = shadow.getElementById("expand").style.display == "block" ? "none" : "block";

@@ -6,7 +6,7 @@ class AdventureNextRoomElement extends HTMLElement {
 			<style>
 				:host {
 					display: grid;
-					grid-template-rows: 1fr minmax(3em, 35%);
+					grid-template-rows: 1fr;
 					grid-template-columns: 50% 50%;
 					color: #fff;
 					height: 100%;
@@ -17,9 +17,8 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters {
 					display: flex;
 					flex-direction: column;
-					justify-content: space-between;
-					min-height: 80%;
-					overflow-y: auto;
+					overflow: auto;
+					font-size: 85%;
 				}
 				#characters > div {
 					display: flex;
@@ -78,9 +77,9 @@ class AdventureNextRoomElement extends HTMLElement {
 					font-size: 150%;
 				}
 				#adventure {
-					width: 100%;
-					height: 100%;
-					grid-row: 1/3;
+					max-width: 100%;
+					max-height: 100vh;
+					grid-row: 1;
 					grid-column: 2;
 				}
 				#adventure .roomClear {
@@ -111,7 +110,7 @@ class AdventureNextRoomElement extends HTMLElement {
 					width: 100%;
 					justify-content: space-around;
 					align-items: center;
-					font-size: 270%;
+					font-size: 220%;
 					background-color: transparent;
 				}
 				#characters #resources > span {
@@ -125,22 +124,25 @@ class AdventureNextRoomElement extends HTMLElement {
 				#characters #resources svg > path {
 					fill: #ccc;
 				}
-				#characters div {
+				#characters > div {
 					background-color: #000;
 					border-radius: 0 1em 1em 0;
 					justify-content: space-between;
+					margin-bottom: 1em;
 				}
 				.explicable {
 					color: #ccf;
 					cursor: pointer;
 				}
 			</style>
-			<div id="characters">
-				<div id="resources"></div>
+			<div>
+				<div id="characters">
+					<div id="resources"></div>
+				</div>
+				<div id="abilityDescText2">
+				</div>
 			</div>
 			<svg id="adventure"></svg>
-			<div id="abilityDescText2">
-			</div>
 		`;
 
 		function updateResources() {
@@ -350,6 +352,22 @@ class AdventureNextRoomElement extends HTMLElement {
 					if (gameState.adventureProgress[i][j]) roomClears++;
 				}
 			}
+			let rewardDimension = 1;
+			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
+				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
+					if (!gameState.adventureProgress[i][j]) {
+						let rewards = 0;
+						let victoryRoom = false;
+						for (let vRoom of gameState.adventure.victory) if (vRoom[0] == i && vRoom[1] == j) victoryRoom = true;
+						if (victoryRoom) rewards += roomClears + 1;
+						for (let x in gameState.adventure.rooms[i][j].reward) {
+							rewards += gameState.adventure.rooms[i][j].reward[x];
+						}
+						rewards = Math.ceil(Math.sqrt(rewards));
+						if (rewards > rewardDimension) rewardDimension = rewards;
+					}
+				}
+			}
 			for (let i = 0; i < gameState.adventure.rooms.length; i++) {
 				for (let j = 0 ; j < gameState.adventure.rooms[i].length; j++) {
 					let room = gameState.adventure.rooms[i][j];
@@ -391,7 +409,6 @@ class AdventureNextRoomElement extends HTMLElement {
 						for (let x in gameState.adventure.rooms[i][j].reward) {
 							for (let y = 0; y < gameState.adventure.rooms[i][j].reward[x]; y++) rewards.push(x);
 						}
-						let rewardDimension = Math.ceil(Math.sqrt(rewards.length));
 						for (let k = 0; k < rewards.length; k++) {
 							let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
 							let px = k % rewardDimension;
