@@ -658,9 +658,11 @@ class AdventureCompleteElement extends HTMLElement {
 				Util.shuffle(abilities);
 				let index = 0;
 				for (let c of gameState.characters) {
+					while (c.abilities.includes(abilityData[abilities[index]]) || c.learnableAbilities.includes(abilityData[abilities[index]])) index = (index + 1) % abilities.length;
 					let a = abilityData[abilities[index++]];
 					c.learnableAbilities.push(a);
 					abilityGains.push({"c": c, "a": a});
+					index = (index + 1) % abilities.length;
 				}
 			} else if (c == Adventure.Consequence.CHARACTER) {
 				let c = new Unit(characterData[gameState.unlockedCharacters[parseInt(Math.random() * gameState.unlockedCharacters.length)]], true);

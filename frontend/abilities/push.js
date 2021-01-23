@@ -6,7 +6,7 @@ abilityData.PUSH = new class extends Ability {
 		this.minActionPoints = 1;
 		this.details = [
 			"Use ♦. Select an adjacent !ENEMY. !MOVE into an open space away from the !ENEMY. Cannot rise 2 or more steps.",
-			"Roll ⚅. If greater than the !ENEMY's ○, they !RETREAT.",
+			"Roll ⚅. If greater than the !ENEMY's ○, they become !FRIGHTENED and !RETREAT.",
 			"Cannot be undone."];
 		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
 	}
@@ -28,6 +28,7 @@ abilityData.PUSH = new class extends Ability {
 		if (retreat1) {
 			let retreatDir = Tile.directionTo(unit.pos, target.pos);
 			events.push(ActionEvent.retreat(target, retreatDir));
+			effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
 		}
 
 		let tpos = target.pos;

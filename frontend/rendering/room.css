@@ -1,5 +1,4 @@
 #turnControls {
-	background: #000;
 	color: #ccc;
 	padding: 0.2em;
 	display: flex;
@@ -22,7 +21,6 @@
 	font-size: 40%;
 }
 #abilityDesc {
-	background: #000;
 	color: #fff;
 	overflow: auto;
 }

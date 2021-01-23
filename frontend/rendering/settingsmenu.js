@@ -9,7 +9,7 @@ class SettingsMenu extends HTMLElement {
 				:host {
 					display: flex;
 					flex-direction: row;
-					border-radius: 0 0 0 1em;
+					border-radius: 0 0 1em 1em;
 					background: #000;
 					padding: 0.1em;
 				}

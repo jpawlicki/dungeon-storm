@@ -48,13 +48,14 @@ class UnitCardElement extends HTMLElement {
 				:host {
 					display: flex;
 					flex-direction: row;
+					border-radius: 0 4em 4em 0;
 				}
 				svg {
 					height: 5em;
 					width: 5em;
 				}
 				#abilities {
-					color: #888;
+					color: #ccc;
 					display: flex;
 					flex-direction: column;
 					flex-wrap: wrap;
@@ -70,10 +71,10 @@ class UnitCardElement extends HTMLElement {
 					color: #ff0;
 				}
 				#abilities svg:hover {
-					color: #ccc;
+					color: #ffa;
 				}
 				#abilities svg.active:hover {
-					color: #cc4;
+					color: #ffa;
 				}
 				#abilities svg.hidden {
 					visibility: hidden;
@@ -114,7 +115,7 @@ class UnitCardElement extends HTMLElement {
 				this.icons[i].element.setAttribute("class", "");
 			}
 		}
-		this.style.backgroundColor = (this.highlightOverride || clickContext.selectedUnit == this.unit) ? "#444" : "#000";
+		this.style.backgroundColor = (this.highlightOverride || clickContext.selectedUnit == this.unit) ? "rgba(255, 255, 255, 0.3)" : "transparent";
 		this.portraitActor.update();
 	}
 

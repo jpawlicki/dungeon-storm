@@ -1,14 +1,37 @@
+Kinetic:
+	5/5/2/2, 2/2/1/1
+  No threatening sides.
+
+---- EFFORTTELEPORT
+Teleport to an open space. Use ♦ equal to the distance travelled.
+
 ---- OUTMANEUVER
-Select an adjacent !ENEMY with fewer ♦. It !RETREATs. Use ♦♦♦. 
+Select an adjacent !ENEMY with fewer ♦. It !RETREATs. Use ♦♦. 
+
+---- FACEENEMY
+Use ♦. Rotate. If a !ENEMY is directly ahead, gain ♦.
+
+---- SIPHON
+!REACTION: When an adjacent !ENEMY uses ♦, gain ♦.
+
+---- VICTORIOUS
+!REACTION: When a !ENEMY is !DEFEATED, gain ♦♦.
 
 ---- REVENGE
-!REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦.
+!REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦♦.
+
+================
+---- ???
+Use ♦. Teleport to an open space with higher elevation.
 
 ---- ???
-Use ♦. !MOVE to a space with higher elevation.
-
----- ???
-Use ♦. !MOVE to a space with lower elevation.
+Use ♦. Teleport to an open space with lower elevation.
 
 ---- TUNNEL
-Use ♦. !MOVE to a space of the same elevation that is connected to this !FRIEND's space by spaces of higher elevation.
+Use ♦. Teleport to an open space of the same elevation that is connected to this !FRIEND's space by spaces of higher elevation.
+
+----
+Use ♦. Do X. If adjacent to a !FRIEND, gain ♦.
+
+---- SIPHONBUDDY
+!REACTION: When an adjacent !FRIEND uses ♦♦, gain ♦.
