@@ -16,4 +16,5 @@ Unlock.unlockData = [
 	{type: Unlock.CHARACTER, value: "Thief", at: 151},
 	{type: Unlock.CHARACTER, value: "Commander", at: 211},
 	{type: Unlock.CHARACTER, value: "Skirmisher", at: 281},
+	{type: Unlock.CHARACTER, value: "Kinetic", at: 361},
 ];

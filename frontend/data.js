@@ -662,6 +662,47 @@ abilityData.DISTRACT = new class extends Ability {
 		return true;
 	}
 }();
+abilityData.EFFORTTELEPORT = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "EffortTeleport";
+		this.icon = "M20 8V16L17 17L13.91 11.5C13.65 11.04 12.92 11.27 13 11.81L14 21L4 17L5.15 8.94C5.64 5.53 8.56 3 12 3H20L18.42 5.37C19.36 5.88 20 6.86 20 8Z";
+		this.minActionPoints = 1;
+		this.details = ["Teleport to an open space. Use ♦ equal to the distance travelled."];
+		this.aiHints = [AiHints.MOVE, AiHints.BASIC_MOVE];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isMoveLegal(unit, loc, quadrant)) return null;
+
+		let effects = [
+			new AddingEffect(unit, "actionPoints", -Tile.distanceBetween(unit.pos, loc)),
+			new Effect(unit, "pos", loc),
+		];
+
+		return new Action(
+				true,
+				effects,
+				[],	
+				this.name,
+				() => {
+					SpecialEffect.abilityUse(unit, this);
+				});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isMoveLegal(unit, loc, quadrant)) return;
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, unit.facing, false, u => {u.actionPoints -= Tile.distanceBetween(unit.pos, loc)}));
+	}
+
+	isMoveLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < Tile.distanceBetween(unit.pos, loc)) return false;
+		let dstUnit = gameState.getUnitAt(loc);
+		if (dstUnit != null) return false;
+		return true;
+	}
+}();
 abilityData.EMPATHY = new class extends Ability {
 	constructor() {
 		super();
@@ -783,6 +824,60 @@ abilityData.ENERGIZE = new class extends Ability {
 		return reactions;
 	}
 }();
+abilityData.FACEENEMY = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "FaceEnemy";
+		this.icon = "M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z";
+		this.minActionPoints = 1;
+		this.details = ["Use ♦. Rotate. If a !ENEMY is directly ahead, gain ♦."];
+		this.aiHints = [AiHints.MOVE];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isMoveLegal(unit, loc, quadrant)) return null;
+
+		let effects = [
+			new AddingEffect(unit, "actionPoints", -1),
+			new Effect(unit, "facing", quadrant),
+		];
+
+		if (this.isEnemyAhead(unit, quadrant)) {
+			effects.push(new AddingEffect(unit, "actionPoints", 1));
+		}
+
+		return new Action(
+				true,
+				effects,
+				[],
+				this.name,
+				() => {
+					SpecialEffect.abilityUse(unit, this);
+				});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isMoveLegal(unit, loc, quadrant)) return;
+		clickContext.actors.push(new AbilityMoveActor(unit, loc, quadrant, !this.isEnemyAhead(unit, quadrant)));
+	}
+
+	isEnemyAhead(unit, newFacing) {
+		for (let u of gameState.units) {
+			if (u.player == unit.player) continue;
+			if (u.state == Unit.State.DEFEATED) continue;
+			if (Tile.directionTo(unit.pos, u.pos) != newFacing) continue;
+			return true;
+		}
+		return false;
+	}
+
+	isMoveLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 1) return false;
+		if (Tile.distanceBetween(unit.pos, loc) != 0) return false;
+		return true;
+	}
+}();
 abilityData.FEARMONGER = new class extends Ability {
 	constructor() {
 		super();
@@ -824,7 +919,7 @@ abilityData.FLEE = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = [
 			"!REACTION: When this !FRIEND !RETREATs, gain ♦.",
-			"(The ♦ can't be spent in the !RETREAT action.)"];
+			"(The ♦ can't be used in the !RETREAT action.)"];
 		this.aiHints = [];
 	}
 
@@ -1238,6 +1333,62 @@ abilityData.OPPORTUNITY = new class extends Ability {
 		return reactions;
 	}
 }();
+abilityData.OUTMANEUVER = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Outmaneuver";
+		this.icon = "M14.58,16.59L19.17,12L14.58,7.41L16,6L22,12L16,18L14.58,16.59M8.58,16.59L13.17,12L8.58,7.41L10,6L16,12L10,18L8.58,16.59M2.58,16.59L7.17,12L2.58,7.41L4,6L10,12L4,18L2.58,16.59Z";
+		this.minActionPoints = 2;
+		this.details = ["Select an adjacent !ENEMY with less ♦. They become !FRIGHTENED and !RETREAT. Use ♦♦."];
+		this.aiHints = [AiHints.ATTACK, AiHints.PUSHER];
+	}
+
+	clickOnTile(unit, loc, quadrant) {
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return;
+
+		let effects = [
+			new Effect(unit, "actionPoints", unit.actionPoints - 2)
+		];
+		let events = [];
+
+		let retreatDir = Tile.directionTo(unit.pos, target.pos);
+		effects.push(new Effect(target, "state", Unit.State.FRIGHTENED));
+		events.push(ActionEvent.retreat(target, retreatDir));
+
+		return new Action(true, effects, events, this.name, () => {
+			SpecialEffect.abilityUse(unit, this);
+			SpecialEffect.attackClash(target.pos, unit.pos, true, false);
+		});
+	}
+
+	mouseOverTile(unit, loc, quadrant) {
+		clearClickContextActors();
+		if (!this.isActionLegal(unit, loc, quadrant)) return;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return;
+
+		// Defender
+		let defenderRetreatChance = 1;
+		let defenderRetreatDir = Tile.directionTo(unit.pos, loc);
+		if (target.canRetreat(defenderRetreatDir)) {
+			clickContext.actors.push(new RetreatActor(target, defenderRetreatDir, defenderRetreatChance));
+		} else {
+			clickContext.actors.push(new DefeatActor(target, defenderRetreatChance));
+		}
+	}
+
+	isActionLegal(unit, loc, quadrant) {
+		if (unit.actionPoints < 2) return false;
+		if (Math.abs(unit.pos[0] - loc[0]) + Math.abs(unit.pos[1] - loc[1]) != 1) return false;
+		let target = gameState.getUnitAt(loc);
+		if (target == null) return false;
+		if (target.player == unit.player) return false;
+		if (target.actionPoints >= unit.actionPoints) return false;
+		return true;
+	}
+}();
 abilityData.PANIC = new class extends Ability {
 	constructor() {
 		super();
@@ -1438,6 +1589,39 @@ abilityData.RESCUE = new class extends Ability {
 		return dests;
 	}
 }();
+abilityData.REVENGE = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Revenge";
+		this.icon = "M20 6.91L17.09 4L12 9.09L6.91 4L4 6.91L9.09 12L4 17.09L6.91 20L12 14.91L17.09 20L20 17.09L14.91 12L20 6.91Z";
+		this.minActionPoints = 0;
+		this.details = ["!REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let defeats = 0;
+		for (let e of action.events) if (e.type == ActionEvent.DEFEAT && e.who.player == unit.player) defeats++;
+		if (defeats > 0) {
+			reactions.push(new Action(
+					true,
+					[
+						new AddingEffect(unit, "actionPoints", defeats * 4),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
+		}
+		return reactions;
+	}
+}();
 abilityData.RUN = new class extends Ability {
 	constructor() {
 		super();
@@ -1590,6 +1774,66 @@ abilityData.SHOOT = new class extends Ability {
 		if (target == null) return false;
 		if (target.player == unit.player) return false;
 		return true;
+	}
+}();
+abilityData.SIPHON = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Siphon";
+		this.icon = "M22 13V15H18.32C18.75 14.09 19 13.08 19 12C19 8.14 15.86 5 12 5H2V3H12C16.97 3 21 7.03 21 12C21 12.34 20.97 12.67 20.94 13H22M12 19C8.14 19 5 15.86 5 12C5 10.93 5.25 9.91 5.69 9H2V11H3.06C3.03 11.33 3 11.66 3 12C3 16.97 7.03 21 12 21H22V19H12M16.86 12.2C15.93 12.94 14.72 12.47 14 12.05V12C16.79 10.31 15.39 7.89 15.39 7.89S14.33 6.04 14.61 7.89C14.78 9.07 13.76 9.88 13.04 10.3L13 10.28C12.93 7 10.13 7 10.13 7S8 7 9.74 7.69C10.85 8.13 11.04 9.42 11.05 10.25L11 10.28C8.14 8.7 6.74 11.12 6.74 11.12S5.67 12.97 7.14 11.8C8.07 11.07 9.28 11.54 10 11.95V12C7.21 13.7 8.61 16.12 8.61 16.12S9.67 17.97 9.4 16.11C9.22 14.94 10.25 14.13 10.97 13.7L11 13.73C11.07 17 13.87 17 13.87 17S16 17 14.26 16.31C13.15 15.87 12.96 14.58 12.95 13.75L13 13.73C15.86 15.31 17.26 12.88 17.26 12.88S18.33 11.04 16.86 12.2Z";
+		this.minActionPoints = 0;
+		this.details = [
+			"!REACTION: When an adjacent !ENEMY uses ♦ and ⚅ is greater than 3, gain ♦.",
+			"(If the !ENEMY caused this !FRIEND to !RETREAT, the ♦ can't be used in the !RETREAT action.)",
+			"Actions that trigger this reaction cannot be undone.",
+		];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let usedDiamonds = 0;
+		let adjEnemies = [];
+		let movedEnemies = [];
+		for (let e of action.effects) if (e.property == "pos") {
+			if (e.unit.player == unit.player) continue;
+			movedEnemies.push(e.unit);
+			if (Tile.distanceBetween(e.oldValue, unit.pos) != 1) continue;
+			adjEnemies.push(e.unit);
+		}
+		for (let u of gameState.units) {
+			if (movedEnemies.includes(u)) continue;
+			if (u.state == Unit.State.DEFEATED) continue;
+			if (u.player == unit.player) continue;
+			if (Tile.distanceBetween(u.pos, unit.pos) != 1) continue;
+			adjEnemies.push(u);
+		}
+		for (let e of action.effects) if (e.property == "actionPoints") {
+			if (!adjEnemies.includes(e.unit)) continue;
+			let spent = 0;
+			if (e instanceof AddingEffect) spent = -e.value;
+			else spent = e.oldValue - e.value;
+			if (spent < 0) continue;
+			for (let i = 0; i < spent; i++) if (Util.roll() > 3) usedDiamonds++;
+		}
+
+		if (usedDiamonds > 0) {
+			reactions.push(new Action(
+					false,
+					[
+						new AddingEffect(unit, "actionPoints", usedDiamonds),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
+		}
+		return reactions;
 	}
 }();
 abilityData.SLIDE = new class extends Ability {
@@ -2105,6 +2349,39 @@ abilityData.VAULT = new class extends Ability {
 		return true;
 	}
 }();
+abilityData.VICTORIOUS = new class extends Ability {
+	constructor() {
+		super();
+		this.name = "Victorious";
+		this.icon = "M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z";
+		this.minActionPoints = 0;
+		this.details = ["!REACTION: When a !ENEMY is !DEFEATED, gain ♦♦."];
+		this.aiHints = [];
+	}
+
+	clickOnTile(unit, loc, quadrant) {}
+
+	mouseOverTile(unit, loc, quadrant) {}
+
+	actionEvent(unit, action) {
+		let reactions = [];
+		let defeats = 0;
+		for (let e of action.events) if (e.type == ActionEvent.DEFEAT && e.who.player != unit.player) defeats++;
+		if (defeats > 0) {
+			reactions.push(new Action(
+					true,
+					[
+						new AddingEffect(unit, "actionPoints", defeats * 2),
+					],
+					[],
+					this.name,
+					() => {
+						SpecialEffect.abilityUse(unit, this);
+					}));
+		}
+		return reactions;
+	}
+}();
 {
 	// Use the first attack ability on the closest unit.
 	// Ties are broken by unit order (player units first, etc).
@@ -2534,7 +2811,7 @@ abilityData.VAULT = new class extends Ability {
 		abilities: [abilityData.MOVE, abilityData.BITE, abilityData.CONTROL],
 		id: "Dog",
 		learnableAbilities: [abilityData.ENERGIZE, abilityData.FRIGHTEN, abilityData.FEARMONGER],
-		portraits: 12,
+		portraits: 13,
 		strengths: [5, 2, 1, 2],
 		strengthsFrightened: [4, 1, 1, 1],
 		threats: [true, false, false, false],
@@ -2551,6 +2828,19 @@ abilityData.VAULT = new class extends Ability {
 		strengths: [4, 3, 2, 2],
 		strengthsFrightened: [3, 2, 2, 2],
 		threats: [true, true, false, false],
+		threatsFrightened: [false, false, false, false],
+	};
+	characterData[c.id] = c;
+}
+{
+	let c = {
+		abilities: [abilityData.EFFORTTELEPORT, abilityData.OUTMANEUVER, abilityData.SIPHON],
+		id: "Kinetic",
+		learnableAbilities: [abilityData.FACEENEMY, abilityData.VICTORIOUS, abilityData.REVENGE],
+		portraits: 9,
+		strengths: [5, 5, 2, 2],
+		strengthsFrightened: [2, 2, 1, 1],
+		threats: [false, false, false, false],
 		threatsFrightened: [false, false, false, false],
 	};
 	characterData[c.id] = c;

@@ -6,7 +6,7 @@ abilityData.FLEE = new class extends Ability {
 		this.minActionPoints = 0;
 		this.details = [
 			"!REACTION: When this !FRIEND !RETREATs, gain ♦.",
-			"(The ♦ can't be spent in the !RETREAT action.)"];
+			"(The ♦ can't be used in the !RETREAT action.)"];
 		this.aiHints = [];
 	}
 

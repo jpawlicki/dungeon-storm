@@ -1,25 +1,3 @@
-Kinetic:
-	5/5/2/2, 2/2/1/1
-  No threatening sides.
-
----- EFFORTTELEPORT
-Teleport to an open space. Use ♦ equal to the distance travelled.
-
----- OUTMANEUVER
-Select an adjacent !ENEMY with fewer ♦. It !RETREATs. Use ♦♦. 
-
----- FACEENEMY
-Use ♦. Rotate. If a !ENEMY is directly ahead, gain ♦.
-
----- SIPHON
-!REACTION: When an adjacent !ENEMY uses ♦, gain ♦.
-
----- VICTORIOUS
-!REACTION: When a !ENEMY is !DEFEATED, gain ♦♦.
-
----- REVENGE
-!REACTION: When a !FRIEND is !DEFEATED, gain ♦♦♦♦♦.
-
 ================
 ---- ???
 Use ♦. Teleport to an open space with higher elevation.

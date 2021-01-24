@@ -884,7 +884,7 @@ function setupRoomClear() {
 
 function setupDefeatSituation() {
 	Sound.roomClear(false);
-	window.setTimeout(() => showSplash("✗"), 1500);
+	window.setTimeout(() => showSplash("✗"), 1770);
 	function setup() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";
@@ -895,7 +895,7 @@ function setupDefeatSituation() {
 
 function setupVictorySituation() {
 	Sound.roomClear(true);
-	window.setTimeout(() => showSplash("✓"), 1000);
+	window.setTimeout(() => showSplash("✓"), 1068);
 	function setup() {
 		hideSidePane();
 		document.querySelector("#mapDiv").innerHTML = "";

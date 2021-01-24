@@ -60,6 +60,7 @@ function clickOnTile() {
 	if (clickContext.lastMouseOver == null) return;
 	if (clickContext.selectedUnit != null && clickContext.selectedAbility != null) {
 		if (clickContext.selectedUnit.player != 0) return;
+		if (clickContext.selectedUnit.state == Unit.State.DEFEATED) return;
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 		if (action != null) {
 			if (!lockUi()) return;
