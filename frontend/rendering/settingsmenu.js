@@ -67,9 +67,12 @@ class SettingsMenu extends HTMLElement {
 		});
 
 		shadow.getElementById("sound").addEventListener("click", () => {
-			soundEnabled = !soundEnabled; // Declared in ui.js.
-			shadow.getElementById("soundOn").style.visibility = !soundEnabled ? "hidden" : "visible";
-			shadow.getElementById("soundOff").style.visibility = soundEnabled ? "hidden" : "visible";
+			Sound.setEnabled(!Sound.enabled); // Declared in ui.js.
+		});
+
+		Sound.addEnabledListener(() => {
+			shadow.getElementById("soundOn").style.visibility = !Sound.enabled ? "hidden" : "visible";
+			shadow.getElementById("soundOff").style.visibility = Sound.enabled ? "hidden" : "visible";
 		});
 
 		shadow.getElementById("roomEditor").addEventListener("click", () => {

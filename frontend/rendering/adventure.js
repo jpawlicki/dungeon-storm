@@ -883,6 +883,7 @@ function setupRoomClear() {
 }
 
 function setupDefeatSituation() {
+	Sound.roomClear(false);
 	window.setTimeout(() => showSplash("✗"), 1500);
 	function setup() {
 		hideSidePane();
@@ -893,6 +894,7 @@ function setupDefeatSituation() {
 }
 
 function setupVictorySituation() {
+	Sound.roomClear(true);
 	window.setTimeout(() => showSplash("✓"), 1000);
 	function setup() {
 		hideSidePane();
@@ -903,6 +905,7 @@ function setupVictorySituation() {
 }
 
 function setupAdventureVictorySituation() {
+	Sound.roomClear(true);
 	window.setTimeout(() => showSplash("✓"), 1000);
 	function setup() {
 		hideSidePane();

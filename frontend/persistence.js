@@ -16,12 +16,24 @@ class Persistence {
 		}
 	}
 
+	static saveSoundPref() {
+		try {
+			localStorage.setItem("soundEnabled", Sound.enabled);
+		} catch (exception) {
+			// Do nothing.
+		}
+	}
+
 	static load() {
 		if (tutorial != null) {
 			let tutVal = localStorage.getItem("tutorialCounts");
 			if (tutVal != null) {
 				tutorial.eventCounts = JSON.parse(tutVal);
 			}
+		}
+		let soundEnabled = localStorage.getItem("soundEnabled");
+		if (soundEnabled != null) {
+			Sound.setEnabled(soundEnabled);
 		}
 		let val = null;
 		try {

@@ -5,8 +5,6 @@ let clickContext = {
 	actors: [],
 };
 
-let soundEnabled = false;
-
 function clearClickContextActors() {
 	for (let a of clickContext.actors) a.destroy();
 	clickContext.actors = [];
@@ -124,7 +122,10 @@ function clickOnDone() {
 }
 
 function notifyTurn() {
-	if (gameState.currentPlayer == 0) selectNext();
+	if (gameState.currentPlayer == 0) {
+		selectNext();
+		Sound.turnBegin();
+	}
 }
 
 function showHideUiElements() {
