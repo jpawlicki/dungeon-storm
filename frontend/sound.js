@@ -49,4 +49,4 @@ Sound.effects["enemy_attack_fail"] = new Audio("assets/sound/enemy_attack_fail.f
 Sound.effects["enemy_attack_success"] = new Audio("assets/sound/enemy_attack_success.flac");
 Sound.effects["room_clear"] = new Audio("assets/sound/room_clear.flac");
 Sound.effects["room_defeat"] = new Audio("assets/sound/room_defeat.flac");
-Sound.effects["turn_begin"] = new Audio("assets/sound/turndone.flac");
+Sound.effects["turn_begin"] = new Audio("assets/sound/turnbegin.flac");
