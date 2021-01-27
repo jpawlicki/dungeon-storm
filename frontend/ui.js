@@ -35,6 +35,7 @@ function clickOnAbility(unit, ability) {
 		if (clickContext.lastMouseOver != null) {
 			mouseOverTile(clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 		}
+		Tutorial.hook(Tutorial.Hook.UI_ABILITYSELECT);
 		return;
 	}
 }
@@ -64,6 +65,7 @@ function clickOnTile() {
 		let action = clickContext.selectedAbility.clickOnTile(clickContext.selectedUnit, clickContext.lastMouseOver.loc, clickContext.lastMouseOver.quadrant);
 		if (action != null) {
 			if (!lockUi()) return;
+			Tutorial.hook(Tutorial.Hook.UI_ABILITYUSE);
 			clearClickContextActors();
 			gameState.addAction(action, () => {
 				unlockUi();
@@ -109,6 +111,7 @@ function clickOnUndo() {
 	if (uiLocked) return;
 	if (gameState.disableActions) return;
 	if (gameState.currentPlayer != 0) return;
+	Tutorial.hook(Tutorial.Hook.UI_UNDO);
 	gameState.undoAction();
 	showHideUiElements();
 }

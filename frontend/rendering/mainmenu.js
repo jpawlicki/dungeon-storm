@@ -116,6 +116,7 @@ class MainMenu extends HTMLElement {
 		let count = 0;
 		for (let x of this.shadow.querySelectorAll("menu-character")) if (x.selected()) count++;
 		for (let c of this.charSelectListeners) c(count);
+		Tutorial.hook(Tutorial.Hook.MAINMENU_CHARACTERSELECT);
 	}
 
 	addAdventures() {

@@ -587,6 +587,11 @@ class GameState {
 		if (this.disableActions) return;
 		this.actionHistory.push(action);
 		action.apply();
+		
+		for (let e of action.events) {
+			if (e.type == ActionEvent.RETREAT) Tutorial.hook(Tutorial.Hook.GAME_RETREAT);
+			if (e.type == ActionEvent.DEFEAT) Tutorial.hook(Tutorial.Hook.GAME_DEFEAT);
+		}
 
 		for (let u of this.units) {
 			for (let reaction of u.actionEvent(action)) {
