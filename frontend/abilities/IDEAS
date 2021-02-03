@@ -1,15 +1,60 @@
 ================
----- ???
-Use ♦. Teleport to an open space with higher elevation.
+==== ATTACKS (PUSHES)
+
+
+================
+==== ATTACKS (NON-PUSHES)
+
+---- ????
+Use ♦♦. !DEFEAT a !ENEMY that is adjacent to 3 or 4 !FRIENDs or !ENEMYs.
+
+---- ????
+Use ♦♦. Teleport a !ENEMY to a random open space.
+
+
+================
+==== MOVES (BASIC)
+
+---- ????
+Use ♦. !MOVE into an adjacent open space and rotate. If it is adjacent to a !FRIEND, gain ♦.
+
+---- ????
+Use ♦. !MOVE into the adjacent open space directly ahead. Gain ♦.
+
+
+================
+==== MOVES (NON-BASIC)
 
 ---- ???
-Use ♦. Teleport to an open space with lower elevation.
+Use ♦♦. Teleport to an open space with higher elevation.
+
+---- ???
+Use ♦♦. Teleport to an open edge space.
+
+---- ???
+Use ♦♦. Teleport to an open space with lower elevation.
 
 ---- TUNNEL
 Use ♦. Teleport to an open space of the same elevation that is connected to this !FRIEND's space by spaces of higher elevation.
 
-----
-Use ♦. Do X. If adjacent to a !FRIEND, gain ♦.
+---- CLIMB
+Use ♦. !MOVE to an adjacent open space that is two or more steps higher. Gain ♦.
+
+================
+==== BUFFS
+
+
+================
+==== REACTIONS
+---- ????
+!REACTION: After this !FRIEND becomes !FRIGHTENED, they use ♦ then becomes no longer !FRIGHTENED.
+
+---- ????
+!REACTION: When this !FRIEND's turn ends, they carry up to 3 unused ♦ over to their next turn.
 
 ---- SIPHONBUDDY
 !REACTION: When an adjacent !FRIEND uses ♦♦, gain ♦.
+
+================
+================
+Maybe upgrade PAUSE to target all adjacent !ENEMYs.

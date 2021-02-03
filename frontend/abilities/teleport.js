@@ -32,7 +32,7 @@ abilityData.TELEPORT = new class extends Ability {
 
 	isLegal(unit, loc, quadrant) {
 		if (gameState.getUnitAt(loc) != null) return false;
-		if (unit.abilityPoints < 1) return false;
+		if (unit.actionPoints < 1) return false;
 		let hasFriend = false;
 		for (let d = 0; d < 4; d++) {
 			let u = gameState.getUnitAt(Tile.offset(loc, d));

@@ -1,10 +1,18 @@
 Misc improvements:
- - sfx sounds
+ - Save games / new games / etc.
  - Additional adventures, abilities, characters, units, etc.
+   - Adventure where the enemy does minimax.
  - PWA-ify for native-like installation.
+ - Game modes:
+   - Standard
+	 - Challenge Run
+	 - Multiplayer (incl. vs AI?)
+	 - Editor
+ - Adventures could limit the abilities available to characters found in those adventures.
+   - Or, instead of having character gain awards, completing an adventure could always grant a new character who may know the abilities picked up in that run?
 
 Server capabilities:
- - Accept connections to multiplayer sessions, reply with seed and command history.
+ - Accept connections to multiplayer sessions, reply with versioned blob.
  - Accept bug reports?
  - Account management and cloud saves?
 
@@ -13,7 +21,7 @@ Multiplayer:
    - A means for two friends to take their characters head-to-head.
 	 - Easy connectivity.
 	 - Session recovery.
-	 - Rewards. (Potentially, could wager resources or characters, and gain some free XP.)
+	 - Rewards. (Potentially, could wager resources or characters, and gain some free XP / unlocks.)
  - Non-Goals:
    - Cheat-proof multiplayer is a non-goal. Players should play with friends they trust.
    - Matchmaking is a non-goal. Players should play with friends they trust.
@@ -43,5 +51,3 @@ Multiplayer:
    - Once both sides accept, they load the map and character sets.
 	 - Which player goes first is randomly chosen. On the first turn, that player only gets 1♦.
 	 - Each (clickOnTile, turn end, undo) is put into the shared object, and shown on both clients.
- - Some abilities need adjustment for multiplayer.
-   - DESPERATION (Pay !FRIGHTENED, get !DEFEAT.)
