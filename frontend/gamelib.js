@@ -624,6 +624,7 @@ class GameState {
 	}
 
 	loadRoom(coords) {
+		lockUi();
 		this.roomLoads++;
 		this.disableActions = false;
 		this.currentPlayer = 0;
@@ -646,7 +647,7 @@ class GameState {
 		}
 		this.currentRoom = coords;
 		for (let c of this.characters) c.actionPoints = 3;
-		this.addAction(new Action(false, [], [ActionEvent.loadRoom()], "(Room Load)", () => {}));
+		this.addAction(new Action(false, [], [ActionEvent.loadRoom()], "(Room Load)", () => { unlockUi(); }));
 	}
 
 	// Returns the unit in the position, or null if there is no unit in the position.
@@ -674,6 +675,7 @@ class GameState {
 	}
 
 	roomDefeat() {
+		if (this.currentRoom == null) return;
 		Telemetry.reportRoomOutcome(false);
 		this.currentRoom = null;
 		this.disableActions = true;
@@ -820,10 +822,3 @@ ActionEvent.DEFEAT = 3;
 ActionEvent.ENDTURN = 4;
 ActionEvent.STARTTURN = 5;
 ActionEvent.LOADROOM = 6;
-
-// A Fortress is a collection of rooms. Fortresses are square. The player starts in the upper-left and is trying to reach the lower-right.
-class Fortress {
-	// id
-	// rooms
-	// random: whether to include the room in randomized room pools.
-}

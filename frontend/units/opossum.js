@@ -1,7 +1,7 @@
 {
 	let unit = {
 		ai: [aiData.ATTACK_NEAREST, aiData.MOVE_RANDOMLY],
-		abilities: [abilityData.MOVE, abilityData.BITE, abilityData.PANIC, abilityData.CONTROL, abilityData.PRESS, abilityData.OPPORTUNITY],
+		abilities: [abilityData.MOVE, abilityData.PUSH, abilityData.REVENGE, abilityData.CONTROL, abilityData.PRESS, abilityData.OPPORTUNITY],
 		id: "Opossum",
 		portrait: "opossum.png",
 		recommendedRewards: {heal: 1},

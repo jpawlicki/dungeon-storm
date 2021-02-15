@@ -16,6 +16,40 @@ Server capabilities:
  - Accept bug reports?
  - Account management and cloud saves?
 
+Campaign Mode 2:
+ - Start with two characters (the basics, or on replays, random ones).
+ - In between rooms, keys can be used to unlock new abilities.
+   - The cost to unlock new abilities decreases when they are passed up.
+ - The player's goal is to beat the final mission within X turns.
+   - Time rewards increase the available time.
+ - Missions can add new characters to the roster. They have only 3 basic moves.
+ - Unlocked abilties can be added to characters at the cost of caps.
+ - Characters that are defeated can't go on missions.
+ - If all characters are defeated, the game is lost.
+ - Each mission is a selection of four random room options.
+ - Each mission provides a trophy according to its type.
+   - Gathering N trophies unlocks the next room set (garden, forest, ceremony, family, departure).
+	 - To unlock the final mission, they need enough trophies of each type.
+ - Granting an unlocked ability to a character costs caps equal to the ability cost plus character cost.
+   - The character cost increases per ability the character already knows.
+	 - The ability cost increases per character that knows the ability.
++------------------------+---------------------------+----------------------+
+| Characters      [Heal] | Ability List              | Next Mission 1    1> |
+|    ...                 |                           | Next Mission 2    3> |
+|                        |                           |       ...            |
+|                        |                           |                      |
+|                        |                           |                      |
+|                        |                           |                      |
+|                        +---------------------------+                      |
+|                        | Ability Text              |                      |
+|                        |                           |                      |
+|                        |                           |                      |
+|                        +---------------------------+----------------------+
+|                        | Ability Unlocks           | Progress             |
+|                        |                           |                      |
++------------------------+---------------------------+----------------------+
+
+
 Multiplayer:
  - Goals:
    - A means for two friends to take their characters head-to-head.
