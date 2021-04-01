@@ -66,7 +66,7 @@ class UnitActor {
 	}
 
 	update() {
-		this.edges.setAttribute("transform", "rotate(" + (90 * this.unit.facing) + "," + (tileSize / 2) + "," + (tileSize / 2) + ")");
+		this.edges.setAttribute("transform", "translate(" + (tileSize / 2) + "," + (tileSize / 2) + ") rotate(" + (90 * this.unit.facing) + ") translate(" + (-tileSize / 2) + "," + (-tileSize / 2) + ")");
 		let loc = getTilePoint(this.unit.pos[0], this.unit.pos[1], this.room.tiles[this.unit.pos[0]][this.unit.pos[1]].height, 0);
 		this.group.setAttribute("transform", "translate(" + loc[0] + "," + loc[1] + ")");
 		this.group.style.opacity = this.unit.state == Unit.State.DEFEATED ? 0 : 1;
