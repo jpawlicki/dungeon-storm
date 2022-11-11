@@ -14,7 +14,7 @@
 		id: "FAMILY",
 		maxAbilities: 7,
 		onVictory: [Adventure.Consequence.CHARACTER],
-		onDefeat: [Adventure.Consequence.ABILITY_LOSS],
+		onDefeat: [],
 		rooms: [
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", null,        "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],
 			["FAMILY_RR", "FAMILY_RR", "CEREMONY_RR", "CEREMONY_RR", "CEREMONY_RR", "FAMILY_RR", "FAMILY_RR"],

@@ -248,18 +248,20 @@ function selectNext() {
 
 window.addEventListener("keypress", (ev) => {
 	if (document.querySelector("body").getAttribute("class") == "nosidepane") return;
-	if (ev.key == "Enter" || ev.key == "d") {
+  let abilityKeys = ["1", "q", "2", "w", "3", "e", "4", "r", "5", "t"];
+	if (ev.key == "Enter" || ev.key == " ") {
 		if (tutorial != undefined && tutorial.isOpen()) tutorial.tutorialClose();
 		else clickOnDone();
+	} else if (ev.key == "h") {
+		Tutorial.hook(Tutorial.Hook.SHOW_HOTKEYS);
 	} else if (ev.key == "z") {
 		clickOnUndo();
 	} else if (ev.key == "`") {
 		selectNext();
-	} else if (ev.keyCode >= 48 && ev.keyCode <= 57) {
-		let num = ev.keyCode == 48 ? 10 : ev.keyCode - 48;
+	} else if (abilityKeys.includes(ev.key)) {
 		for (let unitCard of document.querySelectorAll("unit-card")) {
 			if (unitCard.unit == clickContext.selectedUnit) {
-				unitCard.selectAbility(num);
+				unitCard.selectAbility(abilityKeys.indexOf(ev.key) + 1);
 			}
 		}
 	}

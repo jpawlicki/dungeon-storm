@@ -18,11 +18,13 @@ class MainMenu extends HTMLElement {
 					grid-template-rows: min-content 1fr min-content;
 					grid-template-columns: 1fr 1fr;
 					color: #fff;
-					min-height: 100%;
+					height: 100%;
 				}
 				#cast {
 					grid-row: 1 / 3;
 					grid-column: 1;
+          max-height: calc(100% - 3em);
+          overflow: auto;
 				}
 				#unlockTrack {
 					grid-column: 1 / 3;
@@ -41,7 +43,7 @@ class MainMenu extends HTMLElement {
 					padding-top: 3em;
 				}
 				#adventures > div {
-					margin-bottom: 2em;
+					margin-bottom: 1em;
 					background-color: #000;
 					border-radius: 4em;
 					display: flex;
@@ -54,9 +56,6 @@ class MainMenu extends HTMLElement {
 					cursor: pointer;
 					margin: 0.2em;
 				}
-				#adventures svg:hover path {
-					fill: #fff;
-				}
 				#unlockTrack {
 					overflow: hidden;
 					width: 100vw;
@@ -66,10 +65,12 @@ class MainMenu extends HTMLElement {
 					cursor: pointer;
 				}
 				.begin path {
-					transition: fill 0.4s;
+					transition: all 0.4s;
+          fill: #aaa;
 				}
-				.begin:hover path {
+				#adventures div:hover .begin path {
 					fill: #fff;
+          transform: scale(1.2);
 				}
 				h2, h3 {
 					margin-bottom: 0;
@@ -178,7 +179,6 @@ class MainMenu extends HTMLElement {
 			{
 				let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 				svg.setAttribute("viewBox", "-2 -3 28 28");
-				svg.setAttribute("class", "begin");
 				let c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
 				c.setAttribute("r", "14");
 				c.setAttribute("cx", "12");
@@ -203,10 +203,8 @@ class MainMenu extends HTMLElement {
 			svg.appendChild(t);
 			t.setAttribute("text-anchor", "middle");
 			t.setAttribute("dominant-baseline", "central");
-			t.setAttribute("fill", "#fff");
 			t.appendChild(document.createTextNode(Math.min(gameState.characterPool.length, adventureData[adventure].characters)));
 			let p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-			p.setAttribute("fill", "#eee");
 			p.setAttribute("d", "M8,0L-4,6.9282L-4,-6.9282Z");
 			p.style.opacity = 0;
 			svg.appendChild(p);
@@ -240,7 +238,9 @@ class MainMenu extends HTMLElement {
 			loadAdventure(adventureData[adventure])
 			for (let c of chars) gameState.characters.push(c);
 			loadRoom(adventureData[adventure].entry);
-		}
+		} else if (chars.length == 0) {
+      Tutorial.hook(Tutorial.Hook.MAINMENU_ADVENTUREWITHWRONGCHARNUM);
+    }
 	}
 
 	addUnlockTrack() {

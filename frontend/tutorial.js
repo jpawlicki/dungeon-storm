@@ -187,18 +187,25 @@ class Tutorial {
 		}
 		
 		if (event == Tutorial.Hook.UI_UNDO && this.introState == 3) {
-			this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities svg")], "These move.", true);
+			this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities svg")], "These abilities move your character.", true);
 			this.introState = 4;
 		}
 		
 		if (event == Tutorial.Hook.TUTORIAL_CHECK) {
 			if (this.introState == 4) {
-				this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities div:nth-child(2) svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities div:nth-child(2) svg")], "These push dangers away.", true);
+				this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities div:nth-child(2) svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities div:nth-child(2) svg")], "These abilities make dangers retreat.", true);
 				this.introState = 5;
 			} else if (this.introState == 5) {
-				this.makeOverlay(gameState.units[3].actors[0].edges.querySelectorAll("circle[r=\"3\"]"), "Circles are defenses. There are strong sides and weak sides.", true);
+				// Dangers
+				this.makeOverlay([gameState.units[2].actors[0].edges, gameState.units[3].actors[0].edges], "Overcome these dangers by making them retreat off the board.", true);
 				this.introState = 6;
 			} else if (this.introState == 6) {
+				this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities div:nth-child(3) svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities div:nth-child(3) svg")], "These abilities will also automatically overcome threatened dangers that move sideways.", true);
+				this.introState = 7;
+			} else if (this.introState == 7) {
+				this.makeOverlay(gameState.units[0].actors[0].edges.querySelectorAll("g > g:nth-child(1), g > g:nth-child(2), g > g:nth-child(3), g > g:nth-child(4)"), "Red circles threaten adjacent dangers.", true);
+				this.introState = 8;
+			} else if (this.introState == 8) {
 				// Diamonds
 				let diamonds = [
 					gameState.units[0].actors[0].portraitActor.moveActor.diamonds[0],
@@ -214,26 +221,12 @@ class Tutorial {
 					gameState.units[1].actors[1].div.portraitActor.moveActor.diamonds[1],
 					gameState.units[1].actors[1].div.portraitActor.moveActor.diamonds[2],
 				];
-				this.makeOverlay(diamonds, "Moving and pushing costs ♦.", true);
-				this.introState = 7;
-			} else if (this.introState == 7) {
-				// End turn
-				this.makeOverlay([document.querySelector("#done")], "When you run out of ♦, end your turn.", true);
-				this.introState = 8;
-			} else if (this.introState == 8) {
-				this.makeOverlay(gameState.units[0].actors[0].edges.querySelectorAll("g > g:nth-child(1), g > g:nth-child(2), g > g:nth-child(3), g > g:nth-child(4)"), "Red circles threaten.", true);
+				this.makeOverlay(diamonds, "Most abilities cost ♦.", true);
 				this.introState = 9;
 			} else if (this.introState == 9) {
-				this.makeOverlay([document.querySelector("unit-card").shadow.querySelector("#abilities div:nth-child(3) svg"), document.querySelector("unit-card:nth-child(3)").shadow.querySelector("#abilities div:nth-child(3) svg")], "These automatically overcome threatened dangers that you push sideways.", true);
+				// End turn
+				this.makeOverlay([document.querySelector("#done")], "If you run out of ♦, end your turn.", true);
 				this.introState = 10;
-			} else if (this.introState == 10) {
-				// Dangers
-				this.makeOverlay([gameState.units[2].actors[0].edges, gameState.units[3].actors[0].edges], "These are dangers.", true);
-				this.introState = 11;
-			} else if (this.introState == 11) {
-				// Defeat them
-				this.makeOverlay([], "Overcome the dangers.", true);
-				this.introState = 12;
 			} else if (this.introState == 101) {
 				this.makeOverlay(document.querySelector("adventure-nextroom-element").shadow.querySelectorAll("#resources > span"), "Clearing challenges earns rewards.", true);
 				this.introState = 102;
@@ -273,8 +266,12 @@ class Tutorial {
 			this.makeOverlay([retreater.actors[0].edges], "They were Defeated" + (control ? "." : " because they could not Retreat (no space or no ♦)."), true);
 		}
 		
-		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 12) {
-			window.setTimeout(() => this.addMessage("Hotkeys:<br/><br/><b>Backtick (`)</b>: Select next character<br/><b>1 - 8</b>: Select the corresponding ability<br/><b>z</b>: Undo<br/><b>Enter</b>: end turn or close popup<br/><b>d</b>: end turn or close popup<br/><b>Escape</b>: close popup.<br/><b>F11</b>: Fullscreen."), 750);
+		if (event == Tutorial.Hook.ACTION_TAKEN && this.eventCounts[event] == 20) {
+			window.setTimeout(() => this.addMessage("You can press <b>h</b> to show hotkeys."), 750);
+		}
+
+		if (event == Tutorial.Hook.SHOW_HOTKEYS) {
+			this.addMessage("Hotkeys:<br/><br/><b>Backtick (`)</b>: Select next character<br/><b>1, 2, 3, 4, 5</b>: Select an ability (top row)<br/><b>q, w, e, r, t</b>: Select an ability (bottom row)<br/><b>z</b>: Undo<br/><b>Enter, spacebar</b>: end turn or close popup<br/><b>Escape</b>: close popup.<br/><b>F11</b>: Toggle fullscreen.<br/><b>h</b>: Show hotkeys.");
 		}
 		
 		if (event == Tutorial.Hook.ADVENTURE_NEXTROOM && this.eventCounts[event] == 1) {
@@ -304,6 +301,14 @@ class Tutorial {
 			this.addMessage("You can create challenges of your own and contribute them to the game using the map icon in the menu in the upper-right.");
 		}
 		
+		if (event == Tutorial.Hook.MAINMENU_ADVENTUREWITHWRONGCHARNUM) {
+      let imgs = [];
+      for (let mc of document.querySelector("main-menu").shadow.querySelectorAll("menu-character")) {
+        imgs.push(mc.shadow.querySelector("img"));
+      }
+			this.makeOverlay(imgs, "Tap characters first.", true);
+		}
+		
 		if (event == Tutorial.Hook.EXPLAIN_REACTION) {
 			this.addMessage("!REACTIONs are abilities that are automatically used. Most !REACTIONs only apply to !THREATENed units.");
 		}
@@ -317,7 +322,7 @@ class Tutorial {
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_THREATEN) {
-			this.addMessage("Red and flashing ○ indicate a threat to adjacent !CHARACTERs. Check the !DANGER's abilities for !REACTIONs, and avoid causing them. You can also manipulate !DANGERs into causing !REACTIONs from your !THREATENing !CHARACTERs.");
+			this.addMessage("Red ○ threaten adjacent !CHARACTERs. Check the !DANGER's abilities for !REACTIONs, and avoid causing them. You can also manipulate !DANGERs into causing !REACTIONs from your !THREATENing !CHARACTERs.");
 		}
 
 		if (event == Tutorial.Hook.EXPLAIN_RETREAT) {
@@ -424,4 +429,5 @@ Tutorial.Hook = {
 	MAINMENU_CHARACTERSELECT: 28,
 	GAME_RETREAT: 29,
 	GAME_DEFEAT: 30,
+	MAINMENU_ADVENTUREWITHWRONGCHARNUM: 31,
 }
